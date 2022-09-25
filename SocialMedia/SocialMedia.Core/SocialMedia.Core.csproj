@@ -1,16 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Enumerations\" />
-    <Folder Include="Interfaces\" />
     <Folder Include="Dtos\" />
     <Folder Include="Exceptions\" />
+    <Folder Include="CustomEntities\" />
+    <Folder Include="Enumerations\" />
+    <Folder Include="Services\" />
+    <Folder Include="QueryFilters\" />
   </ItemGroup>
 
 </Project>

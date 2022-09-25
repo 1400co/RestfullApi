@@ -1,6 +1,8 @@
-﻿namespace SocialMedia.Core.Entities
+﻿using System;
+
+namespace SocialMedia.Core.Entities
 {
-    public  class Post
+    public class Post
     {
         public int PostId { get; set; }
         public int UserId { get; set; }
