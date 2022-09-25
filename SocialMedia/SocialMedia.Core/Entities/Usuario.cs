@@ -3,23 +3,23 @@ using System.Collections.Generic;
 
 namespace SocialMedia.Core.Entities
 {
-    public partial class Usuario
+    public partial class User
     {
-        public Usuario()
+        public User()
         {
-            Comentario = new HashSet<Comentario>();
-            Publicacion = new HashSet<Publicacion>();
+            Comment = new HashSet<Comment>();
+            Post = new HashSet<Post>();
         }
 
-        public int IdUsuario { get; set; }
-        public string Nombres { get; set; }
-        public string Apellidos { get; set; }
+        public int UserId { get; set; }
+        public string Names { get; set; }
+        public string LastNames { get; set; }
         public string Email { get; set; }
-        public DateTime FechaNacimiento { get; set; }
-        public string Telefono { get; set; }
-        public bool Activo { get; set; }
+        public DateTime BornDate { get; set; }
+        public string Phone { get; set; }
+        public bool IsActive { get; set; }
 
-        public virtual ICollection<Comentario> Comentario { get; set; }
-        public virtual ICollection<Publicacion> Publicacion { get; set; }
+        public virtual ICollection<Comment> Comment { get; set; }
+        public virtual ICollection<Post> Post { get; set; }
     }
 }

@@ -3,16 +3,16 @@ using System.Collections.Generic;
 
 namespace SocialMedia.Core.Entities
 {
-    public partial class Comentario
+    public partial class Comment
     {
-        public int IdComentario { get; set; }
-        public int IdPublicacion { get; set; }
-        public int IdUsuario { get; set; }
-        public string Descripcion { get; set; }
-        public DateTime Fecha { get; set; }
-        public bool Activo { get; set; }
+        public int CommentId { get; set; }
+        public int PostId { get; set; }
+        public int UserId { get; set; }
+        public string Description { get; set; }
+        public DateTime Date { get; set; }
+        public bool IsActive { get; set; }
 
-        public virtual Publicacion IdPublicacionNavigation { get; set; }
-        public virtual Usuario IdUsuarioNavigation { get; set; }
+        public virtual Post Post { get; set; }
+        public virtual User User { get; set; }
     }
 }
