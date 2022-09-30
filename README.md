@@ -5,3 +5,4 @@
 3. added method for Get all posts and single post
 4. added insert posts
 5. have technical dept on api due to is using same class of repository
+6. fix technical dept removing remository objects for DTOs and use automapper for mapping objects from repository to dto
