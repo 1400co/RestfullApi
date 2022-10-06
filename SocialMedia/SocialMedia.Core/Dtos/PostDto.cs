@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Text;
 
 namespace SocialMedia.Core.Dtos
@@ -9,6 +10,8 @@ namespace SocialMedia.Core.Dtos
         public int PostId { get; set; }
         public int UserId { get; set; }
         public DateTime Date { get; set; }
+        
+        [Required]
         public string Description { get; set; }
         public string Image { get; set; }
     }
