@@ -8,3 +8,4 @@
 6. fix technical dept removing remository objects for DTOs and use automapper for mapping objects from repository to dto
 7. Filter using decorators on Dto and a middleware 
 8. Web Api Configuration and Fluent Validations
+9. CRUD Operations with EF Core
