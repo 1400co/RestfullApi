@@ -59,19 +59,19 @@ namespace SocialMedia.Api.Controllers
         public async Task<IActionResult> Put(int id, PostDto postDto)
         {
             var post = mapper.Map<Post>(postDto);
-            postDto.PostId = id;
+            postDto.Id = id;
 
-            var result = await postService.UpdatePost(post);
-            var response = new ApiResponse<bool>(result);
-            return Ok(response);
+            await postService.UpdatePost(post);
+            //var response = new ApiResponse<bool>();
+            return Ok();
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Detele(int id)
         {
-            var result = await postService.DeletePost(id);
-            var response = new ApiResponse<bool>(result); 
-            return Ok(response);
+             await postService.DeletePost(id);
+            //var response = new ApiResponse<bool>(); 
+            return Ok();
         }
     }
 }

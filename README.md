@@ -10,3 +10,4 @@
 8. Web Api Configuration and Fluent Validations
 9. CRUD Operations with EF Core
 10. Added Bussines Logic and repository pattern to Solution.
+11. Added Repository pattern and Unit of work.
