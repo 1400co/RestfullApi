@@ -9,3 +9,4 @@
 7. Filter using decorators on Dto and a middleware 
 8. Web Api Configuration and Fluent Validations
 9. CRUD Operations with EF Core
+10. Added Bussines Logic and repository pattern to Solution.

@@ -43,6 +43,7 @@ namespace SocialMedia.Infrastructure.Repositories
             var current = await this.GetPost(post.PostId);
             current.Date = post.Date;
             current.Description = post.Description;
+            current.Image = post.Image;
             var rows = await _socialMediaContext.SaveChangesAsync();
 
             return rows > 0;
