@@ -1,6 +1,8 @@
 ﻿using SocialMedia.Core.Entities;
+using SocialMedia.Core.Exceptions;
 using SocialMedia.Core.Interfaces;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace SocialMedia.Core.Services
@@ -8,9 +10,9 @@ namespace SocialMedia.Core.Services
 
     public class PostService : IPostService
     {
-    
+
         private readonly IUnitOfWork _unitOfWork;
-        public PostService( IUnitOfWork unitOfWork)
+        public PostService(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
         }
@@ -19,17 +21,30 @@ namespace SocialMedia.Core.Services
         {
             var user = _unitOfWork.UserRepository.GetById(post.UserId);
             if (user == null)
-                throw new System.Exception("User doesnt exist");
+                throw new BusinessException("User doesnt exist");
 
             if (post.Description.Contains("sexo"))
-                throw new System.Exception("Content not allowed");
+                throw new BusinessException("Content not allowed");
+
+            var userPosts = await _unitOfWork.PostRepository.GetPostsByUser(post.UserId);
+            if (userPosts.Count() < 10)
+            {
+                var lastPost = userPosts.OrderByDescending(x => x.Date).FirstOrDefault();
+                if (lastPost != null && (System.DateTime.Now - lastPost.Date).TotalDays < 7)
+                {
+                    throw new BusinessException("you cant push any posts jet.");
+                }
+            }
 
             await _unitOfWork.PostRepository.Insert(post);
+            await _unitOfWork.SaveChangesAsync();
         }
 
-        public async Task UpdatePost(Post post)
+        public async Task<bool> UpdatePost(Post post)
         {
-            await _unitOfWork.PostRepository.Update(post);
+            _unitOfWork.PostRepository.Update(post);
+            await _unitOfWork.SaveChangesAsync();
+            return true;
         }
 
         public async Task<Post> GetPost(int id)
@@ -37,14 +52,15 @@ namespace SocialMedia.Core.Services
             return await _unitOfWork.PostRepository.GetById(id);
         }
 
-        public async Task<IEnumerable<Post>> GetPosts()
+        public IEnumerable<Post> GetPosts()
         {
-            return await _unitOfWork.PostRepository.GetByAll();
+            return _unitOfWork.PostRepository.GetByAll();
         }
 
         public async Task DeletePost(int id)
         {
             await _unitOfWork.PostRepository.Delete(id);
+            await _unitOfWork.SaveChangesAsync();
         }
     }
 }

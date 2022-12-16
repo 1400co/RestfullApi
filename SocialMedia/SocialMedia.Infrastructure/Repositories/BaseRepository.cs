@@ -3,6 +3,7 @@ using SocialMedia.Core.Entities;
 using SocialMedia.Core.Interfaces;
 using SocialMedia.Infrastructure.Data;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace SocialMedia.Infrastructure.Repositories
@@ -10,16 +11,16 @@ namespace SocialMedia.Infrastructure.Repositories
     public class BaseRepository<T> : IRepository<T> where T : BaseEntity
     {
         private readonly SocialMediaContext socialMediaContext;
-        private readonly DbSet<T> entities;
+        protected readonly DbSet<T> entities;
         public BaseRepository(SocialMediaContext socialMediaContext)
         {
             this.socialMediaContext = socialMediaContext;
             entities = socialMediaContext.Set<T>();
         }
 
-        public async Task<IEnumerable<T>> GetByAll()
+        public IEnumerable<T> GetByAll()
         {
-            return await entities.ToListAsync();
+            return entities.AsEnumerable();
         }
 
         public async Task<T> GetById(int id)
@@ -29,21 +30,18 @@ namespace SocialMedia.Infrastructure.Repositories
 
         public async Task Insert(T entity)
         {
-            entities.Add(entity);
-            socialMediaContext.SaveChanges();
+            await entities.AddAsync(entity);
         }
 
-        public async Task Update(T entity)
+        public async void Update(T entity)
         {
             entities.Update(entity);
-            socialMediaContext.SaveChanges();
         }
 
         public async Task Delete(int id)
         {
             T entity = await GetById(id);
             entities.Remove(entity);
-            socialMediaContext.SaveChanges();
         }
     }
 }

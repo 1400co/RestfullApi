@@ -9,7 +9,7 @@ namespace SocialMedia.Infrastructure.Repositories
     public class UnitOfWork : IUnitOfWork
     {
         private readonly SocialMediaContext socialMediaContext;
-        private readonly IRepository<Post> postRepository;
+        private readonly IPostRepository postRepository;
         private readonly IRepository<User> userRepository;
         private readonly IRepository<Comment> commentRepository;
 
@@ -17,11 +17,11 @@ namespace SocialMedia.Infrastructure.Repositories
         {
             this.socialMediaContext = socialMediaContext;
         }
-        public IRepository<Post> PostRepository => PostRepository ?? new BaseRepository<Post>(socialMediaContext);
+        public IPostRepository PostRepository => postRepository ?? new PostRepository(socialMediaContext);
 
         public IRepository<User> UserRepository => userRepository ?? new BaseRepository<User>(socialMediaContext);
 
-        public IRepository<Comment> CommentRepository => CommentRepository ?? new BaseRepository<Comment>(socialMediaContext);
+        public IRepository<Comment> CommentRepository => commentRepository ?? new BaseRepository<Comment>(socialMediaContext);
 
         public void Dispose()
         {

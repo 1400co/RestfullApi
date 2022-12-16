@@ -8,6 +8,7 @@ namespace SocialMedia.Core.Entities
         public Post()
         {
             Comments = new HashSet<Comment>();
+            Date = DateTime.Now;
         }
 
         public int UserId { get; set; }

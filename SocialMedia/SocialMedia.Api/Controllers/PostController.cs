@@ -24,9 +24,9 @@ namespace SocialMedia.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetPosts()
+        public IActionResult GetPosts()
         {
-            var posts = await postService.GetPosts();
+            var posts = postService.GetPosts();
             var postDto = mapper.Map<IEnumerable<PostDto>>(posts);
 
             var response = new ApiResponse<IEnumerable<PostDto>>(postDto);
@@ -62,15 +62,15 @@ namespace SocialMedia.Api.Controllers
             postDto.Id = id;
 
             await postService.UpdatePost(post);
-            //var response = new ApiResponse<bool>();
+
             return Ok();
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Detele(int id)
         {
-             await postService.DeletePost(id);
-            //var response = new ApiResponse<bool>(); 
+            await postService.DeletePost(id);
+            
             return Ok();
         }
     }
