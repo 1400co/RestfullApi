@@ -5,7 +5,9 @@ using SocialMedia.Api.Responses;
 using SocialMedia.Core.Dtos;
 using SocialMedia.Core.Entities;
 using SocialMedia.Core.Interfaces;
+using SocialMedia.Core.QueryFilters;
 using System.Collections.Generic;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace SocialMedia.Api.Controllers
@@ -24,11 +26,12 @@ namespace SocialMedia.Api.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetPosts()
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(ApiResponse<IEnumerable<PostDto>>))]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest, Type = typeof(ApiResponse<IEnumerable<PostDto>>))]
+        public IActionResult GetPosts([FromQuery] PostQueryFilter filters)
         {
-            var posts = postService.GetPosts();
+            var posts = postService.GetPosts(filters);
             var postDto = mapper.Map<IEnumerable<PostDto>>(posts);
-
             var response = new ApiResponse<IEnumerable<PostDto>>(postDto);
             return Ok(response);
         }
@@ -70,7 +73,7 @@ namespace SocialMedia.Api.Controllers
         public async Task<IActionResult> Detele(int id)
         {
             await postService.DeletePost(id);
-            
+
             return Ok();
         }
     }

@@ -1,4 +1,5 @@
 ﻿using SocialMedia.Core.Entities;
+using SocialMedia.Core.QueryFilters;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -9,7 +10,7 @@ namespace SocialMedia.Core.Interfaces
         Task InsertPost(Post post);
         Task<bool> UpdatePost(Post post);
         Task<Post> GetPost(int id);
-        IEnumerable<Post> GetPosts();
+        IEnumerable<Post> GetPosts(PostQueryFilter filters);
         Task DeletePost(int id);
     }
 }
