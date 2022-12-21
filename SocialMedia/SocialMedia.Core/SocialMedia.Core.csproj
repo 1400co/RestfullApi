@@ -5,7 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="CustomEntities\" />
     <Folder Include="Enumerations\" />
     <Folder Include="QueryFilters\" />
   </ItemGroup>

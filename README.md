@@ -13,3 +13,4 @@
 11. Added Repository pattern and Unit of work.
 12. Added Exception handler and some refactors.
 13. Added Filtering Data and Return Types
+14. Added Paging on querys
