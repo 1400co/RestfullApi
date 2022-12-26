@@ -14,3 +14,5 @@
 12. Added Exception handler and some refactors.
 13. Added Filtering Data and Return Types
 14. Added Paging on querys
+15. Added Configuration
+
