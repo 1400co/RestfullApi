@@ -21,6 +21,7 @@ using SocialMedia.Infrastructure.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace SocialMedia.Api
@@ -65,6 +66,14 @@ namespace SocialMedia.Api
                 return new UriService(absoluteUri);
             });
 
+            services.AddSwaggerGen(options  =>
+            {
+                options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo() { Title = "Social media Api", Version = "1" });
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = string.Concat(AppContext.BaseDirectory, xmlFile);
+                options.IncludeXmlComments(xmlPath);
+            });
+
             services.AddMvc(options =>
             {
                 options.Filters.Add<ValidationFilter>();
@@ -85,6 +94,13 @@ namespace SocialMedia.Api
             }
 
             app.UseHttpsRedirection();
+
+            app.UseSwagger();
+            app.UseSwaggerUI(options =>
+            {
+                options.SwaggerEndpoint("/swagger/v1/swagger.json", "Social Media Api V1");
+                options.RoutePrefix = String.Empty;
+            });
 
             app.UseRouting();
 
