@@ -16,4 +16,5 @@
 14. Added Paging on querys
 15. Added Configuration
 16. Added Documenting API with Swagger
+17. Added Securing API with JWT
 
