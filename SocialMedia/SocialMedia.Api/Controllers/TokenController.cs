@@ -2,10 +2,13 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using SocialMedia.Core.Entities;
+using SocialMedia.Core.Interfaces;
+using SocialMedia.Infrastructure.Interfaces;
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace SocialMedia.Api.Controllers
 {
@@ -14,52 +17,61 @@ namespace SocialMedia.Api.Controllers
     public class TokenController : ControllerBase
     {
         private readonly IConfiguration _configuration;
-        public TokenController(IConfiguration configuration)
+        private readonly ISecurityService _securityService;
+        private readonly IPasswordService _passwordService;
+        public TokenController(IConfiguration configuration, ISecurityService securityService)
         {
             _configuration = configuration;
+            _securityService = securityService;
         }
 
         [HttpPost]
-        public IActionResult GetToken(UserLogin login)
+        public async Task<IActionResult> GetToken(UserLogin login)
         {
             //If valid user
-            if (ValidateUser(login))
+            var result = await ValidateUser(login);
+            if (result.Item1)
             {
-                return Ok(new { Token = GenerateToken() });
+                return Ok(new { Token = GenerateToken(result.Item2) });
             }
 
             return NotFound();
         }
 
-        private bool ValidateUser(UserLogin login)
+        private async Task<(bool, Security)> ValidateUser(UserLogin login)
         {
-            return true;
+            var user = await _securityService.GetLoginByCredentials(login);
+            var isValid = _passwordService.Check(user.Password, login.Password);
+            return (isValid, user);
         }
 
-        private string GenerateToken()
+        private string GenerateToken(Security security)
         {
+            //Header
             var symmetricSecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Authentication:SecretKey"]));
             var signingCredentials = new SigningCredentials(symmetricSecurityKey, SecurityAlgorithms.HmacSha256);
             var header = new JwtHeader(signingCredentials);
+
             //Claims
             var claims = new[]
             {
-                new Claim(ClaimTypes.Name,"Oscar Rueda"),
-                new Claim(ClaimTypes.Email,"oscar_rueda@hotmail.com"),
-                new Claim(ClaimTypes.Role,"Administrator")
+                new Claim(ClaimTypes.Name, security.UserName),
+                new Claim("User", security.User),
+                new Claim(ClaimTypes.Role, security.Role.ToString()),
             };
 
             //Payload
             var payload = new JwtPayload
             (
-                _configuration["Authentication:SecretKey"],
+                _configuration["Authentication:Issuer"],
                 _configuration["Authentication:Audience"],
                 claims,
                 DateTime.Now,
-                DateTime.Now.AddMinutes(5)
+                DateTime.UtcNow.AddMinutes(10)
             );
 
             var token = new JwtSecurityToken(header, payload);
+
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
     }

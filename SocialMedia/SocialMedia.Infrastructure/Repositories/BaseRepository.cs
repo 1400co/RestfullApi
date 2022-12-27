@@ -43,5 +43,10 @@ namespace SocialMedia.Infrastructure.Repositories
             T entity = await GetById(id);
             entities.Remove(entity);
         }
+
+        public async Task Add(T entity)
+        {
+            await entities.AddAsync(entity);
+        }
     }
 }
