@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SocialMedia.Core.Entities;
-using SocialMedia.Infrastructure.Data.Configurations;
 using System.Reflection;
 
 namespace SocialMedia.Infrastructure.Data
@@ -30,6 +29,7 @@ namespace SocialMedia.Infrastructure.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            //Read all configuration classes from Data folder.
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
         }
     }

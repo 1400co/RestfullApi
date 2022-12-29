@@ -12,6 +12,7 @@ using Microsoft.IdentityModel.Tokens;
 using SocialMedia.Core.Interfaces;
 using SocialMedia.Core.Services;
 using SocialMedia.Infrastructure.Data;
+using SocialMedia.Infrastructure.Extentions;
 using SocialMedia.Infrastructure.Filters;
 using SocialMedia.Infrastructure.Interfaces;
 using SocialMedia.Infrastructure.Options;
@@ -35,7 +36,9 @@ namespace SocialMedia.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            //read all automapper from assembly on infraestructure/Mappers
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
             services.AddControllers(
                 options => options.Filters.Add<GlobalExceptionFilter>()
                 )
@@ -49,31 +52,11 @@ namespace SocialMedia.Api
                         //options.SuppressModelStateInvalidFilter = true;
                     });
 
-            services.Configure<Core.CustomEntities.PaginationOptions>(Configuration.GetSection("Pagination"));
-            services.Configure<Infrastructure.Options.PasswordOptions>(Configuration.GetSection("PasswordOptions"));
-            services.AddDbContext<SocialMediaContext>(options => options.UseSqlServer(Configuration.GetConnectionString("SocialMedia")));
-
-            services.AddTransient<IPostService, PostService>();
-            services.AddTransient<ISecurityService, SecurityService>();
-            services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
-            services.AddTransient<IUnitOfWork, UnitOfWork>();
-            services.AddSingleton<IPasswordService, PasswordService>();
-
-            services.AddSingleton<IUriService>(provider =>
-            {
-                var accesor = provider.GetRequiredService<IHttpContextAccessor>();
-                var request = accesor.HttpContext.Request;
-                var absoluteUri = string.Concat(request.Scheme, "://", request.Host.ToUriComponent());
-                return new UriService(absoluteUri);
-            });
-
-            services.AddSwaggerGen(options =>
-            {
-                options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo() { Title = "Social media Api", Version = "1" });
-                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-                var xmlPath = string.Concat(AppContext.BaseDirectory, xmlFile);
-                options.IncludeXmlComments(xmlPath);
-            });
+            //Use extentions methods from infraestructure Extentions.
+            services.AddOptions(Configuration);
+            services.AddDbContexts(Configuration);
+            services.AddServices();
+            services.AddSwagger($"{Assembly.GetExecutingAssembly().GetName().Name}.xml");
 
             services.AddAuthentication(options =>
             {
@@ -100,6 +83,7 @@ namespace SocialMedia.Api
             })
             .AddFluentValidation(options =>
             {
+                //read all validatos from assembly on infraestructure/validators
                 options.RegisterValidatorsFromAssemblies(AppDomain.CurrentDomain.GetAssemblies());
             });
         }
