@@ -19,6 +19,7 @@ namespace SocialMedia.Api.Controllers
         private readonly IConfiguration _configuration;
         private readonly ISecurityService _securityService;
         private readonly IPasswordService _passwordService;
+        
         public TokenController(IConfiguration configuration, ISecurityService securityService)
         {
             _configuration = configuration;
@@ -41,6 +42,7 @@ namespace SocialMedia.Api.Controllers
         private async Task<(bool, Security)> ValidateUser(UserLogin login)
         {
             var user = await _securityService.GetLoginByCredentials(login);
+
             var isValid = _passwordService.Check(user.Password, login.Password);
             return (isValid, user);
         }

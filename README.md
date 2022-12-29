@@ -18,3 +18,4 @@
 16. Added Documenting API with Swagger
 17. Added Securing API with JWT
 18. Added Register and Login User
+19. Added Storing Hashing Passwords

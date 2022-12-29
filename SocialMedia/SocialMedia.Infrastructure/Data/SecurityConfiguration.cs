@@ -24,16 +24,10 @@ namespace SocialMedia.Infrastructure.Data.Configurations
                 .IsUnicode(false);
 
             builder.Property(e => e.UserName)
-                .HasColumnName("NombreUsuario")
-                .IsRequired()
-                .HasMaxLength(100)
-                .IsUnicode(false);
-
-            builder.Property(e => e.UserName)
-                .HasColumnName("NombreUsuario")
-                .IsRequired()
-                .HasMaxLength(100)
-                .IsUnicode(false);
+                 .HasColumnName("NombreUsuario")
+                 .IsRequired()
+                 .HasMaxLength(100)
+                 .IsUnicode(false);
 
             builder.Property(e => e.Password)
                 .HasColumnName("Contrasena")
