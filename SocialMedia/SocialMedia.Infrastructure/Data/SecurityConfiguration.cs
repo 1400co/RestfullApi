@@ -43,6 +43,10 @@ namespace SocialMedia.Infrastructure.Data.Configurations
                 x => x.ToString(),
                 x => (RoleType)Enum.Parse(typeof(RoleType), x)
                 );
+
+            builder.HasData(
+                new Security() { Id = 1, User = "Oscar", UserName = "Admin", Role = 0, Password = "10000.mmlVX3xzYuLQromOzqELBQ==.JIwrJbVGsgYiTMjqWqcvulmXk8Fv6c7hxbl8mEqixTI=" }
+                );
         }
     }
 }

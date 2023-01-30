@@ -43,6 +43,10 @@ namespace SocialMedia.Infrastructure.Data
 
             builder.Property(e => e.IsActive)
                .HasColumnName("Activo");
+
+            builder.HasData(
+                new User() { Id = 1, Names = "Oscar", LastNames = "Rueda", IsActive = true, Email="oruedar@yopmail.com" }
+                );
         }
     }
 }

@@ -23,7 +23,7 @@ namespace SocialMedia.Infrastructure.Data
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("Server=.;Database=SocialMedia;Integrated Security = true");
+                optionsBuilder.UseSqlServer("Server=LILBEAST\\SQLEXPRESS;Database=SocialMedia;Integrated Security = true");
             }
         }
 

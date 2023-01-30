@@ -38,6 +38,37 @@ namespace SocialMedia.Infrastructure.Data
                 .HasForeignKey(d => d.UserId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Publicacion_Usuario");
+
+            builder.HasData(
+                new Post()
+                {
+                    Id = 1,
+                    UserId = 1,
+                    Date = System.DateTime.Now,
+                    Description = "Beatae doloremque error maxime dicta placeat numquam voluptatem sed laborum. ",
+                },
+                new Post()
+                {
+                    Id = 2,
+                    UserId = 1,
+                    Date = System.DateTime.Now,
+                    Description = "Beatae doloremque error maxime dicta placeat numquam voluptatem sed laborum. ",
+                },
+                new Post()
+                {
+                    Id = 3,
+                    UserId = 1,
+                    Date = System.DateTime.Now,
+                    Description = "Beatae doloremque error maxime dicta placeat numquam voluptatem sed laborum. ",
+                },
+                new Post()
+                {
+                    Id = 4,
+                    UserId = 1,
+                    Date = System.DateTime.Now,
+                    Description = "Beatae doloremque error maxime dicta placeat numquam voluptatem sed laborum. ",
+                }
+                );
         }
     }
 }

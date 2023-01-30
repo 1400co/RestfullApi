@@ -45,6 +45,27 @@ namespace SocialMedia.Infrastructure.Data
                 .HasForeignKey(d => d.UserId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Comentario_Usuario");
+
+            builder.HasData(
+                new Comment()
+                {
+                    Id = 1,
+                    Description = "Beatae doloremque error maxime dicta placeat numquam voluptatem sed laborum. ",
+                    Date = System.DateTime.Now,
+                    IsActive = true,
+                    PostId = 1,
+                    UserId = 1
+                },
+                 new Comment()
+                 {
+                     Id = 2,
+                     Description = "Beatae doloremque error maxime dicta placeat numquam voluptatem sed laborum. ",
+                     Date = System.DateTime.Now,
+                     IsActive = true,
+                     PostId = 1,
+                     UserId = 1
+                 }
+                );
         }
     }
 }
