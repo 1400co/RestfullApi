@@ -26,6 +26,7 @@ namespace SocialMedia.Api
 {
     public class Startup
     {
+        //Add test comment.
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
