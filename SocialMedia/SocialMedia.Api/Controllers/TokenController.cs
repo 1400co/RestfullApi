@@ -12,18 +12,19 @@ using System.Threading.Tasks;
 
 namespace SocialMedia.Api.Controllers
 {
-    [Route("api/controller")]
+    [Route("api/[Controller]")]
     [ApiController]
     public class TokenController : ControllerBase
     {
         private readonly IConfiguration _configuration;
         private readonly ISecurityService _securityService;
         private readonly IPasswordService _passwordService;
-        
-        public TokenController(IConfiguration configuration, ISecurityService securityService)
+
+        public TokenController(IConfiguration configuration, ISecurityService securityService, IPasswordService passwordService)
         {
             _configuration = configuration;
             _securityService = securityService;
+            _passwordService = passwordService;
         }
 
         [HttpPost]
