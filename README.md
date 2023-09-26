@@ -20,3 +20,7 @@
 18. Added Register and Login User
 19. Added Storing Hashing Passwords
 20. Final Refactor
+21. Added JWT to Swagger
+22. Added Insert and updates with lists to Base Repository
+23. Added includes to Base Repository on Get and GetById
+24. Replaced int to Guid on Id's
