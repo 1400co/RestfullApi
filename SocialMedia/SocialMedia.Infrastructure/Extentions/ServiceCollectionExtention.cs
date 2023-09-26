@@ -12,6 +12,7 @@ using SocialMedia.Infrastructure.Options;
 using SocialMedia.Infrastructure.Repositories;
 using SocialMedia.Infrastructure.Services;
 using System;
+using Hangfire;
 using System.IO;
 
 namespace SocialMedia.Infrastructure.Extentions
@@ -23,6 +24,19 @@ namespace SocialMedia.Infrastructure.Extentions
             services.AddDbContext<SocialMediaContext>(options =>
                options.UseSqlServer(configuration.GetConnectionString("SocialMedia"))
            );
+
+            return services;
+        }
+
+        public static IServiceCollection AddHangfire(this IServiceCollection services, IConfiguration configurations)
+        {
+            services.AddHangfire(configuration => configuration
+            .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
+            .UseSimpleAssemblyNameTypeSerializer()
+            .UseRecommendedSerializerSettings()
+            .UseSqlServerStorage(configurations.GetConnectionString("SocialMedia")));
+
+            services.AddHangfireServer(); //Comment if web app will only create jobs for another service 
 
             return services;
         }

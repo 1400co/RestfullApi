@@ -1,4 +1,5 @@
 using FluentValidation.AspNetCore;
+using Hangfire;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -46,6 +47,7 @@ namespace SocialMedia.Api
             //Use extentions methods from infraestructure Extentions.
             services.AddOptions(Configuration);
             services.AddDbContexts(Configuration);
+            services.AddHangfire(Configuration);
             services.AddServices();
             services.AddSwagger($"{Assembly.GetExecutingAssembly().GetName().Name}.xml");
 
@@ -95,6 +97,8 @@ namespace SocialMedia.Api
                 options.SwaggerEndpoint("/swagger/v1/swagger.json", "Social Media Api V1");
                 options.RoutePrefix = String.Empty;
             });
+
+            app.UseHangfireDashboard();
 
             app.UseRouting();
 
