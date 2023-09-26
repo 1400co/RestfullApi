@@ -45,7 +45,7 @@ namespace SocialMedia.Infrastructure.Data.Configurations
                 );
 
             builder.HasData(
-                new Security() { Id = 1, User = "Oscar", UserName = "Admin", Role = 0, Password = "10000.mmlVX3xzYuLQromOzqELBQ==.JIwrJbVGsgYiTMjqWqcvulmXk8Fv6c7hxbl8mEqixTI=" }
+                new Security() { Id = Guid.NewGuid(), User = "Oscar", UserName = "Admin", Role = 0, Password = "10000.mmlVX3xzYuLQromOzqELBQ==.JIwrJbVGsgYiTMjqWqcvulmXk8Fv6c7hxbl8mEqixTI=" }
                 );
         }
     }

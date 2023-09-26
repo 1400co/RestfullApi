@@ -61,6 +61,32 @@ namespace SocialMedia.Infrastructure.Extentions
 
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFileName);
                 doc.IncludeXmlComments(xmlPath);
+
+                // Agregar la descripción del esquema de seguridad JWT
+                doc.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Description = "Bearer Token",
+                    Name = "Authorization",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.ApiKey,
+                    Scheme = "Bearer"
+                });
+
+                // Agregar el esquema de seguridad a los documentos Swagger
+                doc.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            }
+                        },
+                        new string[] { }
+                    }
+                });
             });
 
             return services;

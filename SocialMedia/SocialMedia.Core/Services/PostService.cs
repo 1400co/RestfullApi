@@ -4,6 +4,7 @@ using SocialMedia.Core.Entities;
 using SocialMedia.Core.Exceptions;
 using SocialMedia.Core.Interfaces;
 using SocialMedia.Core.QueryFilters;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -57,7 +58,7 @@ namespace SocialMedia.Core.Services
             return true;
         }
 
-        public async Task<Post> GetPost(int id)
+        public async Task<Post> GetPost(Guid id)
         {
             return await _unitOfWork.PostRepository.GetById(id);
         }
@@ -89,7 +90,7 @@ namespace SocialMedia.Core.Services
             return pagedPosts;
         }
 
-        public async Task DeletePost(int id)
+        public async Task DeletePost(Guid id)
         {
             await _unitOfWork.PostRepository.Delete(id);
             await _unitOfWork.SaveChangesAsync();

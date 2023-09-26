@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SocialMedia.Core.Entities;
+using System;
 
 namespace SocialMedia.Infrastructure.Data
 {
@@ -45,7 +46,7 @@ namespace SocialMedia.Infrastructure.Data
                .HasColumnName("Activo");
 
             builder.HasData(
-                new User() { Id = 1, Names = "Oscar", LastNames = "Rueda", IsActive = true, Email="oruedar@yopmail.com" }
+                new User() { Id = Guid.NewGuid(), Names = "Oscar", LastNames = "Rueda", IsActive = true, Email = "oruedar@yopmail.com" }
                 );
         }
     }

@@ -10,13 +10,14 @@ using SocialMedia.Core.Entities;
 using SocialMedia.Core.Interfaces;
 using SocialMedia.Core.QueryFilters;
 using SocialMedia.Infrastructure.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 
 namespace SocialMedia.Api.Controllers
 {
-    //[Authorize]
+    [Authorize]
     [Produces("application/json")]
     [Route("api/[Controller]")]
     [ApiController]
@@ -61,7 +62,7 @@ namespace SocialMedia.Api.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> Get(int id)
+        public async Task<IActionResult> Get(Guid id)
         {
             var post = await _postService.GetPost(id);
             var postDto = _mapper.Map<PostDto>(post);
@@ -83,7 +84,7 @@ namespace SocialMedia.Api.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> Put(int id, PostDto postDto)
+        public async Task<IActionResult> Put(Guid id, PostDto postDto)
         {
             var post = _mapper.Map<Post>(postDto);
             postDto.Id = id;
@@ -94,7 +95,7 @@ namespace SocialMedia.Api.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Detele(int id)
+        public async Task<IActionResult> Detele(Guid id)
         {
             await _postService.DeletePost(id);
 

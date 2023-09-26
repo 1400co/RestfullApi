@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SocialMedia.Core.Entities;
+using System;
 
 namespace SocialMedia.Infrastructure.Data
 {
@@ -39,36 +40,36 @@ namespace SocialMedia.Infrastructure.Data
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Publicacion_Usuario");
 
-            builder.HasData(
-                new Post()
-                {
-                    Id = 1,
-                    UserId = 1,
-                    Date = System.DateTime.Now,
-                    Description = "Beatae doloremque error maxime dicta placeat numquam voluptatem sed laborum. ",
-                },
-                new Post()
-                {
-                    Id = 2,
-                    UserId = 1,
-                    Date = System.DateTime.Now,
-                    Description = "Beatae doloremque error maxime dicta placeat numquam voluptatem sed laborum. ",
-                },
-                new Post()
-                {
-                    Id = 3,
-                    UserId = 1,
-                    Date = System.DateTime.Now,
-                    Description = "Beatae doloremque error maxime dicta placeat numquam voluptatem sed laborum. ",
-                },
-                new Post()
-                {
-                    Id = 4,
-                    UserId = 1,
-                    Date = System.DateTime.Now,
-                    Description = "Beatae doloremque error maxime dicta placeat numquam voluptatem sed laborum. ",
-                }
-                );
+            //builder.HasData(
+            //    new Post()
+            //    {
+            //        Id = Guid.NewGuid(),
+            //        UserId = 1,
+            //        Date = System.DateTime.Now,
+            //        Description = "Beatae doloremque error maxime dicta placeat numquam voluptatem sed laborum. ",
+            //    },
+            //    new Post()
+            //    {
+            //        Id = Guid.NewGuid(),
+            //        UserId = 1,
+            //        Date = System.DateTime.Now,
+            //        Description = "Beatae doloremque error maxime dicta placeat numquam voluptatem sed laborum. ",
+            //    },
+            //    new Post()
+            //    {
+            //        Id = Guid.NewGuid(),
+            //        UserId = 1,
+            //        Date = System.DateTime.Now,
+            //        Description = "Beatae doloremque error maxime dicta placeat numquam voluptatem sed laborum. ",
+            //    },
+            //    new Post()
+            //    {
+            //        Id = Guid.NewGuid(),
+            //        UserId = 1,
+            //        Date = System.DateTime.Now,
+            //        Description = "Beatae doloremque error maxime dicta placeat numquam voluptatem sed laborum. ",
+            //    }
+            //    );
         }
     }
 }

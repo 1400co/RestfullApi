@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SocialMedia.Core.Entities;
+using System;
 
 namespace SocialMedia.Infrastructure.Data
 {
@@ -46,26 +47,26 @@ namespace SocialMedia.Infrastructure.Data
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Comentario_Usuario");
 
-            builder.HasData(
-                new Comment()
-                {
-                    Id = 1,
-                    Description = "Beatae doloremque error maxime dicta placeat numquam voluptatem sed laborum. ",
-                    Date = System.DateTime.Now,
-                    IsActive = true,
-                    PostId = 1,
-                    UserId = 1
-                },
-                 new Comment()
-                 {
-                     Id = 2,
-                     Description = "Beatae doloremque error maxime dicta placeat numquam voluptatem sed laborum. ",
-                     Date = System.DateTime.Now,
-                     IsActive = true,
-                     PostId = 1,
-                     UserId = 1
-                 }
-                );
+            //builder.HasData(
+            //    new Comment()
+            //    {
+            //        Id = Guid.NewGuid(),
+            //        Description = "Beatae doloremque error maxime dicta placeat numquam voluptatem sed laborum. ",
+            //        Date = System.DateTime.Now,
+            //        IsActive = true,
+            //        PostId = 1,
+            //        UserId = 1
+            //    },
+            //     new Comment()
+            //     {
+            //         Id = Guid.NewGuid(),
+            //         Description = "Beatae doloremque error maxime dicta placeat numquam voluptatem sed laborum. ",
+            //         Date = System.DateTime.Now,
+            //         IsActive = true,
+            //         PostId = 1,
+            //         UserId = 1
+            //     }
+            //    );
         }
     }
 }

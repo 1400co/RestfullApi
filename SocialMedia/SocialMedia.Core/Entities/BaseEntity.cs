@@ -1,7 +1,9 @@
-﻿namespace SocialMedia.Core.Entities
+﻿using System;
+
+namespace SocialMedia.Core.Entities
 {
     public abstract class BaseEntity
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
     }
 }
