@@ -16,23 +16,6 @@ namespace SocialMedia.Infrastructure.Data
             builder.Property(e => e.Id)
                .HasColumnName("IdPublicacion").ValueGeneratedNever();
 
-            builder.Property(e => e.UserId)
-             .HasColumnName("IdUsuario").ValueGeneratedNever();
-
-            builder.Property(e => e.Description)
-                .HasColumnName("Descripcion")
-                .IsRequired()
-                .HasMaxLength(1000)
-                .IsUnicode(false);
-
-            builder.Property(e => e.Date)
-                .HasColumnName("Fecha")
-                .HasColumnType("datetime");
-
-            builder.Property(e => e.Image)
-                .HasColumnName("Imagen")
-                .HasMaxLength(500)
-                .IsUnicode(false);
 
             builder.HasOne(d => d.User)
                 .WithMany(p => p.Post)
@@ -40,36 +23,7 @@ namespace SocialMedia.Infrastructure.Data
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Publicacion_Usuario");
 
-            //builder.HasData(
-            //    new Post()
-            //    {
-            //        Id = Guid.NewGuid(),
-            //        UserId = 1,
-            //        Date = System.DateTime.Now,
-            //        Description = "Beatae doloremque error maxime dicta placeat numquam voluptatem sed laborum. ",
-            //    },
-            //    new Post()
-            //    {
-            //        Id = Guid.NewGuid(),
-            //        UserId = 1,
-            //        Date = System.DateTime.Now,
-            //        Description = "Beatae doloremque error maxime dicta placeat numquam voluptatem sed laborum. ",
-            //    },
-            //    new Post()
-            //    {
-            //        Id = Guid.NewGuid(),
-            //        UserId = 1,
-            //        Date = System.DateTime.Now,
-            //        Description = "Beatae doloremque error maxime dicta placeat numquam voluptatem sed laborum. ",
-            //    },
-            //    new Post()
-            //    {
-            //        Id = Guid.NewGuid(),
-            //        UserId = 1,
-            //        Date = System.DateTime.Now,
-            //        Description = "Beatae doloremque error maxime dicta placeat numquam voluptatem sed laborum. ",
-            //    }
-            //    );
+            
         }
     }
 }

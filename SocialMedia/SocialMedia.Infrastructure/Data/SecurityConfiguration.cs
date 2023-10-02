@@ -17,24 +17,6 @@ namespace SocialMedia.Infrastructure.Data.Configurations
             builder.Property(e => e.Id)
                 .HasColumnName("IdSeguridad");
 
-            builder.Property(e => e.User)
-                .HasColumnName("Usuario")
-                .IsRequired()
-                .HasMaxLength(50)
-                .IsUnicode(false);
-
-            builder.Property(e => e.UserName)
-                 .HasColumnName("NombreUsuario")
-                 .IsRequired()
-                 .HasMaxLength(100)
-                 .IsUnicode(false);
-
-            builder.Property(e => e.Password)
-                .HasColumnName("Contrasena")
-                .IsRequired()
-                .HasMaxLength(200)
-                .IsUnicode(false);
-
             builder.Property(e => e.Role)
                .HasColumnName("Rol")
                .HasMaxLength(15)
@@ -45,7 +27,7 @@ namespace SocialMedia.Infrastructure.Data.Configurations
                 );
 
             builder.HasData(
-                new Security() { Id = Guid.NewGuid(), User = "Oscar", UserName = "Admin", Role = 0, Password = "10000.mmlVX3xzYuLQromOzqELBQ==.JIwrJbVGsgYiTMjqWqcvulmXk8Fv6c7hxbl8mEqixTI=" }
+                new Security() { Id = Guid.NewGuid(), UserName = "Admin", Role = 0, Password = "10000.mmlVX3xzYuLQromOzqELBQ==.JIwrJbVGsgYiTMjqWqcvulmXk8Fv6c7hxbl8mEqixTI=" }
                 );
         }
     }

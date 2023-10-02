@@ -22,18 +22,6 @@ namespace SocialMedia.Infrastructure.Data
             builder.Property(e => e.UserId)
                 .HasColumnName("IdUsuario").ValueGeneratedNever();
 
-            builder.Property(e => e.IsActive)
-                .HasColumnName("Activo").ValueGeneratedNever();
-
-            builder.Property(e => e.Description)
-                .HasColumnName("Descripcion")
-                .IsRequired()
-                .HasMaxLength(500)
-                .IsUnicode(false);
-
-            builder.Property(e => e.Date)
-                .HasColumnName("Fecha")
-                .HasColumnType("datetime");
 
             builder.HasOne(d => d.Post)
                 .WithMany(p => p.Comments)
@@ -47,26 +35,7 @@ namespace SocialMedia.Infrastructure.Data
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Comentario_Usuario");
 
-            //builder.HasData(
-            //    new Comment()
-            //    {
-            //        Id = Guid.NewGuid(),
-            //        Description = "Beatae doloremque error maxime dicta placeat numquam voluptatem sed laborum. ",
-            //        Date = System.DateTime.Now,
-            //        IsActive = true,
-            //        PostId = 1,
-            //        UserId = 1
-            //    },
-            //     new Comment()
-            //     {
-            //         Id = Guid.NewGuid(),
-            //         Description = "Beatae doloremque error maxime dicta placeat numquam voluptatem sed laborum. ",
-            //         Date = System.DateTime.Now,
-            //         IsActive = true,
-            //         PostId = 1,
-            //         UserId = 1
-            //     }
-            //    );
+         
         }
     }
 }

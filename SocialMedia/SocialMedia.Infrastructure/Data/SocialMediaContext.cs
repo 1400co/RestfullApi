@@ -23,7 +23,7 @@ namespace SocialMedia.Infrastructure.Data
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("Server=LILBEAST\\SQLEXPRESS;Database=SocialMedia;Integrated Security = true");
+                optionsBuilder.UseSqlServer("Server=localhost;Initial Catalog=EcomKit;Persist Security Info=False;User ID=sa;Password=Pass@Word;Connection Timeout=30;");
             }
         }
 

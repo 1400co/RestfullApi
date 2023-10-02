@@ -16,37 +16,9 @@ namespace SocialMedia.Infrastructure.Data
             builder.Property(e => e.Id)
              .HasColumnName("IdUsuario").ValueGeneratedNever();
 
-            builder.Property(e => e.Names)
-                .HasColumnName("Nombres")
-                .IsRequired()
-                .HasMaxLength(50)
-                .IsUnicode(false);
-
-            builder.Property(e => e.LastNames)
-                .HasColumnName("Apellidos")
-                .IsRequired()
-                .HasMaxLength(50)
-                .IsUnicode(false);
-
-            builder.Property(e => e.Email)
-                .IsRequired()
-                .HasMaxLength(30)
-                .IsUnicode(false);
-
-            builder.Property(e => e.BornDate)
-                .HasColumnName("FechaNacimiento")
-                .HasColumnType("date");
-
-            builder.Property(e => e.Phone)
-                .HasColumnName("Telefono")
-                .HasMaxLength(10)
-                .IsUnicode(false);
-
-            builder.Property(e => e.IsActive)
-               .HasColumnName("Activo");
 
             builder.HasData(
-                new User() { Id = Guid.NewGuid(), Names = "Oscar", LastNames = "Rueda", IsActive = true, Email = "oruedar@yopmail.com" }
+                new User() { Id = Guid.NewGuid(), FullName = "Oscar", IsActive = true, Email = "oruedar@yopmail.com" }
                 );
         }
     }
