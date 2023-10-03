@@ -59,7 +59,7 @@ namespace SocialMedia.Api.Controllers
             var claims = new[]
             {
                 new Claim(ClaimTypes.Name, security.UserName),
-                new Claim("User", security.User),
+                new Claim("User", security.UserName),
                 new Claim(ClaimTypes.Role, security.Role.ToString()),
             };
 
