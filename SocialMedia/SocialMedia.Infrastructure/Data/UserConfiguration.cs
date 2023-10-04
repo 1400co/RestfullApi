@@ -18,7 +18,7 @@ namespace SocialMedia.Infrastructure.Data
 
 
             builder.HasData(
-                new User() { Id = Guid.NewGuid(), FullName = "Oscar", IsActive = true, Email = "oruedar@yopmail.com" }
+                new User() { Id = new Guid("53aeeca4-a5b1-4751-abcb-3207a01b97dc"), FullName = "Oscar", IsActive = true, Email = "oruedar@yopmail.com" }
                 );
         }
     }

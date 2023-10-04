@@ -26,13 +26,13 @@ namespace SocialMedia.Infrastructure.Data
             builder.HasOne(d => d.Post)
                 .WithMany(p => p.Comments)
                 .HasForeignKey(d => d.PostId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
+                .OnDelete(DeleteBehavior.NoAction)
                 .HasConstraintName("FK_Comentario_Publicacion");
 
             builder.HasOne(d => d.User)
                 .WithMany(p => p.Comment)
                 .HasForeignKey(d => d.UserId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
+                .OnDelete(DeleteBehavior.NoAction)
                 .HasConstraintName("FK_Comentario_Usuario");
 
          

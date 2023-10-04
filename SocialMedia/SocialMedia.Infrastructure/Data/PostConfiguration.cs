@@ -20,7 +20,7 @@ namespace SocialMedia.Infrastructure.Data
             builder.HasOne(d => d.User)
                 .WithMany(p => p.Post)
                 .HasForeignKey(d => d.UserId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
+                .OnDelete(DeleteBehavior.NoAction)
                 .HasConstraintName("FK_Publicacion_Usuario");
 
             
