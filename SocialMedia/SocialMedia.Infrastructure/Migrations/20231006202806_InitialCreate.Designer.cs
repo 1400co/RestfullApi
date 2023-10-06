@@ -10,8 +10,8 @@ using SocialMedia.Infrastructure.Data;
 namespace SocialMedia.Infrastructure.Migrations
 {
     [DbContext(typeof(SocialMediaContext))]
-    [Migration("20231004000447_InitialCreated")]
-    partial class InitialCreated
+    [Migration("20231006202806_InitialCreate")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -100,13 +100,64 @@ namespace SocialMedia.Infrastructure.Migrations
                     b.ToTable("Publicacion");
                 });
 
-            modelBuilder.Entity("SocialMedia.Core.Entities.Roles", b =>
+            modelBuilder.Entity("SocialMedia.Core.Entities.RolModule", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnName("IdRolModule")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("Created")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnName("Created")
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<bool>("Deleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnName("Deleted")
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<bool>("Edited")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnName("Edited")
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<bool>("Listed")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnName("Listed")
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<string>("Module")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("Printed")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnName("Printed")
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<Guid?>("RolesId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RolesId");
+
+                    b.ToTable("RolModule");
+                });
+
+            modelBuilder.Entity("SocialMedia.Core.Entities.Roles", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnName("IdRol")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("RolName")
+                        .HasColumnName("RolName")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -151,7 +202,7 @@ namespace SocialMedia.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("78087b1d-4593-43a9-9d1a-7b34dd103c24"),
+                            Id = new Guid("d29e3130-9468-458f-b1b6-e99f48eaf48f"),
                             Password = "10000.mmlVX3xzYuLQromOzqELBQ==.JIwrJbVGsgYiTMjqWqcvulmXk8Fv6c7hxbl8mEqixTI=",
                             Role = "Administrator",
                             UserId = new Guid("53aeeca4-a5b1-4751-abcb-3207a01b97dc"),
@@ -203,20 +254,23 @@ namespace SocialMedia.Infrastructure.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnName("IdUserInRoles")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("RolId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("RoleId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("RolesId")
+                        .HasColumnName("IdRol")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("UserId")
+                        .HasColumnName("IdUser")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("RolesId");
+                    b.HasIndex("RolId");
 
                     b.HasIndex("UserId");
 
@@ -259,6 +313,13 @@ namespace SocialMedia.Infrastructure.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("SocialMedia.Core.Entities.RolModule", b =>
+                {
+                    b.HasOne("SocialMedia.Core.Entities.Roles", null)
+                        .WithMany("RolModules")
+                        .HasForeignKey("RolesId");
+                });
+
             modelBuilder.Entity("SocialMedia.Core.Entities.Security", b =>
                 {
                     b.HasOne("SocialMedia.Core.Entities.User", null)
@@ -270,9 +331,9 @@ namespace SocialMedia.Infrastructure.Migrations
 
             modelBuilder.Entity("SocialMedia.Core.Entities.UserInRoles", b =>
                 {
-                    b.HasOne("SocialMedia.Core.Entities.Roles", "Roles")
-                        .WithMany()
-                        .HasForeignKey("RolesId");
+                    b.HasOne("SocialMedia.Core.Entities.Roles", "Rol")
+                        .WithMany("UserInRoles")
+                        .HasForeignKey("RolId");
 
                     b.HasOne("SocialMedia.Core.Entities.User", "User")
                         .WithMany("UserInRoles")

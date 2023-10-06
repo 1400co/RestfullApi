@@ -27,5 +27,6 @@ namespace SocialMedia.Core.Entities
         public virtual ICollection<Security> Security { get; set; }
         public virtual ICollection<UserInRoles> UserInRoles { get; set; }
         public virtual ICollection<PasswordRecovery> PasswordRecovery { get; set; }
+        
     }
 }

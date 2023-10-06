@@ -14,8 +14,7 @@ namespace SocialMedia.Infrastructure.Data
             builder.HasKey(e => e.Id);
 
             builder.Property(e => e.Id)
-             .HasColumnName("IdUsuario").ValueGeneratedNever();
-
+             .HasColumnName("IdUsuario").ValueGeneratedNever();            
 
             builder.HasData(
                 new User() { Id = new Guid("53aeeca4-a5b1-4751-abcb-3207a01b97dc"), FullName = "Oscar", IsActive = true, Email = "oruedar@yopmail.com" }

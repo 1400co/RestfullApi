@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace SocialMedia.Infrastructure.Migrations
 {
-    public partial class InitialCreated : Migration
+    public partial class InitialCreate : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -11,12 +11,12 @@ namespace SocialMedia.Infrastructure.Migrations
                 name: "Roles",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(nullable: false),
+                    IdRol = table.Column<Guid>(nullable: false),
                     RolName = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Roles", x => x.Id);
+                    table.PrimaryKey("PK_Roles", x => x.IdRol);
                 });
 
             migrationBuilder.CreateTable(
@@ -34,6 +34,30 @@ namespace SocialMedia.Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Usuario", x => x.IdUsuario);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "RolModule",
+                columns: table => new
+                {
+                    IdRolModule = table.Column<Guid>(nullable: false),
+                    Module = table.Column<string>(nullable: true),
+                    Created = table.Column<bool>(nullable: false, defaultValue: false),
+                    Edited = table.Column<bool>(nullable: false, defaultValue: false),
+                    Listed = table.Column<bool>(nullable: false, defaultValue: false),
+                    Deleted = table.Column<bool>(nullable: false, defaultValue: false),
+                    Printed = table.Column<bool>(nullable: false, defaultValue: false),
+                    RolesId = table.Column<Guid>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RolModule", x => x.IdRolModule);
+                    table.ForeignKey(
+                        name: "FK_RolModule_Roles_RolesId",
+                        column: x => x.RolesId,
+                        principalTable: "Roles",
+                        principalColumn: "IdRol",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -103,23 +127,23 @@ namespace SocialMedia.Infrastructure.Migrations
                 name: "UserInRoles",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(nullable: false),
-                    UserId = table.Column<Guid>(nullable: false),
-                    RoleId = table.Column<Guid>(nullable: false),
-                    RolesId = table.Column<Guid>(nullable: true)
+                    IdUserInRoles = table.Column<Guid>(nullable: false),
+                    IdUser = table.Column<Guid>(nullable: false),
+                    IdRol = table.Column<Guid>(nullable: false),
+                    RolId = table.Column<Guid>(nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UserInRoles", x => x.Id);
+                    table.PrimaryKey("PK_UserInRoles", x => x.IdUserInRoles);
                     table.ForeignKey(
-                        name: "FK_UserInRoles_Roles_RolesId",
-                        column: x => x.RolesId,
+                        name: "FK_UserInRoles_Roles_RolId",
+                        column: x => x.RolId,
                         principalTable: "Roles",
-                        principalColumn: "Id",
+                        principalColumn: "IdRol",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_UserInRoles_Usuario_UserId",
-                        column: x => x.UserId,
+                        name: "FK_UserInRoles_Usuario_IdUser",
+                        column: x => x.IdUser,
                         principalTable: "Usuario",
                         principalColumn: "IdUsuario",
                         onDelete: ReferentialAction.Cascade);
@@ -159,7 +183,7 @@ namespace SocialMedia.Infrastructure.Migrations
             migrationBuilder.InsertData(
                 table: "Seguridad",
                 columns: new[] { "IdSeguridad", "Password", "RefreshToken", "RefreshTokenExpiryTime", "Rol", "UserId", "UserName" },
-                values: new object[] { new Guid("78087b1d-4593-43a9-9d1a-7b34dd103c24"), "10000.mmlVX3xzYuLQromOzqELBQ==.JIwrJbVGsgYiTMjqWqcvulmXk8Fv6c7hxbl8mEqixTI=", null, null, "Administrator", new Guid("53aeeca4-a5b1-4751-abcb-3207a01b97dc"), "Admin" });
+                values: new object[] { new Guid("d29e3130-9468-458f-b1b6-e99f48eaf48f"), "10000.mmlVX3xzYuLQromOzqELBQ==.JIwrJbVGsgYiTMjqWqcvulmXk8Fv6c7hxbl8mEqixTI=", null, null, "Administrator", new Guid("53aeeca4-a5b1-4751-abcb-3207a01b97dc"), "Admin" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Comentario_IdPublicacion",
@@ -182,19 +206,24 @@ namespace SocialMedia.Infrastructure.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_RolModule_RolesId",
+                table: "RolModule",
+                column: "RolesId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Seguridad_UserId",
                 table: "Seguridad",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserInRoles_RolesId",
+                name: "IX_UserInRoles_RolId",
                 table: "UserInRoles",
-                column: "RolesId");
+                column: "RolId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserInRoles_UserId",
+                name: "IX_UserInRoles_IdUser",
                 table: "UserInRoles",
-                column: "UserId");
+                column: "IdUser");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -204,6 +233,9 @@ namespace SocialMedia.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "PasswordRecovery");
+
+            migrationBuilder.DropTable(
+                name: "RolModule");
 
             migrationBuilder.DropTable(
                 name: "Seguridad");
