@@ -13,7 +13,7 @@ namespace SocialMedia.Infrastructure.Data
 
             builder.HasKey(e => e.Id);
 
-            builder.Property(e => e.Id).HasColumnName("IdRol").ValueGeneratedNever();
+            builder.Property(e => e.Id).HasColumnName("IdRol");
             builder.Property(e => e.RolName).HasColumnName("RolName").ValueGeneratedNever();
 
             

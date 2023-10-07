@@ -10,7 +10,7 @@ using SocialMedia.Infrastructure.Data;
 namespace SocialMedia.Infrastructure.Migrations
 {
     [DbContext(typeof(SocialMediaContext))]
-    [Migration("20231006202806_InitialCreate")]
+    [Migration("20231006235836_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -125,6 +125,9 @@ namespace SocialMedia.Infrastructure.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
 
+                    b.Property<Guid>("IdRol")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<bool>("Listed")
                         .ValueGeneratedOnAdd()
                         .HasColumnName("Listed")
@@ -140,12 +143,9 @@ namespace SocialMedia.Infrastructure.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
 
-                    b.Property<Guid?>("RolesId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("RolesId");
+                    b.HasIndex("IdRol");
 
                     b.ToTable("RolModule");
                 });
@@ -153,6 +153,7 @@ namespace SocialMedia.Infrastructure.Migrations
             modelBuilder.Entity("SocialMedia.Core.Entities.Roles", b =>
                 {
                     b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnName("IdRol")
                         .HasColumnType("uniqueidentifier");
 
@@ -202,7 +203,7 @@ namespace SocialMedia.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("d29e3130-9468-458f-b1b6-e99f48eaf48f"),
+                            Id = new Guid("cfa7c9b8-8988-4c74-a3c0-090e0848e5b1"),
                             Password = "10000.mmlVX3xzYuLQromOzqELBQ==.JIwrJbVGsgYiTMjqWqcvulmXk8Fv6c7hxbl8mEqixTI=",
                             Role = "Administrator",
                             UserId = new Guid("53aeeca4-a5b1-4751-abcb-3207a01b97dc"),
@@ -315,9 +316,12 @@ namespace SocialMedia.Infrastructure.Migrations
 
             modelBuilder.Entity("SocialMedia.Core.Entities.RolModule", b =>
                 {
-                    b.HasOne("SocialMedia.Core.Entities.Roles", null)
+                    b.HasOne("SocialMedia.Core.Entities.Roles", "Rol")
                         .WithMany("RolModules")
-                        .HasForeignKey("RolesId");
+                        .HasForeignKey("IdRol")
+                        .HasConstraintName("FK_ROL_ROL_MODULE_CUSTOM")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("SocialMedia.Core.Entities.Security", b =>

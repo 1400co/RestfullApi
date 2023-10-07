@@ -19,7 +19,13 @@ namespace SocialMedia.Infrastructure.Data
             builder.Property(e => e.Edited).HasColumnName("Edited").HasDefaultValue<bool>(false);
             builder.Property(e => e.Deleted).HasColumnName("Deleted").HasDefaultValue<bool>(false);
             builder.Property(e => e.Printed).HasColumnName("Printed").HasDefaultValue<bool>(false);
-           
+
+            builder.HasOne(d => d.Rol)
+                .WithMany(p => p.RolModules)
+                .HasForeignKey(d => d.IdRol)
+                .OnDelete(DeleteBehavior.NoAction)
+                .HasConstraintName("FK_ROL_ROL_MODULE_CUSTOM");
+
         }
     }
 }

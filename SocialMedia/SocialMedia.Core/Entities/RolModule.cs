@@ -13,8 +13,8 @@ namespace SocialMedia.Core.Entities
         public bool Deleted { get; set; }
         public bool Printed { get; set; }
 
-        /*public virtual Guid IdRol { get; set; }
-        public virtual Roles Rol { get; set; }*/
+        public Guid IdRol { get; set; }
+        public virtual Roles Rol { get; set; }
 
     }
 }

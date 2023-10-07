@@ -47,17 +47,16 @@ namespace SocialMedia.Infrastructure.Migrations
                     Listed = table.Column<bool>(nullable: false, defaultValue: false),
                     Deleted = table.Column<bool>(nullable: false, defaultValue: false),
                     Printed = table.Column<bool>(nullable: false, defaultValue: false),
-                    RolesId = table.Column<Guid>(nullable: true)
+                    IdRol = table.Column<Guid>(nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_RolModule", x => x.IdRolModule);
                     table.ForeignKey(
-                        name: "FK_RolModule_Roles_RolesId",
-                        column: x => x.RolesId,
+                        name: "FK_ROL_ROL_MODULE_CUSTOM",
+                        column: x => x.IdRol,
                         principalTable: "Roles",
-                        principalColumn: "IdRol",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "IdRol");
                 });
 
             migrationBuilder.CreateTable(
@@ -183,7 +182,7 @@ namespace SocialMedia.Infrastructure.Migrations
             migrationBuilder.InsertData(
                 table: "Seguridad",
                 columns: new[] { "IdSeguridad", "Password", "RefreshToken", "RefreshTokenExpiryTime", "Rol", "UserId", "UserName" },
-                values: new object[] { new Guid("d29e3130-9468-458f-b1b6-e99f48eaf48f"), "10000.mmlVX3xzYuLQromOzqELBQ==.JIwrJbVGsgYiTMjqWqcvulmXk8Fv6c7hxbl8mEqixTI=", null, null, "Administrator", new Guid("53aeeca4-a5b1-4751-abcb-3207a01b97dc"), "Admin" });
+                values: new object[] { new Guid("cfa7c9b8-8988-4c74-a3c0-090e0848e5b1"), "10000.mmlVX3xzYuLQromOzqELBQ==.JIwrJbVGsgYiTMjqWqcvulmXk8Fv6c7hxbl8mEqixTI=", null, null, "Administrator", new Guid("53aeeca4-a5b1-4751-abcb-3207a01b97dc"), "Admin" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Comentario_IdPublicacion",
@@ -206,9 +205,9 @@ namespace SocialMedia.Infrastructure.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RolModule_RolesId",
+                name: "IX_RolModule_IdRol",
                 table: "RolModule",
-                column: "RolesId");
+                column: "IdRol");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Seguridad_UserId",
