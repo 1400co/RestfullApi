@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Net;
 using System.Threading.Tasks;
 
 namespace SocialMedia.Infrastructure.Repositories
@@ -52,11 +51,16 @@ namespace SocialMedia.Infrastructure.Repositories
             return await query.FirstOrDefaultAsync(e => e.Id == id);
         }
 
-       
 
+        /// <summary>
+        /// Insert with Commit
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <returns></returns>
         public async Task Insert(T entity)
         {
             await entities.AddAsync(entity);
+            await socialMediaContext.SaveChangesAsync();
         }
 
         public async Task<List<T>> Insert(List<T> entities)
@@ -66,9 +70,10 @@ namespace SocialMedia.Infrastructure.Repositories
             return entities;
         }
 
-        public async void Update(T entity)
+        public async Task Update(T entity)
         {
             entities.Update(entity);
+            await socialMediaContext.SaveChangesAsync();
         }
 
         public async Task Update(List<T> entities)
@@ -83,6 +88,11 @@ namespace SocialMedia.Infrastructure.Repositories
             entities.Remove(entity);
         }
 
+        /// <summary>
+        /// Add with session, no commit.
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <returns></returns>
         public async Task Add(T entity)
         {
             await entities.AddAsync(entity);

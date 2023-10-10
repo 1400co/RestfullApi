@@ -5,9 +5,7 @@ using SocialMedia.Core.Exceptions;
 using SocialMedia.Core.Interfaces;
 using SocialMedia.Core.QueryFilters;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
 namespace SocialMedia.Core.Services
@@ -26,7 +24,7 @@ namespace SocialMedia.Core.Services
 
         public async Task InsertPost(Post post)
         {
-            var user = _unitOfWork.UserRepository.GetById(post.UserId);
+            var user = await _unitOfWork.UserRepository.GetById(post.UserId);
             if (user == null)
                 throw new BusinessException("User doesnt exist");
 
@@ -44,28 +42,26 @@ namespace SocialMedia.Core.Services
             }
 
             await _unitOfWork.PostRepository.Insert(post);
-            await _unitOfWork.SaveChangesAsync();
         }
 
         public async Task<bool> UpdatePost(Post post)
         {
-            var existingPost = await _unitOfWork.PostRepository.GetById(post.Id);
+            var existingPost = await _unitOfWork.PostRepository.GetById(post.Id, u => u.User);
             existingPost.Image = post.Image;
             existingPost.Description = post.Description;
 
-            _unitOfWork.PostRepository.Update(existingPost);
-            await _unitOfWork.SaveChangesAsync();
+            await _unitOfWork.PostRepository.Update(existingPost);
             return true;
         }
 
         public async Task<Post> GetPost(Guid id)
         {
-            return await _unitOfWork.PostRepository.GetById(id);
+            return await _unitOfWork.PostRepository.GetById(id, u => u.User);
         }
 
         public PagedList<Post> GetPosts(PostQueryFilter filters)
         {
-            var posts = _unitOfWork.PostRepository.GetByAll();
+            var posts = _unitOfWork.PostRepository.Get(u => u.User);
 
             filters.PageNumber = _paginationOptions.DefaultPageNumber;
             filters.PageSize = _paginationOptions.DefaultPageSize;
@@ -77,10 +73,10 @@ namespace SocialMedia.Core.Services
 
             if (filters.Date != null)
             {
-                posts = posts.Where(x => x.Date.ToShortDateString() == filters.Date?.ToShortDateString());
+                posts = posts.Where(x => x.Date.ToShortDateString() == ((DateTime)filters.Date).ToShortDateString());
             }
 
-            if (filters.Date != null)
+            if (filters.Description != null)
             {
                 posts = posts.Where(x => x.Description.ToLower().Contains(filters.Description.ToLower()));
             }

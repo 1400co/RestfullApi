@@ -14,7 +14,7 @@ namespace SocialMedia.Core.Interfaces
         IEnumerable<T> GetByAll();
         Task Insert(T entity);
         Task<List<T>> Insert(List<T> entities);
-        void Update(T entity);
+        Task Update(T entity);
         Task Delete(Guid id);
         Task Update(List<T> entities);
         Task Add(T entity);

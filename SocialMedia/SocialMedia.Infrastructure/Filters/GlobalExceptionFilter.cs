@@ -1,10 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using SocialMedia.Core.Exceptions;
-using System;
-using System.Collections.Generic;
 using System.Net;
-using System.Text;
 
 namespace SocialMedia.Infrastructure.Filters
 {
