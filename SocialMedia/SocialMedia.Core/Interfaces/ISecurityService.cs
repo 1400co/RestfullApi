@@ -5,7 +5,7 @@ namespace SocialMedia.Core.Interfaces
 {
     public interface ISecurityService
     {
-        Task<Security> GetLoginByCredentials(UserLogin userLogin);
+        Task<Security> GetLoginByCredentials(UserLoginDto userLogin);
         Task RegisterUser(Security security);
     }
 }

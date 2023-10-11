@@ -1,13 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using SocialMedia.Core.Entities;
+using SocialMedia.Core.Dtos;
 using System;
 
 namespace SocialMedia.Infrastructure.Data
 {
-    public class UserInRolesConfiguration : IEntityTypeConfiguration<UserInRoles>
+    public class UserInRolesConfiguration : IEntityTypeConfiguration<UserInRolesDto>
     {
-        public void Configure(EntityTypeBuilder<UserInRoles> builder)
+        public void Configure(EntityTypeBuilder<UserInRolesDto> builder)
         {
             builder.ToTable("UserInRoles");
 
@@ -17,21 +17,6 @@ namespace SocialMedia.Infrastructure.Data
 
             builder.Property(e => e.UserId).HasColumnName("IdUser").ValueGeneratedNever();
             builder.Property(e => e.RoleId).HasColumnName("IdRol").ValueGeneratedNever();
-
-
-            /*builder
-                .HasOne(d => d.Rol)
-                .WithMany(p => p.UserInRoles)
-                .HasForeignKey(d => d.RoleId)
-                .OnDelete(DeleteBehavior.NoAction)
-                .HasConstraintName("FK_USERINROLES_ROL_ROLMODULE");
-
-            builder
-                .HasOne(d => d.User)
-                .WithMany(p => p.UserInRoles)
-                .HasForeignKey(d => d.Users)
-                .OnDelete(DeleteBehavior.NoAction)
-                .HasConstraintName("FK_USERINROLES_USER_ROLMODULE");*/
         }
     }
 }

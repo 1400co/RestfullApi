@@ -49,9 +49,7 @@ namespace SocialMedia.Api.Controllers
                 CurrentPage = posts.CurrentPage,
                 TotalPages = posts.TotalPages,
                 HasNextPage = posts.HasNextPage,
-                HasPreviousPage = posts.HasPreviusPage,
-                NextPageUrl = _uriService.GetPostPaginationUri(filters, Url.RouteUrl(nameof(GetPosts))).ToString(),
-                PreviousPageUrl = _uriService.GetPostPaginationUri(filters, Url.RouteUrl(nameof(GetPosts))).ToString(),
+                HasPreviousPage = posts.HasPreviousPage,
             };
 
             response.Meta = metaData;

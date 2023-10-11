@@ -28,7 +28,7 @@ namespace SocialMedia.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> GetToken(UserLogin login)
+        public async Task<IActionResult> GetToken(UserLoginDto login)
         {
             //If valid user
             var result = await ValidateUser(login);
@@ -40,7 +40,7 @@ namespace SocialMedia.Api.Controllers
             return NotFound();
         }
 
-        private async Task<(bool, Security)> ValidateUser(UserLogin login)
+        private async Task<(bool, Security)> ValidateUser(UserLoginDto login)
         {
             var user = await _securityService.GetLoginByCredentials(login);
 

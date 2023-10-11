@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SocialMedia.Core.Dtos;
+using System;
 using System.Collections.Generic;
 
 namespace SocialMedia.Core.Entities
@@ -7,7 +8,7 @@ namespace SocialMedia.Core.Entities
     {
         public Post()
         {
-            Comments = new HashSet<Comment>();
+            Comments = new HashSet<CommentDto>();
             Date = DateTime.Now;
         }
 
@@ -16,7 +17,7 @@ namespace SocialMedia.Core.Entities
         public string Description { get; set; }
         public string Image { get; set; }
 
-        public virtual User User { get; set; }
-        public virtual ICollection<Comment> Comments { get; set; }
+        public virtual UserDto User { get; set; }
+        public virtual ICollection<CommentDto> Comments { get; set; }
     }
 }

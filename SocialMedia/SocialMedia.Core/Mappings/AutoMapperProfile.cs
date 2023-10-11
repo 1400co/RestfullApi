@@ -3,7 +3,7 @@ using SocialMedia.Core.Dtos;
 using SocialMedia.Core.DTOs;
 using SocialMedia.Core.Entities;
 
-namespace SocialMedia.Infrastructure.Mappings
+namespace SocialMedia.Core.Mappings
 {
     public class AutoMapperProfile : Profile
     {
@@ -11,7 +11,7 @@ namespace SocialMedia.Infrastructure.Mappings
         {
             CreateMap<Post, PostDto>().ReverseMap();
             CreateMap<PostDto, Post>().ReverseMap();
-            CreateMap<SecurityDto, Security >().ReverseMap();
+            CreateMap<SecurityDto, Security>().ReverseMap();
 
             CreateMap<Comment, CommentDto>().ReverseMap();
             CreateMap<PasswordRecovery, PasswordRecoveryDto>().ReverseMap();

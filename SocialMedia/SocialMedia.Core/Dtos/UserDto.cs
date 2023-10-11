@@ -1,13 +1,13 @@
-﻿using SocialMedia.Core.Dtos;
+﻿using SocialMedia.Core.Entities;
 using SocialMedia.Core.Enumerations;
 using System;
 using System.Collections.Generic;
 
-namespace SocialMedia.Core.Entities
+namespace SocialMedia.Core.Dtos
 {
-    public partial class User : BaseEntity
+    public partial class UserDto : BaseEntity
     {
-        public User()
+        public UserDto()
         {
             Comment = new HashSet<CommentDto>();
             Post = new HashSet<Post>();
@@ -28,6 +28,6 @@ namespace SocialMedia.Core.Entities
         public virtual ICollection<Security> Security { get; set; }
         public virtual ICollection<UserInRolesDto> UserInRoles { get; set; }
         public virtual ICollection<PasswordRecoveryDto> PasswordRecovery { get; set; }
-        
+
     }
 }

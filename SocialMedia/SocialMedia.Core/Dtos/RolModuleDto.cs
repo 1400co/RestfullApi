@@ -1,9 +1,9 @@
-﻿using SocialMedia.Core.Dtos;
+﻿using SocialMedia.Core.Entities;
 using System;
 
-namespace SocialMedia.Core.Entities
+namespace SocialMedia.Core.Dtos
 {
-    public partial class RolModule : BaseEntity
+    public partial class RolModuleDto : BaseEntity
     {
 
         public string Module { get; set; }

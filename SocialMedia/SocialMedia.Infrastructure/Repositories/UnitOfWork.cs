@@ -11,6 +11,11 @@ namespace SocialMedia.Infrastructure.Repositories
         private readonly IPostRepository postRepository;
         private readonly IRepository<User> userRepository;
         private readonly IRepository<Comment> commentRepository;
+        private readonly IRepository<PasswordRecovery> passwordRecoveryRepository;
+        private readonly IRepository<Roles> rolesRepository;
+        private readonly IRepository<RolModule> rolModuleRepository;
+        private readonly IRepository<UserInRoles> userInRolesRepository;
+        private readonly IRepository<UserLogin> userLoginRepository;
         private readonly ISecurityRepository _securityRepository;
 
         public UnitOfWork(SocialMediaContext socialMediaContext)
@@ -20,8 +25,12 @@ namespace SocialMedia.Infrastructure.Repositories
         public IPostRepository PostRepository => postRepository ?? new PostRepository(socialMediaContext);
 
         public IRepository<User> UserRepository => userRepository ?? new BaseRepository<User>(socialMediaContext);
-
+        public IRepository<PasswordRecovery> PasswordRecoveryRepository => passwordRecoveryRepository ?? new BaseRepository<PasswordRecovery>(socialMediaContext);
         public IRepository<Comment> CommentRepository => commentRepository ?? new BaseRepository<Comment>(socialMediaContext);
+        public IRepository<Roles> RolesRepository => rolesRepository ?? new BaseRepository<Roles>(socialMediaContext);
+        public IRepository<RolModule> RolModuleRepository => rolModuleRepository ?? new BaseRepository<RolModule>(socialMediaContext);
+        public IRepository<UserInRoles> UserInRolesRepository => userInRolesRepository ?? new BaseRepository<UserInRoles>(socialMediaContext);
+        public IRepository<UserLogin> UserLoginRepository => userLoginRepository ?? new BaseRepository<UserLogin>(socialMediaContext);
 
         public ISecurityRepository SecurityRepository => _securityRepository ?? new SecurityRepository(socialMediaContext);
 
@@ -42,3 +51,4 @@ namespace SocialMedia.Infrastructure.Repositories
         }
     }
 }
+

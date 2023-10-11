@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SocialMedia.Core.Entities;
-using System;
 
 namespace SocialMedia.Infrastructure.Data
 {
@@ -26,13 +25,13 @@ namespace SocialMedia.Infrastructure.Data
             builder.HasOne(d => d.Post)
                 .WithMany(p => p.Comments)
                 .HasForeignKey(d => d.PostId)
-                .OnDelete(DeleteBehavior.NoAction)
+                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Comentario_Publicacion");
 
             builder.HasOne(d => d.User)
                 .WithMany(p => p.Comment)
                 .HasForeignKey(d => d.UserId)
-                .OnDelete(DeleteBehavior.NoAction)
+                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Comentario_Usuario");
 
          

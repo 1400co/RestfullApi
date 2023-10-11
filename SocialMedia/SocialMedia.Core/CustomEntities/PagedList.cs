@@ -27,9 +27,9 @@ namespace SocialMedia.Core.CustomEntities
         public int TotalCount { get; set; }
         public int PageSize { get; set; }
         public int TotalPages { get; set; }
-        public bool HasPreviusPage => CurrentPage > 1;
+        public bool HasPreviousPage => CurrentPage > 1;
         public bool HasNextPage => CurrentPage < TotalPages;
         public int? NextPageNumber => HasNextPage ? CurrentPage + 1 : (int?)null;
-        public int? NextPreviusPage => HasPreviusPage ? CurrentPage - 1 : (int?)null;
+        public int? NextPreviusPage => HasPreviousPage ? CurrentPage - 1 : (int?)null;
     }
 }

@@ -1,13 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using SocialMedia.Core.Entities;
+using SocialMedia.Core.Dtos;
 using System;
 
 namespace SocialMedia.Infrastructure.Data
 {
-    public class RolesConfiguration : IEntityTypeConfiguration<Roles>
+    public class RolesConfiguration : IEntityTypeConfiguration<RolesDto>
     {
-        public void Configure(EntityTypeBuilder<Roles> builder)
+        public void Configure(EntityTypeBuilder<RolesDto> builder)
         {
             builder.ToTable("Roles");
 
@@ -15,9 +15,6 @@ namespace SocialMedia.Infrastructure.Data
 
             builder.Property(e => e.Id).HasColumnName("IdRol");
             builder.Property(e => e.RolName).HasColumnName("RolName").ValueGeneratedNever();
-
-            
-
         }
     }
 }

@@ -1,13 +1,12 @@
-﻿using SocialMedia.Core.Dtos;
+﻿using SocialMedia.Core.Entities;
 using System;
 
-namespace SocialMedia.Core.Entities
+namespace SocialMedia.Core.Dtos
 {
-    public class UserInRoles : BaseEntity
+    public class UserInRolesDto : BaseEntity
     {
         public virtual Guid UserId { get; set; }
         public virtual UserDto User { get; set; }
-
         public virtual Guid RoleId { get; set; }
         public virtual RolesDto Rol { get; set; }
 
