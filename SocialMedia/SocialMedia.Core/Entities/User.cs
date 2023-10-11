@@ -9,11 +9,11 @@ namespace SocialMedia.Core.Entities
     {
         public User()
         {
-            Comment = new HashSet<CommentDto>();
+            Comments = new HashSet<Comment>();
             Post = new HashSet<Post>();
             Security = new HashSet<Security>();
-            UserInRoles = new HashSet<UserInRolesDto>();
-            PasswordRecovery = new HashSet<PasswordRecoveryDto>();
+            UserInRoles = new HashSet<UserInRoles>();
+            PasswordRecovery = new HashSet<PasswordRecovery>();
         }
 
         public string FullName { get; set; }
@@ -23,11 +23,11 @@ namespace SocialMedia.Core.Entities
         public bool IsActive { get; set; }
         public Subscription Subscription { get; set; }
 
-        public virtual ICollection<CommentDto> Comment { get; set; }
+        public virtual ICollection<Comment> Comments { get; set; }
         public virtual ICollection<Post> Post { get; set; }
         public virtual ICollection<Security> Security { get; set; }
-        public virtual ICollection<UserInRolesDto> UserInRoles { get; set; }
-        public virtual ICollection<PasswordRecoveryDto> PasswordRecovery { get; set; }
+        public virtual ICollection<UserInRoles> UserInRoles { get; set; }
+        public virtual ICollection<PasswordRecovery> PasswordRecovery { get; set; }
         
     }
 }

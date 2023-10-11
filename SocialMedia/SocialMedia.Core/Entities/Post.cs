@@ -8,7 +8,7 @@ namespace SocialMedia.Core.Entities
     {
         public Post()
         {
-            Comments = new HashSet<CommentDto>();
+            Comments = new HashSet<Comment>();
             Date = DateTime.Now;
         }
 
@@ -18,6 +18,6 @@ namespace SocialMedia.Core.Entities
         public string Image { get; set; }
 
         public virtual UserDto User { get; set; }
-        public virtual ICollection<CommentDto> Comments { get; set; }
+        public virtual ICollection<Comment> Comments { get; set; }
     }
 }

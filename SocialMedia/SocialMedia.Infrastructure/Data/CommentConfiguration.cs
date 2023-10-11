@@ -29,7 +29,7 @@ namespace SocialMedia.Infrastructure.Data
                 .HasConstraintName("FK_Comentario_Publicacion");
 
             builder.HasOne(d => d.User)
-                .WithMany(p => p.Comment)
+                .WithMany(p => p.Comments)
                 .HasForeignKey(d => d.UserId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Comentario_Usuario");
