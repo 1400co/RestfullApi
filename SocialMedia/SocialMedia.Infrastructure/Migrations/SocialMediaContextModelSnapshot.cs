@@ -201,7 +201,7 @@ namespace SocialMedia.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("cfa7c9b8-8988-4c74-a3c0-090e0848e5b1"),
+                            Id = new Guid("9b82c89f-33aa-4bf8-803b-d1ea9278768c"),
                             Password = "10000.mmlVX3xzYuLQromOzqELBQ==.JIwrJbVGsgYiTMjqWqcvulmXk8Fv6c7hxbl8mEqixTI=",
                             Role = "Administrator",
                             UserId = new Guid("53aeeca4-a5b1-4751-abcb-3207a01b97dc"),
@@ -276,20 +276,38 @@ namespace SocialMedia.Infrastructure.Migrations
                     b.ToTable("UserInRoles");
                 });
 
+            modelBuilder.Entity("SocialMedia.Core.Entities.UserLogin", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Password")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("User")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("UserLogin");
+                });
+
             modelBuilder.Entity("SocialMedia.Core.Entities.Comment", b =>
                 {
                     b.HasOne("SocialMedia.Core.Entities.Post", "Post")
                         .WithMany("Comments")
                         .HasForeignKey("PostId")
                         .HasConstraintName("FK_Comentario_Publicacion")
-                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("SocialMedia.Core.Entities.User", "User")
-                        .WithMany("Comment")
+                        .WithMany("Comments")
                         .HasForeignKey("UserId")
                         .HasConstraintName("FK_Comentario_Usuario")
-                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
                 });
 
@@ -324,7 +342,7 @@ namespace SocialMedia.Infrastructure.Migrations
 
             modelBuilder.Entity("SocialMedia.Core.Entities.Security", b =>
                 {
-                    b.HasOne("SocialMedia.Core.Entities.User", null)
+                    b.HasOne("SocialMedia.Core.Entities.User", "User")
                         .WithMany("Security")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)

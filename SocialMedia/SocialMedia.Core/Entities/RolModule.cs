@@ -15,7 +15,7 @@ namespace SocialMedia.Core.Entities
         public bool Printed { get; set; }
 
         public Guid IdRol { get; set; }
-        public virtual RolesDto Rol { get; set; }
+        public virtual Roles Rol { get; set; }
 
     }
 }

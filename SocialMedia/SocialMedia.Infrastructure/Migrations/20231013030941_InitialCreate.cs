@@ -20,6 +20,20 @@ namespace SocialMedia.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "UserLogin",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(nullable: false),
+                    User = table.Column<string>(nullable: true),
+                    Password = table.Column<string>(nullable: true),
+                    UserId = table.Column<Guid>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserLogin", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Usuario",
                 columns: table => new
                 {
@@ -104,12 +118,12 @@ namespace SocialMedia.Infrastructure.Migrations
                 columns: table => new
                 {
                     IdSeguridad = table.Column<Guid>(nullable: false),
-                    UserId = table.Column<Guid>(nullable: false),
                     UserName = table.Column<string>(nullable: true),
                     Password = table.Column<string>(nullable: true),
                     RefreshToken = table.Column<string>(nullable: true),
                     RefreshTokenExpiryTime = table.Column<DateTime>(nullable: true),
-                    Rol = table.Column<string>(maxLength: 15, nullable: false)
+                    Rol = table.Column<string>(maxLength: 15, nullable: false),
+                    UserId = table.Column<Guid>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -153,11 +167,11 @@ namespace SocialMedia.Infrastructure.Migrations
                 columns: table => new
                 {
                     IdComentario = table.Column<Guid>(nullable: false),
-                    IdPublicacion = table.Column<Guid>(nullable: false),
-                    IdUsuario = table.Column<Guid>(nullable: false),
                     Description = table.Column<string>(nullable: true),
                     Date = table.Column<DateTime>(nullable: false),
-                    IsActive = table.Column<bool>(nullable: false)
+                    IsActive = table.Column<bool>(nullable: false),
+                    IdPublicacion = table.Column<Guid>(nullable: false),
+                    IdUsuario = table.Column<Guid>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -166,12 +180,14 @@ namespace SocialMedia.Infrastructure.Migrations
                         name: "FK_Comentario_Publicacion",
                         column: x => x.IdPublicacion,
                         principalTable: "Publicacion",
-                        principalColumn: "IdPublicacion");
+                        principalColumn: "IdPublicacion",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Comentario_Usuario",
                         column: x => x.IdUsuario,
                         principalTable: "Usuario",
-                        principalColumn: "IdUsuario");
+                        principalColumn: "IdUsuario",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.InsertData(
@@ -182,7 +198,7 @@ namespace SocialMedia.Infrastructure.Migrations
             migrationBuilder.InsertData(
                 table: "Seguridad",
                 columns: new[] { "IdSeguridad", "Password", "RefreshToken", "RefreshTokenExpiryTime", "Rol", "UserId", "UserName" },
-                values: new object[] { new Guid("cfa7c9b8-8988-4c74-a3c0-090e0848e5b1"), "10000.mmlVX3xzYuLQromOzqELBQ==.JIwrJbVGsgYiTMjqWqcvulmXk8Fv6c7hxbl8mEqixTI=", null, null, "Administrator", new Guid("53aeeca4-a5b1-4751-abcb-3207a01b97dc"), "Admin" });
+                values: new object[] { new Guid("9b82c89f-33aa-4bf8-803b-d1ea9278768c"), "10000.mmlVX3xzYuLQromOzqELBQ==.JIwrJbVGsgYiTMjqWqcvulmXk8Fv6c7hxbl8mEqixTI=", null, null, "Administrator", new Guid("53aeeca4-a5b1-4751-abcb-3207a01b97dc"), "Admin" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Comentario_IdPublicacion",
@@ -241,6 +257,9 @@ namespace SocialMedia.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "UserInRoles");
+
+            migrationBuilder.DropTable(
+                name: "UserLogin");
 
             migrationBuilder.DropTable(
                 name: "Publicacion");

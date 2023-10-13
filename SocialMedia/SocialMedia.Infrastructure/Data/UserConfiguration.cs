@@ -6,9 +6,9 @@ using System;
 
 namespace SocialMedia.Infrastructure.Data
 {
-    public class UserConfiguration : IEntityTypeConfiguration<UserDto>
+    public class UserConfiguration : IEntityTypeConfiguration<User>
     {
-        public void Configure(EntityTypeBuilder<UserDto> builder)
+        public void Configure(EntityTypeBuilder<User> builder)
         {
             builder.ToTable("Usuario");
 
