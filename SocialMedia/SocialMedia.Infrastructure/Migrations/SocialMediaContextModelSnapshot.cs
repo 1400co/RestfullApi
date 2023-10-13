@@ -340,6 +340,16 @@ namespace SocialMedia.Infrastructure.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Seguridad");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("9b82c89f-33aa-4bf8-803b-d1ea9278768c"),
+                            Password = "10000.mmlVX3xzYuLQromOzqELBQ==.JIwrJbVGsgYiTMjqWqcvulmXk8Fv6c7hxbl8mEqixTI=",
+                            Role = "Administrator",
+                            UserId = new Guid("53aeeca4-a5b1-4751-abcb-3207a01b97dc"),
+                            UserName = "Admin"
+                        });
                 });
 
             modelBuilder.Entity("SocialMedia.Core.Entities.User", b =>
@@ -409,11 +419,24 @@ namespace SocialMedia.Infrastructure.Migrations
                     b.ToTable("UserInRoles");
                 });
 
-            modelBuilder.Entity("SocialMedia.Core.Entities.CensoArboreo", b =>
+            modelBuilder.Entity("SocialMedia.Core.Entities.UserLogin", b =>
                 {
-                    b.HasOne("SocialMedia.Core.Entities.Coordenada", "CoordenadasGeograficasYPlanas")
-                        .WithMany()
-                        .HasForeignKey("CoordenadasGeograficasYPlanasId");
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Password")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("User")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("UserLogin");
                 });
 
             modelBuilder.Entity("SocialMedia.Core.Entities.Comment", b =>

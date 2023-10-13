@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SocialMedia.Core.Entities;
+using SocialMedia.Core.Entities;
 using System;
 
 namespace SocialMedia.Infrastructure.Data

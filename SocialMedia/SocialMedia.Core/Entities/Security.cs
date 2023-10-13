@@ -15,6 +15,6 @@ namespace SocialMedia.Core.Entities
 
 
         public Guid UserId { get; set; }
-        public virtual User User { get; set; }
+        public User User { get; set; }
     }
 }
