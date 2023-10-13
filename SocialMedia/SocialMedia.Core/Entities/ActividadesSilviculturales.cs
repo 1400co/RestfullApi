@@ -2,9 +2,8 @@
 
 namespace SocialMedia.Core.Entities
 {
-    public class ActividadesSilviculturales
-    {
-        public Guid Id { get; set; }
+    public class ActividadesSilviculturales : BaseEntity
+    {        
 
         public virtual Guid IdCensoArboreo { get; set; }
         public virtual CensoArboreo CensoArboreo { get; set; }
@@ -27,5 +26,7 @@ namespace SocialMedia.Core.Entities
         public bool LargoPlazoL { get; set; }
         public bool Trasplante { get; set; }
         public string Observacion { get; set; }
+
+        public virtual CensoArboreo Censo { get; set; }
     }
 }

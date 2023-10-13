@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 namespace SocialMedia.Core.Entities
 {
-    public class EspaciosPotenciales
+    public class EspaciosPotenciales : BaseEntity
     {
-        public Guid Id { get; set; }
+        
         public decimal AreasDisponibles { get; set; }
         public string TipoEmplazamiento { get; set; }
 
