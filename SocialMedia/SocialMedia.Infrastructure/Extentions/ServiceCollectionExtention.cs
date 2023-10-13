@@ -19,14 +19,38 @@ namespace SocialMedia.Infrastructure.Extentions
 {
     public static class ServiceCollectionExtention
     {
+        /// <summary>
+        /// Use to change form Sqlserver o Postgres
+        /// </summary>
+        /// <param name="services"></param>
+        /// <param name="configuration"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         public static IServiceCollection AddDbContexts(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddDbContext<SocialMediaContext>(options =>
-               options.UseSqlServer(configuration.GetConnectionString("SocialMedia"))
-           );
+            var engine = configuration["Database:Engine"];
+            var connectionStringName = "MyConn"; // Asumiendo que quieres usar la misma cadena de conexión para ambos
+
+            if (engine == "SqlServer")
+            {
+                services.AddDbContext<SocialMediaContext>(options =>
+                    options.UseSqlServer(configuration.GetConnectionString(connectionStringName))
+                );
+            }
+            else if (engine == "Postgres")
+            {
+                services.AddDbContext<SocialMediaContext>(options =>
+                    options.UseNpgsql(configuration.GetConnectionString(connectionStringName))
+                );
+            }
+            else
+            {
+                throw new Exception("Database engine not supported");
+            }
 
             return services;
         }
+
 
         public static IServiceCollection AddHangfire(this IServiceCollection services, IConfiguration configurations)
         {
@@ -45,6 +69,7 @@ namespace SocialMedia.Infrastructure.Extentions
         {
             services.Configure<PaginationOptions>(options => configuration.GetSection("Pagination").Bind(options));
             services.Configure<PasswordOptions>(options => configuration.GetSection("PasswordOptions").Bind(options));
+            services.Configure<EngineOptions>(options => configuration.GetSection("Database").Bind(options));
 
             return services;
         }

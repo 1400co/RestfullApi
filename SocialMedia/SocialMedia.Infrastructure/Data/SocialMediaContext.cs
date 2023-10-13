@@ -1,13 +1,20 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SocialMedia.Core.Entities;
 using System.Reflection;
+using Microsoft.Extensions.Configuration;
+using System.IO;
+using SocialMedia.Core.CustomEntities;
+using SocialMedia.Infrastructure.Options;
+using Microsoft.Extensions.Options;
 
 namespace SocialMedia.Infrastructure.Data
 {
     public partial class SocialMediaContext : DbContext
     {
-        public SocialMediaContext()
+        private readonly EngineOptions _engineOptions;
+        public SocialMediaContext(IOptions<EngineOptions> engineOptions)
         {
+            _engineOptions = engineOptions.Value;
         }
 
         public SocialMediaContext(DbContextOptions<SocialMediaContext> options)
@@ -29,9 +36,14 @@ namespace SocialMedia.Infrastructure.Data
         {
             if (!optionsBuilder.IsConfigured)
             {
-                /*optionsBuilder.UseSqlServer("Server=localhost;Initial Catalog=SocialMedia;Persist Security Info=False;User ID=sa;Password=Pass@Word;Connection Timeout=30;TrustServerCertificate=True");*/
-				//optionsBuilder.UseSqlServer("Server=localhost;Initial Catalog=EcomKit;Persist Security Info=False;User ID=sa;Password=Pass@Word;Connection Timeout=30;TrustServerCertificate=True");
-                optionsBuilder.UseNpgsql("host=localhost;port=5432;database=SocialMedia;username=postgres;password=Pass@Word");
+                if (_engineOptions.Engine == EngineType.SqlServer)
+                {
+                    optionsBuilder.UseSqlServer("Server=localhost;Initial Catalog=SocialMedia;Persist Security Info=False;User ID=sa;Password=Pass@Word;Connection Timeout=30;TrustServerCertificate=True");
+                }
+                else
+                {
+                    optionsBuilder.UseNpgsql("");
+                }
             }
         }
 
