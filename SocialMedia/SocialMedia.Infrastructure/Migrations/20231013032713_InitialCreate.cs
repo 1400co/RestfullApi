@@ -275,17 +275,10 @@ namespace SocialMedia.Infrastructure.Migrations
                 columns: new[] { "IdUsuario", "BornDate", "Email", "FullName", "IsActive", "Phone", "Subscription" },
                 values: new object[] { new Guid("53aeeca4-a5b1-4751-abcb-3207a01b97dc"), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "oruedar@yopmail.com", "Oscar", true, null, 0 });
 
-<<<<<<<< HEAD:SocialMedia/SocialMedia.Infrastructure/Migrations/20231013031211_InitialCreate.cs
             migrationBuilder.CreateIndex(
                 name: "IX_CensoArboreo_CoordenadasGeograficasYPlanasId",
                 table: "CensoArboreo",
                 column: "CoordenadasGeograficasYPlanasId");
-========
-            migrationBuilder.InsertData(
-                table: "Seguridad",
-                columns: new[] { "IdSeguridad", "Password", "RefreshToken", "RefreshTokenExpiryTime", "Rol", "UserId", "UserName" },
-                values: new object[] { new Guid("9b82c89f-33aa-4bf8-803b-d1ea9278768c"), "10000.mmlVX3xzYuLQromOzqELBQ==.JIwrJbVGsgYiTMjqWqcvulmXk8Fv6c7hxbl8mEqixTI=", null, null, "Administrator", new Guid("53aeeca4-a5b1-4751-abcb-3207a01b97dc"), "Admin" });
->>>>>>>> main:SocialMedia/SocialMedia.Infrastructure/Migrations/20231013030941_InitialCreate.cs
 
             migrationBuilder.CreateIndex(
                 name: "IX_Comentario_IdPublicacion",

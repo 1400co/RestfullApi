@@ -340,16 +340,6 @@ namespace SocialMedia.Infrastructure.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Seguridad");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("9b82c89f-33aa-4bf8-803b-d1ea9278768c"),
-                            Password = "10000.mmlVX3xzYuLQromOzqELBQ==.JIwrJbVGsgYiTMjqWqcvulmXk8Fv6c7hxbl8mEqixTI=",
-                            Role = "Administrator",
-                            UserId = new Guid("53aeeca4-a5b1-4751-abcb-3207a01b97dc"),
-                            UserName = "Admin"
-                        });
                 });
 
             modelBuilder.Entity("SocialMedia.Core.Entities.User", b =>
@@ -437,6 +427,13 @@ namespace SocialMedia.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("UserLogin");
+                });
+
+            modelBuilder.Entity("SocialMedia.Core.Entities.CensoArboreo", b =>
+                {
+                    b.HasOne("SocialMedia.Core.Entities.Coordenada", "CoordenadasGeograficasYPlanas")
+                        .WithMany()
+                        .HasForeignKey("CoordenadasGeograficasYPlanasId");
                 });
 
             modelBuilder.Entity("SocialMedia.Core.Entities.Comment", b =>

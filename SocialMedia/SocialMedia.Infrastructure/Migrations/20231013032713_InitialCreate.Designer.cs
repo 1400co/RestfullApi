@@ -10,7 +10,7 @@ using SocialMedia.Infrastructure.Data;
 namespace SocialMedia.Infrastructure.Migrations
 {
     [DbContext(typeof(SocialMediaContext))]
-    [Migration("20231013031211_InitialCreate")]
+    [Migration("20231013032713_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -409,6 +409,26 @@ namespace SocialMedia.Infrastructure.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("UserInRoles");
+                });
+
+            modelBuilder.Entity("SocialMedia.Core.Entities.UserLogin", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Password")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("User")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("UserLogin");
                 });
 
             modelBuilder.Entity("SocialMedia.Core.Entities.CensoArboreo", b =>
