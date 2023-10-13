@@ -1,5 +1,4 @@
-﻿using SocialMedia.Core.Dtos;
-using System;
+﻿using System;
 
 namespace SocialMedia.Core.Entities
 {

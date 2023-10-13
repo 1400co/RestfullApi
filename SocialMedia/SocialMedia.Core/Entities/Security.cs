@@ -1,5 +1,4 @@
-﻿using SocialMedia.Core.Dtos;
-using SocialMedia.Core.Enumerations;
+﻿using SocialMedia.Core.Enumerations;
 using System;
 
 namespace SocialMedia.Core.Entities
@@ -16,6 +15,6 @@ namespace SocialMedia.Core.Entities
 
 
         public Guid UserId { get; set; }
-        public UserDto User { get; set; }
+        public virtual User User { get; set; }
     }
 }

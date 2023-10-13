@@ -10,7 +10,7 @@ using SocialMedia.Infrastructure.Data;
 namespace SocialMedia.Infrastructure.Migrations
 {
     [DbContext(typeof(SocialMediaContext))]
-    [Migration("20231006235836_InitialCreate")]
+    [Migration("20231013023212_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -20,6 +20,191 @@ namespace SocialMedia.Infrastructure.Migrations
                 .HasAnnotation("ProductVersion", "3.1.3")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+            modelBuilder.Entity("SocialMedia.Core.Dtos.CommentDto", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("PostId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PostId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Comments");
+                });
+
+            modelBuilder.Entity("SocialMedia.Core.Dtos.PasswordRecoveryDto", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("ExpiryDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("PasswordRecoveryToken")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("PasswordRecoveryDto");
+                });
+
+            modelBuilder.Entity("SocialMedia.Core.Dtos.RolModuleDto", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnName("IdRolModule")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("Created")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnName("Created")
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<bool>("Deleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnName("Deleted")
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<bool>("Edited")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnName("Edited")
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<Guid>("IdRol")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("Listed")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnName("Listed")
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<string>("Module")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("Printed")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnName("Printed")
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IdRol");
+
+                    b.ToTable("RolModule");
+                });
+
+            modelBuilder.Entity("SocialMedia.Core.Dtos.RolesDto", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnName("IdRol")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("RolName")
+                        .HasColumnName("RolName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Roles");
+                });
+
+            modelBuilder.Entity("SocialMedia.Core.Dtos.UserDto", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnName("IdUsuario")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("BornDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FullName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Phone")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Subscription")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Usuario");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("53aeeca4-a5b1-4751-abcb-3207a01b97dc"),
+                            BornDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Email = "oruedar@yopmail.com",
+                            FullName = "Oscar",
+                            IsActive = true,
+                            Subscription = 0
+                        });
+                });
+
+            modelBuilder.Entity("SocialMedia.Core.Dtos.UserInRolesDto", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnName("IdUserInRoles")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("RolId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("RoleId")
+                        .HasColumnName("IdRol")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnName("IdUser")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RolId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserInRoles");
+                });
 
             modelBuilder.Entity("SocialMedia.Core.Entities.Comment", b =>
                 {
@@ -90,10 +275,15 @@ namespace SocialMedia.Infrastructure.Migrations
                     b.Property<string>("Image")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid?>("UserDtoId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("UserDtoId");
 
                     b.HasIndex("UserId");
 
@@ -104,66 +294,51 @@ namespace SocialMedia.Infrastructure.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnName("IdRolModule")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("Created")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnName("Created")
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
+                        .HasColumnType("bit");
 
                     b.Property<bool>("Deleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnName("Deleted")
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
+                        .HasColumnType("bit");
 
                     b.Property<bool>("Edited")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnName("Edited")
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
+                        .HasColumnType("bit");
 
                     b.Property<Guid>("IdRol")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("Listed")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnName("Listed")
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
+                        .HasColumnType("bit");
 
                     b.Property<string>("Module")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("Printed")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnName("Printed")
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
+                        .HasColumnType("bit");
+
+                    b.Property<Guid?>("RolId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("IdRol");
+                    b.HasIndex("RolId");
 
-                    b.ToTable("RolModule");
+                    b.ToTable("RolModule1");
                 });
 
             modelBuilder.Entity("SocialMedia.Core.Entities.Roles", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnName("IdRol")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("RolName")
-                        .HasColumnName("RolName")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Roles");
+                    b.ToTable("Roles1");
                 });
 
             modelBuilder.Entity("SocialMedia.Core.Entities.Security", b =>
@@ -188,6 +363,9 @@ namespace SocialMedia.Infrastructure.Migrations
                         .HasColumnType("nvarchar(15)")
                         .HasMaxLength(15);
 
+                    b.Property<Guid?>("UserDtoId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
 
@@ -196,6 +374,8 @@ namespace SocialMedia.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("UserDtoId");
+
                     b.HasIndex("UserId");
 
                     b.ToTable("Seguridad");
@@ -203,7 +383,7 @@ namespace SocialMedia.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("cfa7c9b8-8988-4c74-a3c0-090e0848e5b1"),
+                            Id = new Guid("31ecea6f-9790-4de4-820d-17ed7b940e5f"),
                             Password = "10000.mmlVX3xzYuLQromOzqELBQ==.JIwrJbVGsgYiTMjqWqcvulmXk8Fv6c7hxbl8mEqixTI=",
                             Role = "Administrator",
                             UserId = new Guid("53aeeca4-a5b1-4751-abcb-3207a01b97dc"),
@@ -214,7 +394,7 @@ namespace SocialMedia.Infrastructure.Migrations
             modelBuilder.Entity("SocialMedia.Core.Entities.User", b =>
                 {
                     b.Property<Guid>("Id")
-                        .HasColumnName("IdUsuario")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("BornDate")
@@ -237,36 +417,22 @@ namespace SocialMedia.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Usuario");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("53aeeca4-a5b1-4751-abcb-3207a01b97dc"),
-                            BornDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Email = "oruedar@yopmail.com",
-                            FullName = "Oscar",
-                            IsActive = true,
-                            Subscription = 0
-                        });
+                    b.ToTable("User");
                 });
 
             modelBuilder.Entity("SocialMedia.Core.Entities.UserInRoles", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnName("IdUserInRoles")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("RolId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("RoleId")
-                        .HasColumnName("IdRol")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("UserId")
-                        .HasColumnName("IdUser")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
@@ -275,7 +441,54 @@ namespace SocialMedia.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserInRoles");
+                    b.ToTable("UserInRoles1");
+                });
+
+            modelBuilder.Entity("SocialMedia.Core.Dtos.CommentDto", b =>
+                {
+                    b.HasOne("SocialMedia.Core.Entities.Post", "Post")
+                        .WithMany()
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SocialMedia.Core.Dtos.UserDto", "User")
+                        .WithMany("Comment")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("SocialMedia.Core.Dtos.PasswordRecoveryDto", b =>
+                {
+                    b.HasOne("SocialMedia.Core.Dtos.UserDto", "User")
+                        .WithMany("PasswordRecovery")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("SocialMedia.Core.Dtos.RolModuleDto", b =>
+                {
+                    b.HasOne("SocialMedia.Core.Dtos.RolesDto", "Rol")
+                        .WithMany("RolModules")
+                        .HasForeignKey("IdRol")
+                        .HasConstraintName("FK_ROL_ROL_MODULE_CUSTOM")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("SocialMedia.Core.Dtos.UserInRolesDto", b =>
+                {
+                    b.HasOne("SocialMedia.Core.Dtos.RolesDto", "Rol")
+                        .WithMany("UserInRoles")
+                        .HasForeignKey("RolId");
+
+                    b.HasOne("SocialMedia.Core.Dtos.UserDto", "User")
+                        .WithMany("UserInRoles")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("SocialMedia.Core.Entities.Comment", b =>
@@ -284,14 +497,12 @@ namespace SocialMedia.Infrastructure.Migrations
                         .WithMany("Comments")
                         .HasForeignKey("PostId")
                         .HasConstraintName("FK_Comentario_Publicacion")
-                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("SocialMedia.Core.Entities.User", "User")
-                        .WithMany("Comment")
+                        .WithMany("Comments")
                         .HasForeignKey("UserId")
                         .HasConstraintName("FK_Comentario_Usuario")
-                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
                 });
 
@@ -306,6 +517,10 @@ namespace SocialMedia.Infrastructure.Migrations
 
             modelBuilder.Entity("SocialMedia.Core.Entities.Post", b =>
                 {
+                    b.HasOne("SocialMedia.Core.Dtos.UserDto", null)
+                        .WithMany("Post")
+                        .HasForeignKey("UserDtoId");
+
                     b.HasOne("SocialMedia.Core.Entities.User", "User")
                         .WithMany("Post")
                         .HasForeignKey("UserId")
@@ -318,15 +533,16 @@ namespace SocialMedia.Infrastructure.Migrations
                 {
                     b.HasOne("SocialMedia.Core.Entities.Roles", "Rol")
                         .WithMany("RolModules")
-                        .HasForeignKey("IdRol")
-                        .HasConstraintName("FK_ROL_ROL_MODULE_CUSTOM")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .HasForeignKey("RolId");
                 });
 
             modelBuilder.Entity("SocialMedia.Core.Entities.Security", b =>
                 {
-                    b.HasOne("SocialMedia.Core.Entities.User", null)
+                    b.HasOne("SocialMedia.Core.Dtos.UserDto", null)
+                        .WithMany("Security")
+                        .HasForeignKey("UserDtoId");
+
+                    b.HasOne("SocialMedia.Core.Entities.User", "User")
                         .WithMany("Security")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)

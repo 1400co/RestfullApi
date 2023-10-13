@@ -1,4 +1,4 @@
-﻿using SocialMedia.Core.Dtos;
+﻿
 using System.Collections.Generic;
 
 namespace SocialMedia.Core.Entities
@@ -7,9 +7,9 @@ namespace SocialMedia.Core.Entities
     {
         public string RolName { get; set; }
 
-        public virtual ICollection<RolModuleDto> RolModules { get; set; }
+        public virtual ICollection<RolModule> RolModules { get; set; }
         
 
-        public virtual ICollection<UserInRolesDto> UserInRoles { get; set; }
+        public virtual ICollection<UserInRoles> UserInRoles { get; set; }
     }
 }
