@@ -42,7 +42,7 @@ namespace SocialMedia.Infrastructure.Data
                 }
                 else
                 {
-                    optionsBuilder.UseNpgsql("");
+                    optionsBuilder.UseNpgsql("host=localhost;port=5432;database=SocialMedia;username=postgres;password=Pass@Word");
                 }
             }
         }
