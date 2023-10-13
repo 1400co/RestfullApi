@@ -1,13 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using SocialMedia.Core.Dtos;
+using SocialMedia.Core.Entities;
 using System;
 
 namespace SocialMedia.Infrastructure.Data
 {
-    public class RolesConfiguration : IEntityTypeConfiguration<RolesDto>
+    public class RolesConfiguration : IEntityTypeConfiguration<Roles>
     {
-        public void Configure(EntityTypeBuilder<RolesDto> builder)
+        public void Configure(EntityTypeBuilder<Roles> builder)
         {
             builder.ToTable("Roles");
 

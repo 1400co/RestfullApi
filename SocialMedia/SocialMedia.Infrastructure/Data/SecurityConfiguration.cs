@@ -26,9 +26,13 @@ namespace SocialMedia.Infrastructure.Data.Configurations
                 x => (RoleType)Enum.Parse(typeof(RoleType), x)
                 );
 
-            builder.HasData(
-                new Security() { Id = Guid.NewGuid(),UserId = new Guid("53aeeca4-a5b1-4751-abcb-3207a01b97dc"), UserName = "Admin", Role = 0, Password = "10000.mmlVX3xzYuLQromOzqELBQ==.JIwrJbVGsgYiTMjqWqcvulmXk8Fv6c7hxbl8mEqixTI=" }
-                );
+            /*builder.HasData(
+                new Security() { Id = Guid.NewGuid(),
+                    UserId = new Guid("53aeeca4-a5b1-4751-abcb-3207a01b97dc"), 
+                    UserName = "Admin", 
+                    Role = 0, 
+                    Password = "10000.mmlVX3xzYuLQromOzqELBQ==.JIwrJbVGsgYiTMjqWqcvulmXk8Fv6c7hxbl8mEqixTI=" }
+                );*/
         }
     }
 }

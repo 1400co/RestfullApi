@@ -1,13 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using SocialMedia.Core.Dtos;
+using SocialMedia.Core.Entities;
 using System;
 
 namespace SocialMedia.Infrastructure.Data
 {
-    public class RolModuleConfiguration : IEntityTypeConfiguration<RolModuleDto>
+    public class RolModuleConfiguration : IEntityTypeConfiguration<RolModule>
     {
-        public void Configure(EntityTypeBuilder<RolModuleDto> builder)
+        public void Configure(EntityTypeBuilder<RolModule> builder)
         {
             builder.ToTable("RolModule");
 

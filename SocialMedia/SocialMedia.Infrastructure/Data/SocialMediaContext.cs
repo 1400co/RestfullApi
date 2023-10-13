@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using SocialMedia.Core.Dtos;
 using SocialMedia.Core.Entities;
 using System.Reflection;
 
@@ -16,9 +15,9 @@ namespace SocialMedia.Infrastructure.Data
         {
         }
 
-        public virtual DbSet<CommentDto> Comments { get; set; }
+        public virtual DbSet<Comment> Comments { get; set; }
         public virtual DbSet<Post> Posts { get; set; }
-        public virtual DbSet<UserDto> Users { get; set; }
+        public virtual DbSet<User> Users { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
