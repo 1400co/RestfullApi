@@ -29,7 +29,9 @@ namespace SocialMedia.Infrastructure.Data
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("Server=localhost;Initial Catalog=SocialMedia;Persist Security Info=False;User ID=sa;Password=Pass@Word;Connection Timeout=30;TrustServerCertificate=True");
+                /*optionsBuilder.UseSqlServer("Server=localhost;Initial Catalog=SocialMedia;Persist Security Info=False;User ID=sa;Password=Pass@Word;Connection Timeout=30;TrustServerCertificate=True");*/
+				//optionsBuilder.UseSqlServer("Server=localhost;Initial Catalog=EcomKit;Persist Security Info=False;User ID=sa;Password=Pass@Word;Connection Timeout=30;TrustServerCertificate=True");
+                optionsBuilder.UseNpgsql("host=localhost;port=5432;database=SocialMedia;username=postgres;password=Pass@Word");
             }
         }
 

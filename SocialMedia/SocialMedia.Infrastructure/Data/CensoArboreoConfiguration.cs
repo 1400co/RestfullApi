@@ -17,4 +17,28 @@ namespace SocialMedia.Infrastructure.Data
 
         }
     }
+    public class ActividadesSilviculturalesConfiguration : IEntityTypeConfiguration<ActividadesSilviculturales>
+    {
+
+        public void Configure(EntityTypeBuilder<ActividadesSilviculturales> builder)
+        {
+            builder.ToTable("ActividadesSilviculturales");
+
+            builder.HasKey(e => e.Id);
+            builder.Property(e => e.Id).HasColumnName("IdActividadesSilviculturales");
+
+        }
+    }
+    public class EspaciosPotencialesConfiguration : IEntityTypeConfiguration<EspaciosPotenciales>
+    {
+
+        public void Configure(EntityTypeBuilder<EspaciosPotenciales> builder)
+        {
+            builder.ToTable("EspaciosPotenciales");
+
+            builder.HasKey(e => e.Id);
+            builder.Property(e => e.Id).HasColumnName("IdEspaciosPotenciales");
+
+        }
+    }
 }
