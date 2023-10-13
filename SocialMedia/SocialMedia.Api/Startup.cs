@@ -46,7 +46,10 @@ namespace SocialMedia.Api
 
             //Use extentions methods from infraestructure Extentions.
             services.AddOptions(Configuration);
-            services.AddDbContexts(Configuration);
+
+            //services.AddDbContexts(Configuration);
+            services.AddDbContextsPostgress(Configuration);
+
             services.AddHangfire(Configuration);
             services.AddServices();
             services.AddSwagger($"{Assembly.GetExecutingAssembly().GetName().Name}.xml");

@@ -31,22 +31,26 @@ namespace SocialMedia.Infrastructure.Extentions
             var engine = configuration["Database:Engine"];
             var connectionStringName = "MyConn"; // Asumiendo que quieres usar la misma cadena de conexión para ambos
 
-            if (engine == "SqlServer")
-            {
                 services.AddDbContext<SocialMediaContext>(options =>
                     options.UseSqlServer(configuration.GetConnectionString(connectionStringName))
-                );
-            }
-            else if (engine == "Postgres")
-            {
-                services.AddDbContext<SocialMediaContext>(options =>
-                    options.UseNpgsql(configuration.GetConnectionString(connectionStringName))
-                );
-            }
-            else
-            {
-                throw new Exception("Database engine not supported");
-            }
+           
+            return services;
+        }
+
+        /// <summary>
+        /// Use to change form Sqlserver o Postgres
+        /// </summary>
+        /// <param name="services"></param>
+        /// <param name="configuration"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        public static IServiceCollection AddDbContextsPostgress(this IServiceCollection services, IConfiguration configuration)
+        {
+            var connectionStringName = "MyConn";
+
+            services.AddDbContext<SocialMediaContext>(options =>
+                options.UseNpgsql(configuration.GetConnectionString(connectionStringName))
+            );
 
             return services;
         }
