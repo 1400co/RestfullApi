@@ -196,6 +196,11 @@ namespace SocialMedia.Infrastructure.Migrations
                 columns: new[] { "IdUsuario", "BornDate", "Email", "FullName", "IsActive", "Phone", "Subscription" },
                 values: new object[] { new Guid("53aeeca4-a5b1-4751-abcb-3207a01b97dc"), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "oruedar@yopmail.com", "Oscar", true, null, 0 });
 
+            migrationBuilder.InsertData(
+                table: "Seguridad",
+                columns: new[] { "IdSeguridad", "Password", "RefreshToken", "RefreshTokenExpiryTime", "Rol", "UserId", "UserName" },
+                values: new object[] { new Guid("93f1d72e-0084-4e43-8402-aedb42af4ea9"), "10000.mmlVX3xzYuLQromOzqELBQ==.JIwrJbVGsgYiTMjqWqcvulmXk8Fv6c7hxbl8mEqixTI=", null, null, "Administrator", new Guid("53aeeca4-a5b1-4751-abcb-3207a01b97dc"), "admin" });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Comentario_IdPublicacion",
                 table: "Comentario",

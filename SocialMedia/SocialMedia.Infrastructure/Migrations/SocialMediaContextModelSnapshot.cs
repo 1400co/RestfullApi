@@ -200,6 +200,16 @@ namespace SocialMedia.Infrastructure.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Seguridad", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("93f1d72e-0084-4e43-8402-aedb42af4ea9"),
+                            Password = "10000.mmlVX3xzYuLQromOzqELBQ==.JIwrJbVGsgYiTMjqWqcvulmXk8Fv6c7hxbl8mEqixTI=",
+                            Role = "Administrator",
+                            UserId = new Guid("53aeeca4-a5b1-4751-abcb-3207a01b97dc"),
+                            UserName = "admin"
+                        });
                 });
 
             modelBuilder.Entity("SocialMedia.Core.Entities.User", b =>

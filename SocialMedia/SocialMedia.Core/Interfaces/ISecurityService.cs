@@ -7,5 +7,6 @@ namespace SocialMedia.Core.Interfaces
     {
         Task<Security> GetLoginByCredentials(UserLoginDto userLogin);
         Task RegisterUser(Security security);
+        Task UpdateRefreshToken(string userName, string refreshToken);
     }
 }

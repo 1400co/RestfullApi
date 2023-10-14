@@ -9,6 +9,8 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using TransforSerPu.Core.Dtos;
+using TransforSerPu.Core.Interfaces;
 
 namespace SocialMedia.Api.Controllers
 {
@@ -19,12 +21,14 @@ namespace SocialMedia.Api.Controllers
         private readonly IConfiguration _configuration;
         private readonly ISecurityService _securityService;
         private readonly IPasswordService _passwordService;
+        private readonly ITokenService _tokenService;
 
-        public TokenController(IConfiguration configuration, ISecurityService securityService, IPasswordService passwordService)
+        public TokenController(IConfiguration configuration, ISecurityService securityService, IPasswordService passwordService, ITokenService tokenService)
         {
             _configuration = configuration;
             _securityService = securityService;
             _passwordService = passwordService;
+            _tokenService = tokenService;
         }
 
         [HttpPost]
@@ -38,6 +42,31 @@ namespace SocialMedia.Api.Controllers
             }
 
             return NotFound();
+        }
+
+        [HttpPost]
+        [Route("RenewToken")]
+        public async Task<IActionResult> RenewToken(TokenDto tokenApiModel)
+        {
+            if (tokenApiModel is null)
+                return BadRequest("Invalid client request");
+
+            var result = await this._tokenService.RenewToken(tokenApiModel);
+
+            return Ok(result);
+        }
+
+        [HttpPost]
+        [Route("revoke")]
+        public async Task<IActionResult> Revoke()
+        {
+            var username = User.Identity.Name;
+            var user = await _securityService.GetLoginByCredentials(new UserLoginDto() { User = username });
+            if (user == null) return BadRequest();
+
+            await _securityService.UpdateRefreshToken(username, null);
+
+            return NoContent();
         }
 
         private async Task<(bool, Security)> ValidateUser(UserLoginDto login)
@@ -70,7 +99,7 @@ namespace SocialMedia.Api.Controllers
                 _configuration["Authentication:Audience"],
                 claims,
                 DateTime.Now,
-                DateTime.UtcNow.AddMinutes(10)
+                DateTime.UtcNow.AddMinutes(1)
             );
 
             var token = new JwtSecurityToken(header, payload);

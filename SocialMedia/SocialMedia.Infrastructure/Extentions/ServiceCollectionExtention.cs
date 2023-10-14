@@ -14,6 +14,8 @@ using SocialMedia.Infrastructure.Services;
 using System;
 using Hangfire;
 using System.IO;
+using TransforSerPu.Core.Interfaces;
+using Hangfire.PostgreSql;
 
 namespace SocialMedia.Infrastructure.Extentions
 {
@@ -33,7 +35,7 @@ namespace SocialMedia.Infrastructure.Extentions
 
             services.AddDbContext<SocialMediaContext>(options =>
                 options.UseSqlServer(configuration.GetConnectionString(connectionStringName)));
-           
+
             return services;
         }
 
@@ -62,7 +64,8 @@ namespace SocialMedia.Infrastructure.Extentions
             .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
             .UseSimpleAssemblyNameTypeSerializer()
             .UseRecommendedSerializerSettings()
-            .UseSqlServerStorage(configurations.GetConnectionString("MyConn")));
+            .UsePostgreSqlStorage(configurations.GetConnectionString("MyConn")));
+            //.UseSqlServerStorage(configurations.GetConnectionString("MyConn")));
 
             services.AddHangfireServer(); //Comment if web app will only create jobs for another service 
 
@@ -73,13 +76,14 @@ namespace SocialMedia.Infrastructure.Extentions
         {
             services.Configure<PaginationOptions>(options => configuration.GetSection("Pagination").Bind(options));
             services.Configure<PasswordOptions>(options => configuration.GetSection("PasswordOptions").Bind(options));
-            services.Configure<EngineOptions>(options => configuration.GetSection("Database").Bind(options));
+            services.Configure<AuthenticationOptions>(options => configuration.GetSection("Authentication").Bind(options));
 
             return services;
         }
 
         public static IServiceCollection AddServices(this IServiceCollection services)
         {
+            services.AddTransient<ITokenService, TokenService>();
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<IUserInRolesService, UserInRolesService>();
             services.AddTransient<IRolModuleService, RolModuleService>();
@@ -117,8 +121,8 @@ namespace SocialMedia.Infrastructure.Extentions
                     Description = "Bearer Token",
                     Name = "Authorization",
                     In = ParameterLocation.Header,
-                    Type = SecuritySchemeType.ApiKey,
-                    Scheme = "Bearer"
+                    Type = SecuritySchemeType.Http,
+                    Scheme = "bearer"
                 });
 
                 // Agregar el esquema de seguridad a los documentos Swagger
@@ -131,7 +135,10 @@ namespace SocialMedia.Infrastructure.Extentions
                             {
                                 Type = ReferenceType.SecurityScheme,
                                 Id = "Bearer"
-                            }
+                            },
+                            Scheme = "oauth2",
+                            Name = "Bearer",
+                            In = ParameterLocation.Header
                         },
                         new string[] { }
                     }
