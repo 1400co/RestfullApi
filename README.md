@@ -24,3 +24,9 @@
 22. Added Insert and updates with lists to Base Repository
 23. Added includes to Base Repository on Get and GetById
 24. Replaced int to Guid on Id's
+25. Added support for Postgress EF
+26. Added Refresh Token
+
+
+Special thanks to 
+@force4Win - Alvaro Andres Obregon.
