@@ -62,7 +62,7 @@ namespace SocialMedia.Infrastructure.Extentions
             .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
             .UseSimpleAssemblyNameTypeSerializer()
             .UseRecommendedSerializerSettings()
-            .UseSqlServerStorage(configurations.GetConnectionString("SocialMedia")));
+            .UseSqlServerStorage(configurations.GetConnectionString("MyConn")));
 
             services.AddHangfireServer(); //Comment if web app will only create jobs for another service 
 
