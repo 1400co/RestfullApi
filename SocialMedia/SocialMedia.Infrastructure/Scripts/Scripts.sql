@@ -2,6 +2,8 @@
 
 --Instalar EF
 --dotnet tool install --global dotnet-ef
+--dotnet tool update --global dotnet-ef
+
 
 --Instalar EF design
 --dotnet add package Microsoft.EntityFrameworkCore.Design --version 6.0.5
@@ -11,3 +13,4 @@
 
 --Ejecutar migraciones
 --dotnet ef database update
+
