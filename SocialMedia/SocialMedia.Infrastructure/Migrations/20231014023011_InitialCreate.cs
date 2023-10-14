@@ -12,46 +12,6 @@ namespace SocialMedia.Infrastructure.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Coordenada",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    X = table.Column<string>(type: "text", nullable: true),
-                    Y = table.Column<string>(type: "text", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Coordenada", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "EspaciosPotenciales",
-                columns: table => new
-                {
-                    IdEspaciosPotenciales = table.Column<Guid>(type: "uuid", nullable: false),
-                    AreasDisponibles = table.Column<decimal>(type: "numeric", nullable: false),
-                    TipoEmplazamiento = table.Column<string>(type: "text", nullable: true),
-                    EspeciesPotencialesParaSiembraAlMenosTresOpciones = table.Column<string>(type: "text", nullable: true),
-                    AlturasPotencialesArboles = table.Column<decimal>(type: "numeric", nullable: false),
-                    CaracteristicasEdaficasODelSuelo = table.Column<decimal>(type: "numeric", nullable: false),
-                    TresBolillo = table.Column<bool>(type: "boolean", nullable: false),
-                    Cuadrado = table.Column<bool>(type: "boolean", nullable: false),
-                    Rectangular = table.Column<bool>(type: "boolean", nullable: false),
-                    IndividualOUno = table.Column<bool>(type: "boolean", nullable: false),
-                    DistanciamientoSiembra = table.Column<decimal>(type: "numeric", nullable: false),
-                    InfraestructuraAfectada = table.Column<string>(type: "text", nullable: true),
-                    CoordenadasGeograficasYPlanas = table.Column<decimal>(type: "numeric", nullable: false),
-                    PendienteDelTerreno = table.Column<string>(type: "text", nullable: true),
-                    Barrio = table.Column<string>(type: "text", nullable: true),
-                    Comuna = table.Column<string>(type: "text", nullable: true),
-                    AltitudASNM = table.Column<decimal>(type: "numeric", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_EspaciosPotenciales", x => x.IdEspaciosPotenciales);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Roles",
                 columns: table => new
                 {
@@ -92,52 +52,6 @@ namespace SocialMedia.Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Usuario", x => x.IdUsuario);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "CensoArboreo",
-                columns: table => new
-                {
-                    IdCensoArboreo = table.Column<Guid>(type: "uuid", nullable: false),
-                    AlturaTotal = table.Column<decimal>(type: "numeric", nullable: false),
-                    AlturaComercial = table.Column<decimal>(type: "numeric", nullable: false),
-                    DiametroCopa = table.Column<decimal>(type: "numeric", nullable: false),
-                    FormaCopa = table.Column<string>(type: "text", nullable: true),
-                    DAP = table.Column<decimal>(type: "numeric", nullable: false),
-                    NumeroFustes = table.Column<decimal>(type: "numeric", nullable: false),
-                    NombreComun = table.Column<string>(type: "text", nullable: true),
-                    NombreCientifico = table.Column<string>(type: "text", nullable: true),
-                    Orden = table.Column<string>(type: "text", nullable: true),
-                    Familia = table.Column<string>(type: "text", nullable: true),
-                    Genero = table.Column<string>(type: "text", nullable: true),
-                    Especie = table.Column<string>(type: "text", nullable: true),
-                    CoordenadasGeograficasYPlanasId = table.Column<Guid>(type: "uuid", nullable: true),
-                    AltitudASNM = table.Column<decimal>(type: "numeric", nullable: false),
-                    EstadoFitosanitario = table.Column<string>(type: "text", nullable: true),
-                    EstadoMadurez = table.Column<string>(type: "text", nullable: true),
-                    TipoIndividuo = table.Column<string>(type: "text", nullable: true),
-                    Barrio = table.Column<string>(type: "text", nullable: true),
-                    Comuna = table.Column<string>(type: "text", nullable: true),
-                    TipoEmplazamiento = table.Column<string>(type: "text", nullable: true),
-                    InfraestructuraAfectada = table.Column<string>(type: "text", nullable: true),
-                    ApendiceCites = table.Column<bool>(type: "boolean", nullable: false),
-                    CategoriaUicn = table.Column<bool>(type: "boolean", nullable: false),
-                    CategoriaMinisterioResolucion0192de2014 = table.Column<bool>(type: "boolean", nullable: false),
-                    EspecieEndemica = table.Column<bool>(type: "boolean", nullable: false),
-                    Origen = table.Column<string>(type: "text", nullable: true),
-                    Observacion = table.Column<string>(type: "text", nullable: true),
-                    Fecha = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    RecomendacionesParaManejoSilvicultural = table.Column<string>(type: "text", nullable: true),
-                    Ninguna = table.Column<string>(type: "text", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_CensoArboreo", x => x.IdCensoArboreo);
-                    table.ForeignKey(
-                        name: "FK_CensoArboreo_Coordenada_CoordenadasGeograficasYPlanasId",
-                        column: x => x.CoordenadasGeograficasYPlanasId,
-                        principalTable: "Coordenada",
-                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -252,70 +166,6 @@ namespace SocialMedia.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ActividadesSilviculturales",
-                columns: table => new
-                {
-                    IdActividadesSilviculturales = table.Column<Guid>(type: "uuid", nullable: false),
-                    IdCensoArboreo = table.Column<Guid>(type: "uuid", nullable: false),
-                    CensoArboreoId = table.Column<Guid>(type: "uuid", nullable: true),
-                    PodaRealceR = table.Column<bool>(type: "boolean", nullable: false),
-                    PodaEstabilidadE = table.Column<bool>(type: "boolean", nullable: false),
-                    PodaMantenimientoM = table.Column<bool>(type: "boolean", nullable: false),
-                    CortesNuevos = table.Column<bool>(type: "boolean", nullable: false),
-                    CortesViejos = table.Column<bool>(type: "boolean", nullable: false),
-                    CortesEnfermos = table.Column<bool>(type: "boolean", nullable: false),
-                    PodaRaices = table.Column<bool>(type: "boolean", nullable: false),
-                    EstructurasCercanasTipoEmplazamiento = table.Column<string>(type: "text", nullable: true),
-                    Limpieza = table.Column<string>(type: "text", nullable: true),
-                    PodaSanitaria = table.Column<string>(type: "text", nullable: true),
-                    InmediataI = table.Column<bool>(type: "boolean", nullable: false),
-                    CortoPlazoC = table.Column<bool>(type: "boolean", nullable: false),
-                    LargoPlazoL = table.Column<bool>(type: "boolean", nullable: false),
-                    Trasplante = table.Column<bool>(type: "boolean", nullable: false),
-                    Observacion = table.Column<string>(type: "text", nullable: true),
-                    CensoId = table.Column<Guid>(type: "uuid", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ActividadesSilviculturales", x => x.IdActividadesSilviculturales);
-                    table.ForeignKey(
-                        name: "FK_ActividadesSilviculturales_CensoArboreo_CensoArboreoId",
-                        column: x => x.CensoArboreoId,
-                        principalTable: "CensoArboreo",
-                        principalColumn: "IdCensoArboreo");
-                    table.ForeignKey(
-                        name: "FK_ActividadesSilviculturales_CensoArboreo_CensoId",
-                        column: x => x.CensoId,
-                        principalTable: "CensoArboreo",
-                        principalColumn: "IdCensoArboreo");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "RegistroFotografico",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Url = table.Column<string>(type: "text", nullable: true),
-                    Name = table.Column<string>(type: "text", nullable: true),
-                    CensoArboreoId = table.Column<Guid>(type: "uuid", nullable: true),
-                    EspaciosPotencialesId = table.Column<Guid>(type: "uuid", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_RegistroFotografico", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_RegistroFotografico_CensoArboreo_CensoArboreoId",
-                        column: x => x.CensoArboreoId,
-                        principalTable: "CensoArboreo",
-                        principalColumn: "IdCensoArboreo");
-                    table.ForeignKey(
-                        name: "FK_RegistroFotografico_EspaciosPotenciales_EspaciosPotenciales~",
-                        column: x => x.EspaciosPotencialesId,
-                        principalTable: "EspaciosPotenciales",
-                        principalColumn: "IdEspaciosPotenciales");
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Comentario",
                 columns: table => new
                 {
@@ -347,21 +197,6 @@ namespace SocialMedia.Infrastructure.Migrations
                 values: new object[] { new Guid("53aeeca4-a5b1-4751-abcb-3207a01b97dc"), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "oruedar@yopmail.com", "Oscar", true, null, 0 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_ActividadesSilviculturales_CensoArboreoId",
-                table: "ActividadesSilviculturales",
-                column: "CensoArboreoId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ActividadesSilviculturales_CensoId",
-                table: "ActividadesSilviculturales",
-                column: "CensoId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_CensoArboreo_CoordenadasGeograficasYPlanasId",
-                table: "CensoArboreo",
-                column: "CoordenadasGeograficasYPlanasId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Comentario_IdPublicacion",
                 table: "Comentario",
                 column: "IdPublicacion");
@@ -380,16 +215,6 @@ namespace SocialMedia.Infrastructure.Migrations
                 name: "IX_Publicacion_UserId",
                 table: "Publicacion",
                 column: "UserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_RegistroFotografico_CensoArboreoId",
-                table: "RegistroFotografico",
-                column: "CensoArboreoId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_RegistroFotografico_EspaciosPotencialesId",
-                table: "RegistroFotografico",
-                column: "EspaciosPotencialesId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_RolModule_IdRol",
@@ -416,16 +241,10 @@ namespace SocialMedia.Infrastructure.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "ActividadesSilviculturales");
-
-            migrationBuilder.DropTable(
                 name: "Comentario");
 
             migrationBuilder.DropTable(
                 name: "PasswordRecovery");
-
-            migrationBuilder.DropTable(
-                name: "RegistroFotografico");
 
             migrationBuilder.DropTable(
                 name: "RolModule");
@@ -443,19 +262,10 @@ namespace SocialMedia.Infrastructure.Migrations
                 name: "Publicacion");
 
             migrationBuilder.DropTable(
-                name: "CensoArboreo");
-
-            migrationBuilder.DropTable(
-                name: "EspaciosPotenciales");
-
-            migrationBuilder.DropTable(
                 name: "Roles");
 
             migrationBuilder.DropTable(
                 name: "Usuario");
-
-            migrationBuilder.DropTable(
-                name: "Coordenada");
         }
     }
 }

@@ -47,8 +47,8 @@ namespace SocialMedia.Api
             //Use extentions methods from infraestructure Extentions.
             services.AddOptions(Configuration);
 
-            //services.AddDbContexts(Configuration);
-            services.AddDbContextsPostgress(Configuration);
+            //services.AddDbContexts(Configuration); //SqlServer
+            services.AddDbContextsPostgress(Configuration); //Postgress
 
             services.AddHangfire(Configuration);
             services.AddServices();

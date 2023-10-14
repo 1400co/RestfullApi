@@ -31,8 +31,8 @@ namespace SocialMedia.Infrastructure.Extentions
             var engine = configuration["Database:Engine"];
             var connectionStringName = "MyConn"; // Asumiendo que quieres usar la misma cadena de conexión para ambos
 
-                services.AddDbContext<SocialMediaContext>(options =>
-                    options.UseSqlServer(configuration.GetConnectionString(connectionStringName))
+            services.AddDbContext<SocialMediaContext>(options =>
+                options.UseSqlServer(configuration.GetConnectionString(connectionStringName)));
            
             return services;
         }

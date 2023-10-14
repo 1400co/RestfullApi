@@ -1,20 +1,15 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using SocialMedia.Core.Entities;
-using System.Reflection;
-using Microsoft.Extensions.Configuration;
-using System.IO;
-using SocialMedia.Core.CustomEntities;
-using SocialMedia.Infrastructure.Options;
 using Microsoft.Extensions.Options;
+using SocialMedia.Core.Entities;
+using SocialMedia.Infrastructure.Options;
+using System.Reflection;
 
 namespace SocialMedia.Infrastructure.Data
 {
     public partial class SocialMediaContext : DbContext
     {
-        private readonly EngineOptions _engineOptions;
-        public SocialMediaContext(IOptions<EngineOptions> engineOptions)
+        public SocialMediaContext()
         {
-            _engineOptions = engineOptions.Value;
         }
 
         public SocialMediaContext(DbContextOptions<SocialMediaContext> options)
@@ -32,19 +27,14 @@ namespace SocialMedia.Infrastructure.Data
         public virtual DbSet<Security> Security { get; set; }
         public virtual DbSet<UserLogin> UserLogin { get; set; }
 
+        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        //{
+        //    optionsBuilder.UseSqlServer("Server=localhost;Initial Catalog=SocialMedia;Persist Security Info=False;User ID=sa;Password=Pass@Word;Connection Timeout=30;TrustServerCertificate=True");
+        //}
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            if (!optionsBuilder.IsConfigured)
-            {
-                if (_engineOptions.Engine == EngineType.SqlServer)
-                {
-                    optionsBuilder.UseSqlServer("Server=localhost;Initial Catalog=SocialMedia;Persist Security Info=False;User ID=sa;Password=Pass@Word;Connection Timeout=30;TrustServerCertificate=True");
-                }
-                else
-                {
-                    optionsBuilder.UseNpgsql("host=localhost;port=5432;database=SocialMedia;username=postgres;password=Pass@Word");
-                }
-            }
+            optionsBuilder.UseNpgsql("host=localhost;port=5432;database=SocialMedia;username=opinor_crm;password=opinor_crm");
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
