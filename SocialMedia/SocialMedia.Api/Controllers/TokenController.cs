@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using SocialMedia.Core.Entities;
 using SocialMedia.Core.Interfaces;
 using SocialMedia.Infrastructure.Interfaces;
 using System;
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -23,25 +25,64 @@ namespace SocialMedia.Api.Controllers
         private readonly IPasswordService _passwordService;
         private readonly ITokenService _tokenService;
 
+        private string issuer;
+        private string audience;
+        private string secret;
+
         public TokenController(IConfiguration configuration, ISecurityService securityService, IPasswordService passwordService, ITokenService tokenService)
         {
             _configuration = configuration;
             _securityService = securityService;
             _passwordService = passwordService;
             _tokenService = tokenService;
+
+            issuer = _configuration["Authentication:Issuer"];
+            audience = _configuration["Authentication:Audience"];
+            secret = _configuration["Authentication:SecretKey"];
         }
 
         [HttpPost]
         public async Task<IActionResult> GetToken(UserLoginDto login)
         {
-            //If valid user
-            var result = await ValidateUser(login);
-            if (result.Item1)
+            try
             {
-                return Ok(new { Token = GenerateToken(result.Item2) });
-            }
+                if (login is null)
+                {
+                    return BadRequest("Invalid client request");
+                }
 
-            return NotFound();
+                //If valid user
+                var result = await ValidateUser(login);
+
+                if (!result.Item1)
+                {
+                    return Unauthorized();
+                }
+
+                var security = result.Item2;
+
+                var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Name, security.UserName),
+                    new Claim(ClaimTypes.Role, security.Role.ToString()),
+            };
+                var accessToken = _tokenService.GenerateAccessToken(claims, issuer, audience, secret);
+                var refreshToken = _tokenService.GenerateRefreshToken();
+
+                await _securityService.UpdateRefreshToken(security.UserName, refreshToken);
+
+                return Ok(new AuthenticatedResponse
+                {
+                    AuthToken = accessToken,
+                    RefreshToken = refreshToken,
+                    UserId = security.Id,
+                    UserName = security.UserName,
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpPost]
@@ -99,7 +140,7 @@ namespace SocialMedia.Api.Controllers
                 _configuration["Authentication:Audience"],
                 claims,
                 DateTime.Now,
-                DateTime.UtcNow.AddMinutes(1)
+                DateTime.Now.AddMinutes(1)
             );
 
             var token = new JwtSecurityToken(header, payload);

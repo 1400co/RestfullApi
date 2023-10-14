@@ -1,5 +1,6 @@
 ﻿using SocialMedia.Core.Entities;
 using SocialMedia.Core.Interfaces;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -31,7 +32,7 @@ namespace SocialMedia.Core.Services
                 .Get().Where(x => x.UserName == userName).FirstOrDefault();
 
             sec.RefreshToken = refreshToken;
-            sec.RefreshTokenExpiryTime = System.DateTime.Now.AddDays(7);
+            sec.RefreshTokenExpiryTime = DateTime.Now.AddDays(7);
 
             await _unitOfWork.SecurityRepository.Update(sec);
             await _unitOfWork.SaveChangesAsync();

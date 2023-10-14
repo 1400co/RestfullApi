@@ -1,11 +1,6 @@
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace SocialMedia.Api
 {
@@ -13,6 +8,9 @@ namespace SocialMedia.Api
     {
         public static void Main(string[] args)
         {
+            //Enable postgress datetime.now
+            AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+
             CreateHostBuilder(args).Build().Run();
         }
 

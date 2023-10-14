@@ -40,6 +40,8 @@ namespace SocialMedia.Core.Services
             secret = _authenticationOptions.SecretKey;
         }
 
+        
+
         public async Task<AuthenticatedResponse> RenewToken(TokenDto tokenApiModel)
         {
             string accessToken = tokenApiModel.AccessToken;
