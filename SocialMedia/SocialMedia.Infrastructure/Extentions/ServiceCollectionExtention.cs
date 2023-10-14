@@ -80,6 +80,12 @@ namespace SocialMedia.Infrastructure.Extentions
 
         public static IServiceCollection AddServices(this IServiceCollection services)
         {
+            services.AddTransient<IUserService, UserService>();
+            services.AddTransient<IUserInRolesService, UserInRolesService>();
+            services.AddTransient<IRolModuleService, RolModuleService>();
+            services.AddTransient<IRolesService, RolesService>();
+            services.AddTransient<IPasswordRecoveryService, PasswordRecoveryService>();
+            services.AddTransient<ICommentService, CommentService>();
             services.AddTransient<IPostService, PostService>();
             services.AddTransient<ISecurityService, SecurityService>();
             services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
