@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
@@ -11,6 +12,24 @@ namespace SocialMedia.Infrastructure.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "AuditLogs",
+                columns: table => new
+                {
+                    AuditLogId = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    TableName = table.Column<string>(type: "text", nullable: true),
+                    ActionType = table.Column<string>(type: "text", nullable: true),
+                    Timestamp = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    KeyValues = table.Column<string>(type: "text", nullable: true),
+                    OldValues = table.Column<string>(type: "text", nullable: true),
+                    NewValues = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AuditLogs", x => x.AuditLogId);
+                });
+
             migrationBuilder.CreateTable(
                 name: "Roles",
                 columns: table => new
@@ -199,7 +218,7 @@ namespace SocialMedia.Infrastructure.Migrations
             migrationBuilder.InsertData(
                 table: "Seguridad",
                 columns: new[] { "IdSeguridad", "Password", "RefreshToken", "RefreshTokenExpiryTime", "Rol", "UserId", "UserName" },
-                values: new object[] { new Guid("93f1d72e-0084-4e43-8402-aedb42af4ea9"), "10000.mmlVX3xzYuLQromOzqELBQ==.JIwrJbVGsgYiTMjqWqcvulmXk8Fv6c7hxbl8mEqixTI=", null, null, "Administrator", new Guid("53aeeca4-a5b1-4751-abcb-3207a01b97dc"), "admin" });
+                values: new object[] { new Guid("54499cd0-48df-44a6-b7ac-119e4f5ce239"), "10000.mmlVX3xzYuLQromOzqELBQ==.JIwrJbVGsgYiTMjqWqcvulmXk8Fv6c7hxbl8mEqixTI=", null, null, "Administrator", new Guid("53aeeca4-a5b1-4751-abcb-3207a01b97dc"), "admin" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Comentario_IdPublicacion",
@@ -245,6 +264,9 @@ namespace SocialMedia.Infrastructure.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "AuditLogs");
+
             migrationBuilder.DropTable(
                 name: "Comentario");
 

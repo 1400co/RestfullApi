@@ -33,7 +33,8 @@ namespace SocialMedia.Infrastructure.Data.Configurations
                     UserId = new Guid("53aeeca4-a5b1-4751-abcb-3207a01b97dc"),
                     UserName = "admin",
                     Role = 0,
-                    Password = "10000.mmlVX3xzYuLQromOzqELBQ==.JIwrJbVGsgYiTMjqWqcvulmXk8Fv6c7hxbl8mEqixTI="
+                    Password = "10000.mmlVX3xzYuLQromOzqELBQ==.JIwrJbVGsgYiTMjqWqcvulmXk8Fv6c7hxbl8mEqixTI=",
+
                 }
                 );
         }

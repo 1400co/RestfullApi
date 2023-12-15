@@ -1,10 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SocialMedia.Core.Entities;
-using SocialMedia.Core.Entities;
-using System;
 
-namespace SocialMedia.Infrastructure.Data
+namespace SocialMedia.Infrastructure.Data.Configurations
 {
     public class RolModuleConfiguration : IEntityTypeConfiguration<RolModule>
     {
@@ -15,11 +13,11 @@ namespace SocialMedia.Infrastructure.Data
             builder.HasKey(e => e.Id);
             builder.Property(e => e.Id).HasColumnName("IdRolModule");
 
-            builder.Property(e => e.Listed).HasColumnName("Listed").HasDefaultValue<bool>(false);
-            builder.Property(e => e.Created).HasColumnName("Created").HasDefaultValue<bool>(false);
-            builder.Property(e => e.Edited).HasColumnName("Edited").HasDefaultValue<bool>(false);
-            builder.Property(e => e.Deleted).HasColumnName("Deleted").HasDefaultValue<bool>(false);
-            builder.Property(e => e.Printed).HasColumnName("Printed").HasDefaultValue<bool>(false);
+            builder.Property(e => e.Listed).HasColumnName("Listed").HasDefaultValue(false);
+            builder.Property(e => e.Created).HasColumnName("Created").HasDefaultValue(false);
+            builder.Property(e => e.Edited).HasColumnName("Edited").HasDefaultValue(false);
+            builder.Property(e => e.Deleted).HasColumnName("Deleted").HasDefaultValue(false);
+            builder.Property(e => e.Printed).HasColumnName("Printed").HasDefaultValue(false);
 
             builder.HasOne(d => d.Rol)
                 .WithMany(p => p.RolModules)

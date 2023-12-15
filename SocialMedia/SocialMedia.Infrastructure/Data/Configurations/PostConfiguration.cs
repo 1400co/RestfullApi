@@ -1,9 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SocialMedia.Core.Entities;
-using System;
 
-namespace SocialMedia.Infrastructure.Data
+namespace SocialMedia.Infrastructure.Data.Configurations
 {
     public class PostConfiguration : IEntityTypeConfiguration<Post>
     {
@@ -23,7 +22,7 @@ namespace SocialMedia.Infrastructure.Data
                 .OnDelete(DeleteBehavior.NoAction)
                 .HasConstraintName("FK_Publicacion_Usuario");
 
-            
+
         }
     }
 }

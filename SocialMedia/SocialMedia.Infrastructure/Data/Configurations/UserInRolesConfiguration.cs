@@ -4,7 +4,7 @@ using SocialMedia.Core.Entities;
 using SocialMedia.Core.Entities;
 using System;
 
-namespace SocialMedia.Infrastructure.Data
+namespace SocialMedia.Infrastructure.Data.Configurations
 {
     public class UserInRolesConfiguration : IEntityTypeConfiguration<UserInRoles>
     {

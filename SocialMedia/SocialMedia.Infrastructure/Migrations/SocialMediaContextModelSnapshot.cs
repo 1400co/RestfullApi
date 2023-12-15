@@ -17,10 +17,41 @@ namespace SocialMedia.Infrastructure.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.11")
+                .HasAnnotation("ProductVersion", "8.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
+            modelBuilder.Entity("SocialMedia.Core.CustomEntities.AuditLog", b =>
+                {
+                    b.Property<int>("AuditLogId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("AuditLogId"));
+
+                    b.Property<string>("ActionType")
+                        .HasColumnType("text");
+
+                    b.Property<string>("KeyValues")
+                        .HasColumnType("text");
+
+                    b.Property<string>("NewValues")
+                        .HasColumnType("text");
+
+                    b.Property<string>("OldValues")
+                        .HasColumnType("text");
+
+                    b.Property<string>("TableName")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("Timestamp")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("AuditLogId");
+
+                    b.ToTable("AuditLogs");
+                });
 
             modelBuilder.Entity("SocialMedia.Core.Entities.Comment", b =>
                 {
@@ -204,7 +235,7 @@ namespace SocialMedia.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("93f1d72e-0084-4e43-8402-aedb42af4ea9"),
+                            Id = new Guid("54499cd0-48df-44a6-b7ac-119e4f5ce239"),
                             Password = "10000.mmlVX3xzYuLQromOzqELBQ==.JIwrJbVGsgYiTMjqWqcvulmXk8Fv6c7hxbl8mEqixTI=",
                             Role = "Administrator",
                             UserId = new Guid("53aeeca4-a5b1-4751-abcb-3207a01b97dc"),

@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SocialMedia.Core.Entities;
 
-namespace SocialMedia.Infrastructure.Data
+namespace SocialMedia.Infrastructure.Data.Configurations
 {
     public class CommentConfiguration : IEntityTypeConfiguration<Comment>
     {
@@ -34,7 +34,7 @@ namespace SocialMedia.Infrastructure.Data
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Comentario_Usuario");
 
-         
+
         }
     }
 }

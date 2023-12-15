@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
+using Serilog;
 using SocialMedia.Infrastructure.Extentions;
 using SocialMedia.Infrastructure.Filters;
 using System;
@@ -91,6 +92,8 @@ namespace SocialMedia.Api
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseSerilogRequestLogging();
 
             app.UseHttpsRedirection();
 
