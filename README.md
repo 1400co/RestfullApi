@@ -24,9 +24,13 @@
 22. Added Insert and updates with lists to Base Repository
 23. Added includes to Base Repository on Get and GetById
 24. Replaced int to Guid on Id's
-25. Added Serilog
-26. updated to .net Core 8
-27. added postgress support
-28. added audit historic changes to all models
-29. added auth to swagger
-30. added auth and permissions entities
+25. Added support for Postgress EF
+26. Added Refresh Token
+27. Added Serilog
+28. updated to .net Core 8
+29. added audit historic changes to all models
+30. added auth to swagger
+31. added auth and permissions entities
+
+Special thanks to 
+@force4Win - Alvaro Andres Obregon.
