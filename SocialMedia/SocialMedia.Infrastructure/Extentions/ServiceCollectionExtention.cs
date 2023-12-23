@@ -67,7 +67,10 @@ namespace SocialMedia.Infrastructure.Extentions
             .UsePostgreSqlStorage(configurations.GetConnectionString("MyConn")));
             //.UseSqlServerStorage(configurations.GetConnectionString("MyConn")));
 
-            services.AddHangfireServer(); //Comment if web app will only create jobs for another service 
+            services.AddHangfireServer(options =>
+            {
+                options.WorkerCount = 1;
+            }); //Comment if web app will only create jobs for another service 
 
             return services;
         }

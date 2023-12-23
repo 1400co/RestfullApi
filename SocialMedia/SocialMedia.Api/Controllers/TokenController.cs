@@ -118,34 +118,5 @@ namespace SocialMedia.Api.Controllers
             return (isValid, user);
         }
 
-        private string GenerateToken(Security security)
-        {
-            //Header
-            var symmetricSecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Authentication:SecretKey"]));
-            var signingCredentials = new SigningCredentials(symmetricSecurityKey, SecurityAlgorithms.HmacSha256);
-            var header = new JwtHeader(signingCredentials);
-
-            //Claims
-            var claims = new[]
-            {
-                new Claim(ClaimTypes.Name, security.UserName),
-                new Claim("User", security.UserName),
-                new Claim(ClaimTypes.Role, security.Role.ToString()),
-            };
-
-            //Payload
-            var payload = new JwtPayload
-            (
-                _configuration["Authentication:Issuer"],
-                _configuration["Authentication:Audience"],
-                claims,
-                DateTime.Now,
-                DateTime.Now.AddMinutes(1)
-            );
-
-            var token = new JwtSecurityToken(header, payload);
-
-            return new JwtSecurityTokenHandler().WriteToken(token);
-        }
     }
 }

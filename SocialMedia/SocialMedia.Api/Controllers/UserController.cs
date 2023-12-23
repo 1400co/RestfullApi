@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using Azure;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using SocialMedia.Api.Responses;
@@ -9,11 +9,10 @@ using SocialMedia.Core.Entities;
 using SocialMedia.Core.Interfaces;
 using SocialMedia.Core.QueryFilters;
 using SocialMedia.Infrastructure.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
-using System;
-using Microsoft.AspNetCore.Http;
 
 namespace SocialMedia.Api.Controllers
 {
@@ -24,12 +23,16 @@ namespace SocialMedia.Api.Controllers
         private readonly IUserService _userService;
         private readonly IMapper _mapper;
         private readonly IUriService _uriService;
+        private readonly ISecurityService _securityService;
+        private readonly IPasswordService _passwordService;
 
-        public UserController(IUserService userService, IMapper mapper, IUriService uriService)
+        public UserController(IUserService userService, IMapper mapper, IUriService uriService, ISecurityService securityService, IPasswordService passwordService)
         {
             _userService = userService;
             _mapper = mapper;
             _uriService = uriService;
+            _securityService = securityService;
+            _passwordService = passwordService;
         }
 
         [HttpGet(Name = nameof(GetUsers))]
@@ -66,12 +69,22 @@ namespace SocialMedia.Api.Controllers
             return Ok(response);
         }
 
-        [HttpPost]
         public async Task<IActionResult> Post(UserDto userDto)
         {
             var user = _mapper.Map<User>(userDto);
 
             await _userService.InsertUser(user);
+
+            var credential = new Security()
+            {
+                UserId = user.Id,
+                Role = Core.Enumerations.RoleType.Consumer,
+                UserName = userDto.UserName,
+                Password = _passwordService.Hash(userDto.Password),
+                RefreshTokenExpiryTime = DateTime.Now.AddHours(1),
+            };
+
+            await _securityService.RegisterUser(credential);
 
             userDto = _mapper.Map<UserDto>(user);
 

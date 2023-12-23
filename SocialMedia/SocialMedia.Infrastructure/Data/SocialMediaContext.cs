@@ -183,7 +183,8 @@ namespace SocialMedia.Infrastructure.Data
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseNpgsql("host=localhost;port=5432;database=SocialMedia;username=opinor_crm;password=opinor_crm");
+            optionsBuilder
+                .UseNpgsql("host=localhost;port=5432;database=SocialMedia;username=opinor_crm;password=opinor_crm");
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

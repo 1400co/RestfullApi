@@ -1,7 +1,10 @@
-﻿using SocialMedia.Core.Entities;
+﻿using SocialMedia.Core.CustomEntities;
+using SocialMedia.Core.Entities;
 using SocialMedia.Core.Exceptions;
 using SocialMedia.Core.Interfaces;
+using SocialMedia.Core.QueryFilters;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace SocialMedia.Core.Services
@@ -50,6 +53,25 @@ namespace SocialMedia.Core.Services
         {
             await _unitOfWork.PasswordRecoveryRepository.Delete(token);
             await _unitOfWork.SaveChangesAsync();
+        }
+
+        public async Task<PagedList<PasswordRecovery>> GetRecovery(GeneralQueryFilter filters)
+        {
+            var pRecovery = _unitOfWork.PasswordRecoveryRepository.Get();
+
+            // Set default pagination values or use provided filters
+            filters.PageNumber = filters.PageNumber;
+            filters.PageSize = filters.PageSize;
+
+            // Additional filtering logic if necessary
+            if (!string.IsNullOrEmpty(filters.Filter))
+            {
+                pRecovery = pRecovery.Where(x => x.User.FullName.ToLower().Contains(filters.Filter.ToLower()));
+            }
+
+            var pagedRecovery = await PagedList<PasswordRecovery>.CreateAsync(pRecovery, filters.PageNumber, filters.PageSize);
+
+            return pagedRecovery;
         }
     }
 

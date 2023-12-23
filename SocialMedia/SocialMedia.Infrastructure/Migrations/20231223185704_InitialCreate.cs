@@ -35,7 +35,9 @@ namespace SocialMedia.Infrastructure.Migrations
                 columns: table => new
                 {
                     IdRol = table.Column<Guid>(type: "uuid", nullable: false),
-                    RolName = table.Column<string>(type: "text", nullable: true)
+                    RolName = table.Column<string>(type: "text", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Responsable = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -49,7 +51,9 @@ namespace SocialMedia.Infrastructure.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     User = table.Column<string>(type: "text", nullable: true),
                     Password = table.Column<string>(type: "text", nullable: true),
-                    UserId = table.Column<Guid>(type: "uuid", nullable: false)
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Responsable = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -66,7 +70,9 @@ namespace SocialMedia.Infrastructure.Migrations
                     BornDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     Phone = table.Column<string>(type: "text", nullable: true),
                     IsActive = table.Column<bool>(type: "boolean", nullable: false),
-                    Subscription = table.Column<int>(type: "integer", nullable: false)
+                    Subscription = table.Column<int>(type: "integer", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Responsable = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -84,7 +90,9 @@ namespace SocialMedia.Infrastructure.Migrations
                     Listed = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false),
                     Deleted = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false),
                     Printed = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false),
-                    IdRol = table.Column<Guid>(type: "uuid", nullable: false)
+                    IdRol = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Responsable = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -103,7 +111,9 @@ namespace SocialMedia.Infrastructure.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     PasswordRecoveryToken = table.Column<Guid>(type: "uuid", nullable: false),
                     ExpiryDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UserId = table.Column<Guid>(type: "uuid", nullable: false)
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Responsable = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -122,9 +132,10 @@ namespace SocialMedia.Infrastructure.Migrations
                 {
                     IdPublicacion = table.Column<Guid>(type: "uuid", nullable: false),
                     UserId = table.Column<Guid>(type: "uuid", nullable: false),
-                    Date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     Description = table.Column<string>(type: "text", nullable: true),
-                    Image = table.Column<string>(type: "text", nullable: true)
+                    Image = table.Column<string>(type: "text", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Responsable = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -146,7 +157,9 @@ namespace SocialMedia.Infrastructure.Migrations
                     RefreshToken = table.Column<string>(type: "text", nullable: true),
                     RefreshTokenExpiryTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     Rol = table.Column<string>(type: "character varying(15)", maxLength: 15, nullable: false),
-                    UserId = table.Column<Guid>(type: "uuid", nullable: false)
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Responsable = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -166,7 +179,9 @@ namespace SocialMedia.Infrastructure.Migrations
                     IdUserInRoles = table.Column<Guid>(type: "uuid", nullable: false),
                     IdUser = table.Column<Guid>(type: "uuid", nullable: false),
                     IdRol = table.Column<Guid>(type: "uuid", nullable: false),
-                    RolId = table.Column<Guid>(type: "uuid", nullable: true)
+                    RolId = table.Column<Guid>(type: "uuid", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Responsable = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -193,7 +208,9 @@ namespace SocialMedia.Infrastructure.Migrations
                     Date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     IsActive = table.Column<bool>(type: "boolean", nullable: false),
                     IdPublicacion = table.Column<Guid>(type: "uuid", nullable: false),
-                    IdUsuario = table.Column<Guid>(type: "uuid", nullable: false)
+                    IdUsuario = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Responsable = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -212,13 +229,13 @@ namespace SocialMedia.Infrastructure.Migrations
 
             migrationBuilder.InsertData(
                 table: "Usuario",
-                columns: new[] { "IdUsuario", "BornDate", "Email", "FullName", "IsActive", "Phone", "Subscription" },
-                values: new object[] { new Guid("53aeeca4-a5b1-4751-abcb-3207a01b97dc"), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "oruedar@yopmail.com", "Oscar", true, null, 0 });
+                columns: new[] { "IdUsuario", "BornDate", "CreatedAt", "Email", "FullName", "IsActive", "Phone", "Responsable", "Subscription" },
+                values: new object[] { new Guid("53aeeca4-a5b1-4751-abcb-3207a01b97dc"), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2023, 12, 23, 18, 57, 4, 215, DateTimeKind.Utc).AddTicks(1080), "oruedar@yopmail.com", "Oscar", true, null, null, 0 });
 
             migrationBuilder.InsertData(
                 table: "Seguridad",
-                columns: new[] { "IdSeguridad", "Password", "RefreshToken", "RefreshTokenExpiryTime", "Rol", "UserId", "UserName" },
-                values: new object[] { new Guid("54499cd0-48df-44a6-b7ac-119e4f5ce239"), "10000.mmlVX3xzYuLQromOzqELBQ==.JIwrJbVGsgYiTMjqWqcvulmXk8Fv6c7hxbl8mEqixTI=", null, null, "Administrator", new Guid("53aeeca4-a5b1-4751-abcb-3207a01b97dc"), "admin" });
+                columns: new[] { "IdSeguridad", "CreatedAt", "Password", "RefreshToken", "RefreshTokenExpiryTime", "Responsable", "Rol", "UserId", "UserName" },
+                values: new object[] { new Guid("7c58cf3c-e0e5-44aa-812c-4fc26ccf16ac"), new DateTime(2023, 12, 23, 18, 57, 4, 214, DateTimeKind.Utc).AddTicks(9320), "10000.mmlVX3xzYuLQromOzqELBQ==.JIwrJbVGsgYiTMjqWqcvulmXk8Fv6c7hxbl8mEqixTI=", null, null, null, "Administrator", new Guid("53aeeca4-a5b1-4751-abcb-3207a01b97dc"), "admin" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Comentario_IdPublicacion",

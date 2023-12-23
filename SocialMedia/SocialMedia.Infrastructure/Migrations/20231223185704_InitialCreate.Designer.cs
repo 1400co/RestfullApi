@@ -12,7 +12,7 @@ using SocialMedia.Infrastructure.Data;
 namespace SocialMedia.Infrastructure.Migrations
 {
     [DbContext(typeof(SocialMediaContext))]
-    [Migration("20231215022945_InitialCreate")]
+    [Migration("20231223185704_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -62,6 +62,9 @@ namespace SocialMedia.Infrastructure.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("IdComentario");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<DateTime>("Date")
                         .HasColumnType("timestamp with time zone");
 
@@ -74,6 +77,9 @@ namespace SocialMedia.Infrastructure.Migrations
                     b.Property<Guid>("PostId")
                         .HasColumnType("uuid")
                         .HasColumnName("IdPublicacion");
+
+                    b.Property<string>("Responsable")
+                        .HasColumnType("text");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid")
@@ -94,11 +100,17 @@ namespace SocialMedia.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<DateTime>("ExpiryDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("PasswordRecoveryToken")
                         .HasColumnType("uuid");
+
+                    b.Property<string>("Responsable")
+                        .HasColumnType("text");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
@@ -116,13 +128,16 @@ namespace SocialMedia.Infrastructure.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("IdPublicacion");
 
-                    b.Property<DateTime>("Date")
+                    b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Description")
                         .HasColumnType("text");
 
                     b.Property<string>("Image")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Responsable")
                         .HasColumnType("text");
 
                     b.Property<Guid>("UserId")
@@ -147,6 +162,9 @@ namespace SocialMedia.Infrastructure.Migrations
                         .HasColumnType("boolean")
                         .HasDefaultValue(false)
                         .HasColumnName("Created");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<bool>("Deleted")
                         .ValueGeneratedOnAdd()
@@ -178,6 +196,9 @@ namespace SocialMedia.Infrastructure.Migrations
                         .HasDefaultValue(false)
                         .HasColumnName("Printed");
 
+                    b.Property<string>("Responsable")
+                        .HasColumnType("text");
+
                     b.HasKey("Id");
 
                     b.HasIndex("IdRol");
@@ -191,6 +212,12 @@ namespace SocialMedia.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("IdRol");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Responsable")
+                        .HasColumnType("text");
 
                     b.Property<string>("RolName")
                         .HasColumnType("text")
@@ -208,6 +235,9 @@ namespace SocialMedia.Infrastructure.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("IdSeguridad");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("Password")
                         .HasColumnType("text");
 
@@ -216,6 +246,9 @@ namespace SocialMedia.Infrastructure.Migrations
 
                     b.Property<DateTime?>("RefreshTokenExpiryTime")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Responsable")
+                        .HasColumnType("text");
 
                     b.Property<string>("Role")
                         .IsRequired()
@@ -238,7 +271,8 @@ namespace SocialMedia.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("54499cd0-48df-44a6-b7ac-119e4f5ce239"),
+                            Id = new Guid("7c58cf3c-e0e5-44aa-812c-4fc26ccf16ac"),
+                            CreatedAt = new DateTime(2023, 12, 23, 18, 57, 4, 214, DateTimeKind.Utc).AddTicks(9320),
                             Password = "10000.mmlVX3xzYuLQromOzqELBQ==.JIwrJbVGsgYiTMjqWqcvulmXk8Fv6c7hxbl8mEqixTI=",
                             Role = "Administrator",
                             UserId = new Guid("53aeeca4-a5b1-4751-abcb-3207a01b97dc"),
@@ -255,6 +289,9 @@ namespace SocialMedia.Infrastructure.Migrations
                     b.Property<DateTime>("BornDate")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("Email")
                         .HasColumnType("text");
 
@@ -265,6 +302,9 @@ namespace SocialMedia.Infrastructure.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<string>("Phone")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Responsable")
                         .HasColumnType("text");
 
                     b.Property<int>("Subscription")
@@ -279,6 +319,7 @@ namespace SocialMedia.Infrastructure.Migrations
                         {
                             Id = new Guid("53aeeca4-a5b1-4751-abcb-3207a01b97dc"),
                             BornDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedAt = new DateTime(2023, 12, 23, 18, 57, 4, 215, DateTimeKind.Utc).AddTicks(1080),
                             Email = "oruedar@yopmail.com",
                             FullName = "Oscar",
                             IsActive = true,
@@ -292,6 +333,12 @@ namespace SocialMedia.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("IdUserInRoles");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Responsable")
+                        .HasColumnType("text");
 
                     b.Property<Guid?>("RolId")
                         .HasColumnType("uuid");
@@ -319,7 +366,13 @@ namespace SocialMedia.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("Password")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Responsable")
                         .HasColumnType("text");
 
                     b.Property<string>("User")
