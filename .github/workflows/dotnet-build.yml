@@ -16,10 +16,13 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: '6.0.x' 
+        dotnet-version: '6.0.x'
+
+    - name: Change to SocialMedia directory
+      run: cd SocialMedia
 
     - name: Restore dependencies
-      run: dotnet restore your-solution.sln
+      run: dotnet restore
 
     - name: Build
-      run: dotnet build your-solution.sln --configuration Release --no-restore
+      run: dotnet build --configuration Release --no-restore
