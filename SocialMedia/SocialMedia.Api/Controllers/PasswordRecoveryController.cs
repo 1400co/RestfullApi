@@ -25,9 +25,11 @@ namespace SocialMedia.Api.Controllers
         private readonly IMapper _mapper;
         private readonly IUriService _uriService;
 
-        public PasswordRecoveryController(IPasswordRecoveryService passwordRecoveryService)
+        public PasswordRecoveryController(IPasswordRecoveryService passwordRecoveryService, IMapper mapper, IUriService uriService)
         {
             _passwordRecoveryService = passwordRecoveryService;
+            _mapper = mapper;
+            _uriService = uriService;
         }
 
         [HttpGet(Name = nameof(GetpasswordRecoverys))]
@@ -64,6 +66,7 @@ namespace SocialMedia.Api.Controllers
             return Ok(response);
         }
 
+        [HttpPost]
         public async Task<IActionResult> Post(PasswordRecoveryDto passwordRecoveryDto)
         {
             var passwordRecovery = _mapper.Map<PasswordRecovery>(passwordRecoveryDto);
