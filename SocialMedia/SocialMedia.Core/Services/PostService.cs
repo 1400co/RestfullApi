@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 
 namespace SocialMedia.Core.Services
 {
-
     public class PostService : IPostService
     {
 
@@ -34,8 +33,8 @@ namespace SocialMedia.Core.Services
             var userPosts = await _unitOfWork.PostRepository.GetPostsByUser(post.UserId);
             if (userPosts.Count() < 10)
             {
-                var lastPost = userPosts.OrderByDescending(x => x.Date).FirstOrDefault();
-                if (lastPost != null && (System.DateTime.Now - lastPost.Date).TotalDays < 7)
+                var lastPost = userPosts.OrderByDescending(x => x.CreatedAt).FirstOrDefault();
+                if (lastPost != null && (System.DateTime.UtcNow - lastPost.CreatedAt).TotalDays < 7)
                 {
                     throw new BusinessException("you cant push any posts jet.");
                 }
@@ -47,8 +46,8 @@ namespace SocialMedia.Core.Services
         public async Task<bool> UpdatePost(Post post)
         {
             var existingPost = await _unitOfWork.PostRepository.GetById(post.Id, u => u.User);
-            existingPost.Image = post.Image;
-            existingPost.Description = post.Description;
+
+            post.CopyPropertiesTo(existingPost);
 
             await _unitOfWork.PostRepository.Update(existingPost);
             return true;
@@ -59,7 +58,7 @@ namespace SocialMedia.Core.Services
             return await _unitOfWork.PostRepository.GetById(id, u => u.User);
         }
 
-        public PagedList<Post> GetPosts(PostQueryFilter filters)
+        public async Task<PagedList<Post>> GetPosts(PostQueryFilter filters)
         {
             var posts = _unitOfWork.PostRepository.Get(u => u.User);
 
@@ -71,17 +70,12 @@ namespace SocialMedia.Core.Services
                 posts = posts.Where(x => x.UserId == filters.UserId);
             }
 
-            if (filters.Date != null)
-            {
-                posts = posts.Where(x => x.Date.ToShortDateString() == ((DateTime)filters.Date).ToShortDateString());
-            }
-
             if (filters.Description != null)
             {
                 posts = posts.Where(x => x.Description.ToLower().Contains(filters.Description.ToLower()));
             }
 
-            var pagedPosts = PagedList<Post>.Create(posts, filters.PageSize, filters.PageSize);
+            var pagedPosts = await PagedList<Post>.CreateAsync(posts, filters.PageSize, filters.PageSize);
 
             return pagedPosts;
         }

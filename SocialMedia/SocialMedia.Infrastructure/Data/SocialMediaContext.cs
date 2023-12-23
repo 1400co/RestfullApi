@@ -49,7 +49,7 @@ namespace SocialMedia.Infrastructure.Data
             return result;
         }
 
-
+        #region audit
         private List<AuditEntry> OnBeforeSaveChanges()
         {
             ChangeTracker.DetectChanges();
@@ -174,7 +174,7 @@ namespace SocialMedia.Infrastructure.Data
             // Guarda las entradas de auditoría de forma asincrónica
             await SaveChangesAsync(cancellationToken);
         }
-
+        #endregion
 
         //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         //{

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using SocialMedia.Api.Responses;
@@ -33,9 +34,9 @@ namespace SocialMedia.Api.Controllers
         [HttpGet(Name = nameof(GetUserInRoles))]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(ApiResponse<IEnumerable<UserInRolesDto>>))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public IActionResult GetUserInRoles([FromQuery] UserInRolesQueryFilter filters)
+        public async Task<IActionResult> GetUserInRoles([FromQuery] UserInRolesQueryFilter filters)
         {
-            var userInRoles = _userInRolesService.GetUserInRoles(filters);
+            var userInRoles = await _userInRolesService.GetUserInRoles(filters);
             var userInRolesDto = _mapper.Map<IEnumerable<UserInRolesDto>>(userInRoles);
             var response = new ApiResponse<IEnumerable<UserInRolesDto>>(userInRolesDto);
 
@@ -50,7 +51,7 @@ namespace SocialMedia.Api.Controllers
             };
 
             response.Meta = metaData;
-            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metaData));
+            Response.Headers.Append("X-Pagination", JsonConvert.SerializeObject(metaData));
 
             return Ok(response);
         }

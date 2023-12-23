@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Options;
-using SocialMedia.Core.CustomEntities;
+﻿using SocialMedia.Core.CustomEntities;
 using SocialMedia.Core.Entities;
 using SocialMedia.Core.Exceptions;
 using SocialMedia.Core.Interfaces;
@@ -13,12 +12,10 @@ namespace SocialMedia.Core.Services
     public class UserService : IUserService
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly PaginationOptions _paginationOptions;
 
-        public UserService(IUnitOfWork unitOfWork, IOptions<PaginationOptions> paginationOptions)
+        public UserService(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
-            _paginationOptions = paginationOptions.Value;
         }
 
         public async Task InsertUser(User user)
@@ -26,7 +23,6 @@ namespace SocialMedia.Core.Services
             if (string.IsNullOrEmpty(user.Email))
                 throw new BusinessException("Email is required");
 
-            // Additional business validations if necessary
             await _unitOfWork.UserRepository.Insert(user);
             await _unitOfWork.SaveChangesAsync();
         }
@@ -37,12 +33,7 @@ namespace SocialMedia.Core.Services
             if (existingUser == null)
                 throw new BusinessException("User doesn't exist");
 
-            existingUser.FullName = user.FullName;
-            existingUser.Email = user.Email;
-            existingUser.BornDate = user.BornDate;
-            existingUser.Phone = user.Phone;
-            existingUser.IsActive = user.IsActive;
-            existingUser.Subscription = user.Subscription;
+            user.CopyPropertiesTo(existingUser);
 
             await _unitOfWork.UserRepository.Update(existingUser);
             await _unitOfWork.SaveChangesAsync();
@@ -54,20 +45,19 @@ namespace SocialMedia.Core.Services
             return await _unitOfWork.UserRepository.GetById(id);
         }
 
-        public PagedList<User> GetUsers(UserQueryFilter filters)
+        public async Task<PagedList<User>> GetUsers(UserQueryFilter filters)
         {
             var users = _unitOfWork.UserRepository.Get();
 
             filters.PageNumber = filters.PageNumber;
             filters.PageSize = filters.PageSize;
 
-            // Additional filtering logic if necessary
             if (!string.IsNullOrEmpty(filters.Email))
             {
                 users = users.Where(x => x.Email.Contains(filters.Email));
             }
 
-            var pagedUsers = PagedList<User>.Create(users, filters.PageNumber, filters.PageSize);
+            var pagedUsers = await PagedList<User>.CreateAsync(users, filters.PageNumber, filters.PageSize);
 
             return pagedUsers;
         }

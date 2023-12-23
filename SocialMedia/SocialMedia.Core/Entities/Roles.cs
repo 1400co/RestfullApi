@@ -8,8 +8,6 @@ namespace SocialMedia.Core.Entities
         public string RolName { get; set; }
 
         public virtual ICollection<RolModule> RolModules { get; set; }
-        
-
         public virtual ICollection<UserInRoles> UserInRoles { get; set; }
     }
 }

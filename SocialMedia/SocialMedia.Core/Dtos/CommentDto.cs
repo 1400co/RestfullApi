@@ -6,7 +6,6 @@ namespace SocialMedia.Core.Dtos
     public partial class CommentDto : BaseDto
     {
         public string Description { get; set; }
-        public DateTime Date { get; set; }
         public bool IsActive { get; set; }
 
         //Relations

@@ -10,7 +10,7 @@ namespace SocialMedia.Core.Interfaces
     {
         Task DeleteUserInRole(Guid id);
         Task<UserInRoles> GetUserInRole(Guid id);
-        PagedList<UserInRoles> GetUserInRoles(UserInRolesQueryFilter filters);
+        Task<PagedList<UserInRoles>> GetUserInRoles(UserInRolesQueryFilter filters);
         Task InsertUserInRole(UserInRoles userInRole);
         Task<bool> UpdateUserInRole(UserInRoles userInRole);
     }

@@ -5,10 +5,4 @@
         Administrator,
         Consumer
     }
-
-    public enum Subscription
-    {
-        Free,
-        Basic
-    }
 }

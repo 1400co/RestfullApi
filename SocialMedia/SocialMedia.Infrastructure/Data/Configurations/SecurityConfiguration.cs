@@ -34,7 +34,6 @@ namespace SocialMedia.Infrastructure.Data.Configurations
                     UserName = "admin",
                     Role = 0,
                     Password = "10000.mmlVX3xzYuLQromOzqELBQ==.JIwrJbVGsgYiTMjqWqcvulmXk8Fv6c7hxbl8mEqixTI=",
-
                 }
                 );
         }

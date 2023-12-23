@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using System;
+using Microsoft.AspNetCore.Http;
 
 namespace SocialMedia.Api.Controllers
 {
@@ -34,9 +35,9 @@ namespace SocialMedia.Api.Controllers
         [HttpGet(Name = nameof(GetUsers))]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(ApiResponse<IEnumerable<UserDto>>))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public IActionResult GetUsers([FromQuery] UserQueryFilter filters)
+        public async Task< IActionResult> GetUsers([FromQuery] UserQueryFilter filters)
         {
-            var users = _userService.GetUsers(filters);
+            var users = await  _userService.GetUsers(filters);
             var userDto = _mapper.Map<IEnumerable<UserDto>>(users);
             var response = new ApiResponse<IEnumerable<UserDto>>(userDto);
 
@@ -51,7 +52,7 @@ namespace SocialMedia.Api.Controllers
             };
 
             response.Meta = metaData;
-            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metaData));
+            Response.Headers.Append("X-Pagination", JsonConvert.SerializeObject(metaData));
 
             return Ok(response);
         }

@@ -40,13 +40,7 @@ namespace SocialMedia.Core.Services
                 throw new BusinessException("RolModule doesn't exist");
 
             // Complete properties mapping
-            existingRolModule.Module = rolModule.Module;
-            existingRolModule.Created = rolModule.Created;
-            existingRolModule.Edited = rolModule.Edited;
-            existingRolModule.Listed = rolModule.Listed;
-            existingRolModule.Deleted = rolModule.Deleted;
-            existingRolModule.Printed = rolModule.Printed;
-            existingRolModule.IdRol = rolModule.IdRol;
+            rolModule.CopyPropertiesTo(existingRolModule);
 
             await _unitOfWork.RolModuleRepository.Update(existingRolModule);
             await _unitOfWork.SaveChangesAsync();
@@ -58,7 +52,7 @@ namespace SocialMedia.Core.Services
             return await _unitOfWork.RolModuleRepository.GetById(id);
         }
 
-        public PagedList<RolModule> GetRolModules(RolModuleQueryFilter filters)
+        public async Task<PagedList<RolModule>> GetRolModules(RolModuleQueryFilter filters)
         {
             var rolModules = _unitOfWork.RolModuleRepository.Get();
 
@@ -73,7 +67,7 @@ namespace SocialMedia.Core.Services
                 rolModules = rolModules.Where(x => x.IdRol == filters.RoleId);
             }
 
-            var pagedRolModules = PagedList<RolModule>.Create(rolModules, filters.PageNumber, filters.PageSize);
+            var pagedRolModules = await PagedList<RolModule>.CreateAsync(rolModules, filters.PageNumber, filters.PageSize);
 
             return pagedRolModules;
         }

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using SocialMedia.Api.Responses;
@@ -36,9 +37,9 @@ namespace SocialMedia.Api.Controllers
         [HttpGet(Name = nameof(GetPosts))]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(ApiResponse<IEnumerable<PostDto>>))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest, Type = typeof(ApiResponse<IEnumerable<PostDto>>))]
-        public IActionResult GetPosts([FromQuery] PostQueryFilter filters)
+        public async Task<IActionResult> GetPosts([FromQuery] PostQueryFilter filters)
         {
-            var posts = _postService.GetPosts(filters);
+            var posts = await _postService.GetPosts(filters);
             var postDto = _mapper.Map<IEnumerable<PostDto>>(posts);
             var response = new ApiResponse<IEnumerable<PostDto>>(postDto);
 
@@ -53,7 +54,7 @@ namespace SocialMedia.Api.Controllers
             };
 
             response.Meta = metaData;
-            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metaData));
+            Response.Headers.Append("X-Pagination", JsonConvert.SerializeObject(metaData));
 
             return Ok(response);
         }

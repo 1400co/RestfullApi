@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using System;
+using Microsoft.AspNetCore.Http;
 
 namespace SocialMedia.Api.Controllers
 {
@@ -34,9 +35,9 @@ namespace SocialMedia.Api.Controllers
         [HttpGet(Name = nameof(GetRoles))]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(ApiResponse<IEnumerable<RolesDto>>))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public IActionResult GetRoles([FromQuery] RolesQueryFilter filters)
+        public async Task<IActionResult> GetRoles([FromQuery] RolesQueryFilter filters)
         {
-            var roles = _rolesService.GetRoles(filters);
+            var roles = await _rolesService.GetRoles(filters);
             var rolesDto = _mapper.Map<IEnumerable<RolesDto>>(roles);
             var response = new ApiResponse<IEnumerable<RolesDto>>(rolesDto);
 
@@ -51,7 +52,7 @@ namespace SocialMedia.Api.Controllers
             };
 
             response.Meta = metaData;
-            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metaData));
+            Response.Headers.Append("X-Pagination", JsonConvert.SerializeObject(metaData));
 
             return Ok(response);
         }

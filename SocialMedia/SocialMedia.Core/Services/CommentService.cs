@@ -32,8 +32,6 @@ namespace SocialMedia.Core.Services
             if (comment.Description.Contains("sexo"))
                 throw new BusinessException("Content not allowed");
 
-            // Additional business validations if necessary
-
             await _unitOfWork.CommentRepository.Insert(comment);
             await _unitOfWork.SaveChangesAsync();
         }
@@ -44,9 +42,7 @@ namespace SocialMedia.Core.Services
             if (existingComment == null)
                 throw new BusinessException("Comment doesn't exist");
 
-            existingComment.Description = comment.Description;
-            existingComment.IsActive = comment.IsActive;
-
+            comment.CopyPropertiesTo(existingComment);
 
             await _unitOfWork.CommentRepository.Update(existingComment);
             await _unitOfWork.SaveChangesAsync();
@@ -58,7 +54,7 @@ namespace SocialMedia.Core.Services
             return await _unitOfWork.CommentRepository.GetById(id);
         }
 
-        public PagedList<Comment> GetComments(CommentQueryFilter filters)
+        public async Task<PagedList<Comment>> GetComments(CommentQueryFilter filters)
         {
             var comments = _unitOfWork.CommentRepository.Get();
 
@@ -77,7 +73,7 @@ namespace SocialMedia.Core.Services
                 comments = comments.Where(x => x.Description.Contains(filters.Description));
             }
 
-            var pagedComments = PagedList<Comment>.Create(comments, filters.PageNumber, filters.PageSize);
+            var pagedComments = await PagedList<Comment>.CreateAsync(comments, filters.PageNumber, filters.PageSize);
 
             return pagedComments;
         }

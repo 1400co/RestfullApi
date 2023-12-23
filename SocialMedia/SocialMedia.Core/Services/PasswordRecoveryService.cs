@@ -34,7 +34,7 @@ namespace SocialMedia.Core.Services
             if (existingRecovery == null)
                 throw new BusinessException("Recovery Token doesn't exist");
 
-            existingRecovery.ExpiryDate = recovery.ExpiryDate;
+            recovery.CopyPropertiesTo(existingRecovery);
 
             await _unitOfWork.PasswordRecoveryRepository.Update(existingRecovery);
             await _unitOfWork.SaveChangesAsync();

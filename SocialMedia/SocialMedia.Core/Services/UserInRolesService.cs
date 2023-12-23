@@ -39,8 +39,7 @@ namespace SocialMedia.Core.Services
             if (existingUserInRole == null)
                 throw new BusinessException("UserInRole doesn't exist");
 
-            existingUserInRole.UserId = userInRole.UserId;
-            existingUserInRole.RoleId = userInRole.RoleId;
+            userInRole.CopyPropertiesTo(existingUserInRole);
 
             await _unitOfWork.UserInRolesRepository.Update(existingUserInRole);
             await _unitOfWork.SaveChangesAsync();
@@ -52,16 +51,14 @@ namespace SocialMedia.Core.Services
             return await _unitOfWork.UserInRolesRepository.GetById(id);
         }
 
-        public PagedList<UserInRoles> GetUserInRoles(UserInRolesQueryFilter filters)
+        public async Task<PagedList<UserInRoles>> GetUserInRoles(UserInRolesQueryFilter filters)
         {
             var userInRoles = _unitOfWork.UserInRolesRepository.Get();
 
             filters.PageNumber = filters.PageNumber;
             filters.PageSize = filters.PageSize;
 
-            // Additional filtering logic if necessary
-
-            var pagedUserInRoles = PagedList<UserInRoles>.Create(userInRoles, filters.PageNumber, filters.PageSize);
+            var pagedUserInRoles = await PagedList<UserInRoles>.CreateAsync(userInRoles, filters.PageNumber, filters.PageSize);
 
             return pagedUserInRoles;
         }

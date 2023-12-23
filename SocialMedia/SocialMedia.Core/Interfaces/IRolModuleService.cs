@@ -10,7 +10,7 @@ namespace SocialMedia.Core.Interfaces
     {
         Task DeleteRolModule(Guid id);
         Task<RolModule> GetRolModule(Guid id);
-        PagedList<RolModule> GetRolModules(RolModuleQueryFilter filters);
+        Task<PagedList<RolModule>> GetRolModules(RolModuleQueryFilter filters);
         Task InsertRolModule(RolModule rolModule);
         Task<bool> UpdateRolModule(RolModule rolModule);
     }

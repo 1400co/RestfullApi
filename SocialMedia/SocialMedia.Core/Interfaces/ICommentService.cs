@@ -10,7 +10,7 @@ namespace SocialMedia.Core.Interfaces
     {
         Task DeleteComment(Guid id);
         Task<Comment> GetComment(Guid id);
-        PagedList<Comment> GetComments(CommentQueryFilter filters);
+        Task<PagedList<Comment>> GetComments(CommentQueryFilter filters);
         Task InsertComment(Comment comment);
         Task<bool> UpdateComment(Comment comment);
     }

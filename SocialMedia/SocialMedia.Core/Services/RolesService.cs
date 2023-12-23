@@ -40,7 +40,7 @@ namespace SocialMedia.Core.Services
             if (existingRole == null)
                 throw new BusinessException("Role doesn't exist");
 
-            existingRole.RolName = role.RolName;
+            role.CopyPropertiesTo(existingRole);
 
             await _unitOfWork.RolesRepository.Update(existingRole);
             await _unitOfWork.SaveChangesAsync();
@@ -52,7 +52,7 @@ namespace SocialMedia.Core.Services
             return await _unitOfWork.RolesRepository.GetById(id);
         }
 
-        public PagedList<Roles> GetRoles(RolesQueryFilter filters)
+        public async Task<PagedList<Roles>> GetRoles(RolesQueryFilter filters)
         {
             var roles = _unitOfWork.RolesRepository.Get();
 
@@ -66,7 +66,7 @@ namespace SocialMedia.Core.Services
                 roles = roles.Where(x => x.RolName.Contains(filters.RoleName));
             }
 
-            var pagedRoles = PagedList<Roles>.Create(roles, filters.PageNumber, filters.PageSize);
+            var pagedRoles = await PagedList<Roles>.CreateAsync(roles, filters.PageNumber, filters.PageSize);
 
             return pagedRoles;
         }

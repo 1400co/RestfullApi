@@ -4,8 +4,6 @@ namespace SocialMedia.Core.Entities
 {
     public partial class Comment : BaseEntity
     {
-        
-        
         public string Description { get; set; }
         public DateTime Date { get; set; }
         public bool IsActive { get; set; }

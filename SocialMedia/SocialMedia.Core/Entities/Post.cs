@@ -9,11 +9,9 @@ namespace SocialMedia.Core.Entities
         public Post()
         {
             Comments = new HashSet<Comment>();
-            Date = DateTime.Now;
         }
 
         public Guid UserId { get; set; }
-        public DateTime Date { get; set; }
         public string Description { get; set; }
         public string Image { get; set; }
 

@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using Hangfire.PostgreSql.Properties;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using SocialMedia.Api.Responses;
@@ -33,9 +35,9 @@ namespace SocialMedia.Api.Controllers
         [HttpGet(Name = nameof(GetRolModules))]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(ApiResponse<IEnumerable<RolModuleDto>>))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public IActionResult GetRolModules([FromQuery] RolModuleQueryFilter filters)
+        public async Task<IActionResult> GetRolModules([FromQuery] RolModuleQueryFilter filters)
         {
-            var rolModules = _rolModuleService.GetRolModules(filters);
+            var rolModules = await _rolModuleService.GetRolModules(filters);
             var rolModuleDto = _mapper.Map<IEnumerable<RolModuleDto>>(rolModules);
             var response = new ApiResponse<IEnumerable<RolModuleDto>>(rolModuleDto);
 
@@ -50,7 +52,7 @@ namespace SocialMedia.Api.Controllers
             };
 
             response.Meta = metaData;
-            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metaData));
+            Response.Headers.Append("X-Pagination", JsonConvert.SerializeObject(metaData));
 
             return Ok(response);
         }
