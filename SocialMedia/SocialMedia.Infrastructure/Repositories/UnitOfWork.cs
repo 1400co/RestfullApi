@@ -16,6 +16,7 @@ namespace SocialMedia.Infrastructure.Repositories
         private readonly IRepository<RolModule> rolModuleRepository;
         private readonly IRepository<UserInRoles> userInRolesRepository;
         private readonly IRepository<UserLogin> userLoginRepository;
+        private readonly IRepository<Modules> moduleRepository;
         private readonly ISecurityRepository _securityRepository;
 
         public UnitOfWork(SocialMediaContext socialMediaContext)
@@ -31,6 +32,7 @@ namespace SocialMedia.Infrastructure.Repositories
         public IRepository<RolModule> RolModuleRepository => rolModuleRepository ?? new BaseRepository<RolModule>(socialMediaContext);
         public IRepository<UserInRoles> UserInRolesRepository => userInRolesRepository ?? new BaseRepository<UserInRoles>(socialMediaContext);
         public IRepository<UserLogin> UserLoginRepository => userLoginRepository ?? new BaseRepository<UserLogin>(socialMediaContext);
+        public IRepository<Modules> ModuleRepository => moduleRepository ?? new BaseRepository<Modules>(socialMediaContext);
 
         public ISecurityRepository SecurityRepository => _securityRepository ?? new SecurityRepository(socialMediaContext);
 

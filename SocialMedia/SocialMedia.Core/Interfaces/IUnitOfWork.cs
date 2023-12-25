@@ -13,6 +13,7 @@ namespace SocialMedia.Core.Interfaces
         IRepository<Roles> RolesRepository { get; }
         IRepository<RolModule> RolModuleRepository { get; }
         IRepository<UserInRoles> UserInRolesRepository { get; }
+        IRepository<Modules> ModuleRepository { get; }
         ISecurityRepository SecurityRepository { get; }
         void SaveChanges();
         Task SaveChangesAsync();
