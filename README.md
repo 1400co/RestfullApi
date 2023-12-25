@@ -31,6 +31,7 @@
 29. added audit historic changes to all models
 30. added auth to swagger
 31. added auth and permissions entities
+32. fixed cors
 
 Special thanks to 
 @force4Win - Alvaro Andres Obregon.
