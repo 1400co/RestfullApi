@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Hangfire;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -24,12 +25,14 @@ namespace SocialMedia.Api.Controllers
         private readonly IPasswordRecoveryService _passwordRecoveryService;
         private readonly IMapper _mapper;
         private readonly IUriService _uriService;
+        private readonly IEmailService _emailService;
 
-        public PasswordRecoveryController(IPasswordRecoveryService passwordRecoveryService, IMapper mapper, IUriService uriService)
+        public PasswordRecoveryController(IPasswordRecoveryService passwordRecoveryService, IMapper mapper, IUriService uriService, IEmailService emailService)
         {
             _passwordRecoveryService = passwordRecoveryService;
             _mapper = mapper;
             _uriService = uriService;
+            _emailService = emailService;
         }
 
         [HttpGet(Name = nameof(GetpasswordRecoverys))]
@@ -71,8 +74,11 @@ namespace SocialMedia.Api.Controllers
         {
             var passwordRecovery = _mapper.Map<PasswordRecovery>(passwordRecoveryDto);
 
-            await _passwordRecoveryService.InsertRecovery(passwordRecovery);
+            var recovery = await _passwordRecoveryService.InsertRecovery(passwordRecovery);
 
+            BackgroundJob.Enqueue(() => this.SendRecoveryEmail(recovery.Id));
+
+            passwordRecoveryDto.Id = recovery.Id;
 
             var response = new ApiResponse<PasswordRecoveryDto>(passwordRecoveryDto);
             return Ok(response);
@@ -94,6 +100,11 @@ namespace SocialMedia.Api.Controllers
         {
             await _passwordRecoveryService.DeleteRecovery(id);
             return Ok();
+        }
+
+        private async Task SendRecoveryEmail(Guid recoveryId)
+        {
+           await this._emailService.SendEmailAsync("", "Passord recovery", "password recovery", false);
         }
     }
 }

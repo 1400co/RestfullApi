@@ -1,7 +1,6 @@
 ﻿using SocialMedia.Core.Entities;
 using SocialMedia.Core.Enumerations;
 using System;
-using System.Collections.Generic;
 
 namespace SocialMedia.Core.Dtos
 {
@@ -9,11 +8,7 @@ namespace SocialMedia.Core.Dtos
     {
         public UserDto()
         {
-            Comment = new HashSet<CommentDto>();
-            Post = new HashSet<Post>();
-            Security = new HashSet<Security>();
-            UserInRoles = new HashSet<UserInRolesDto>();
-            PasswordRecovery = new HashSet<PasswordRecoveryDto>();
+           
         }
 
         public string FullName { get; set; }
@@ -24,12 +19,5 @@ namespace SocialMedia.Core.Dtos
         public Subscription Subscription { get; set; }
         public string UserName { get; set; }
         public string Password { get; set; } = string.Empty;
-
-        public virtual ICollection<CommentDto> Comment { get; set; }
-        public virtual ICollection<Post> Post { get; set; }
-        public virtual ICollection<Security> Security { get; set; }
-        public virtual ICollection<UserInRolesDto> UserInRoles { get; set; }
-        public virtual ICollection<PasswordRecoveryDto> PasswordRecovery { get; set; }
-
     }
 }

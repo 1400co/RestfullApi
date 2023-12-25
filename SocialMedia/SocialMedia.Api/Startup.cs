@@ -32,6 +32,18 @@ namespace SocialMedia.Api
             //read all automapper from assembly on infraestructure/Mappers
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAllOrigins",
+                    builder =>
+                    {
+                        builder.AllowAnyOrigin()
+                                // .WithOrigins(origins)
+                                .AllowAnyHeader()
+                                .AllowAnyMethod();
+                    });
+            });
+
             services.AddControllers(
                 options => options.Filters.Add<GlobalExceptionFilter>()
                 )
@@ -103,6 +115,8 @@ namespace SocialMedia.Api
                 options.SwaggerEndpoint("/swagger/v1/swagger.json", "Social Media Api V1");
                 options.RoutePrefix = String.Empty;
             });
+
+            app.UseCors("AllowAllOrigins");
 
             app.UseHangfireDashboard();
 

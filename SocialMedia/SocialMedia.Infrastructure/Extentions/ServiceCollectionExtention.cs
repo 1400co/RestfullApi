@@ -80,12 +80,14 @@ namespace SocialMedia.Infrastructure.Extentions
             services.Configure<PaginationOptions>(options => configuration.GetSection("Pagination").Bind(options));
             services.Configure<PasswordOptions>(options => configuration.GetSection("PasswordOptions").Bind(options));
             services.Configure<AuthenticationOptions>(options => configuration.GetSection("Authentication").Bind(options));
+            services.Configure<SmtpSettings>(options => configuration.GetSection("SmtpSettings").Bind(options));
 
             return services;
         }
 
         public static IServiceCollection AddServices(this IServiceCollection services)
         {
+            services.AddTransient<IEmailService, EmailService>();
             services.AddTransient<ITokenService, TokenService>();
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<IUserInRolesService, UserInRolesService>();

@@ -19,16 +19,16 @@ namespace SocialMedia.Core.Services
             _unitOfWork = unitOfWork;
         }
 
-        public async Task InsertRecovery(PasswordRecovery recovery)
+        public async Task<PasswordRecovery> InsertRecovery(PasswordRecovery recovery)
         {
             var user = await _unitOfWork.UserRepository.GetById(recovery.UserId);
             if (user == null)
                 throw new BusinessException("User doesn't exist");
 
-            // Add additional business validations if necessary
-
             await _unitOfWork.PasswordRecoveryRepository.Insert(recovery);
             await _unitOfWork.SaveChangesAsync();
+
+            return recovery;
         }
 
         public async Task<bool> UpdateRecovery(PasswordRecovery recovery)

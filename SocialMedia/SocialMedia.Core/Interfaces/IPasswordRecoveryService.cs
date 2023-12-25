@@ -10,7 +10,7 @@ namespace SocialMedia.Core.Interfaces
     {
         Task DeleteRecovery(Guid token);
         Task<PasswordRecovery> GetRecovery(Guid token);
-        Task InsertRecovery(PasswordRecovery recovery);
+        Task<PasswordRecovery> InsertRecovery(PasswordRecovery recovery);
         Task<bool> UpdateRecovery(PasswordRecovery recovery);
         Task<PagedList<PasswordRecovery>> GetRecovery(GeneralQueryFilter filters);
     }
