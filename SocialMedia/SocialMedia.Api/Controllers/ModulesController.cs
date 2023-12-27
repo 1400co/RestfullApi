@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
-using Azure;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using SocialMedia.Api.Responses;
@@ -9,18 +10,17 @@ using SocialMedia.Core.Entities;
 using SocialMedia.Core.Interfaces;
 using SocialMedia.Core.QueryFilters;
 using SocialMedia.Infrastructure.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
-using System;
-using Microsoft.AspNetCore.Cors;
-using SocialMedia.Core.Services;
 
 namespace SocialMedia.Api.Controllers
 {
+    //[Authorize]
+    [Produces("application/json")]
+    [Route("api/[Controller]")]
     [ApiController]
-    [Route("api/[controller]")]
-    [EnableCors("AllowAllOrigins")]
     public class ModulesController : ControllerBase
     {
         private readonly IModuleService _moduleService;
@@ -86,7 +86,7 @@ namespace SocialMedia.Api.Controllers
             };
 
             response.Meta = metaData;
-            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metaData));
+            Response.Headers.Append("X-Pagination", JsonConvert.SerializeObject(metaData));
 
             return Ok(response);
         }

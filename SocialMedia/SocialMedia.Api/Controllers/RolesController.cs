@@ -14,9 +14,11 @@ using System.Net;
 using System.Threading.Tasks;
 using System;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 
 namespace SocialMedia.Api.Controllers
 {
+    //[Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class RolesController : ControllerBase

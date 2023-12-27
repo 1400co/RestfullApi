@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SocialMedia.Core.Entities;
+using System;
 
 namespace SocialMedia.Infrastructure.Data.Configurations
 {
@@ -14,6 +15,17 @@ namespace SocialMedia.Infrastructure.Data.Configurations
             builder.Property(e => e.Id).HasColumnName("IdUserInRoles");
             builder.Property(e => e.UserId).HasColumnName("IdUser").ValueGeneratedNever();
             builder.Property(e => e.RoleId).HasColumnName("IdRol").ValueGeneratedNever();
+
+            builder.HasData(
+                   new UserInRoles
+                   {
+                       Id = Guid.NewGuid(),
+                       UserId = Guid.Parse("53AEECA4-A5B1-4751-ABCB-3207A01B97DC"),
+                       RoleId = Guid.Parse("3A9A7CE2-9A5C-4AFF-A47A-C5FDFCD955AE"),
+                       CreatedAt = DateTime.UtcNow,
+                       Responsable = "System"
+                   }
+           );
         }
     }
 }

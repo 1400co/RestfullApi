@@ -23,6 +23,8 @@ namespace SocialMedia.Infrastructure.Data.Configurations
                     FullName = "Oscar",
                     IsActive = true,
                     Email = "oruedar@yopmail.com",
+                    CreatedAt = DateTime.UtcNow,
+                    Responsable = "System"
                 }
                 );
         }

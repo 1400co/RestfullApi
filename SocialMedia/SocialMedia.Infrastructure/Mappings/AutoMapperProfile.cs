@@ -20,6 +20,7 @@ namespace SocialMedia.Infrastructure.Mappings
             CreateMap<User, UserDto>().ReverseMap();
             CreateMap<UserInRoles, UserInRolesDto>().ReverseMap();
             CreateMap<UserLogin, UserLoginDto>().ReverseMap();
+            CreateMap<Modules, ModulesDto>().ReverseMap();
 
         }
     }

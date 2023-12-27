@@ -5,9 +5,6 @@ namespace SocialMedia.Core.Entities
 {
     public partial class RolModule : BaseEntity
     {
-
-        public string Module { get; set; }
-
         public bool Created { get; set; }
         public bool Edited { get; set; }
         public bool Listed { get; set; }
@@ -16,6 +13,7 @@ namespace SocialMedia.Core.Entities
 
         public Guid IdRol { get; set; }
         public virtual Roles Rol { get; set; }
-
+        public Guid ModuleId { get; set; }
+        public virtual Modules Module { get; set; }
     }
 }

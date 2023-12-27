@@ -97,6 +97,7 @@ namespace SocialMedia.Infrastructure.Extentions
             services.AddTransient<ICommentService, CommentService>();
             services.AddTransient<IPostService, PostService>();
             services.AddTransient<ISecurityService, SecurityService>();
+            services.AddTransient<IModuleService, ModuleService>();
             services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
             services.AddTransient<IUnitOfWork, UnitOfWork>();
             services.AddSingleton<IPasswordService, PasswordService>();

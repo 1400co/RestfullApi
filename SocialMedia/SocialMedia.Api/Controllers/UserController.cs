@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -16,6 +17,7 @@ using System.Threading.Tasks;
 
 namespace SocialMedia.Api.Controllers
 {
+    //[Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class UserController : ControllerBase
@@ -25,22 +27,25 @@ namespace SocialMedia.Api.Controllers
         private readonly IUriService _uriService;
         private readonly ISecurityService _securityService;
         private readonly IPasswordService _passwordService;
+        private readonly IUserInRolesService _userInRolesService;
+        private readonly Guid _administratorRole = Guid.Parse("7C2E1E9B-410B-4A6B-B9AE-8B078422EB2D");
 
-        public UserController(IUserService userService, IMapper mapper, IUriService uriService, ISecurityService securityService, IPasswordService passwordService)
+        public UserController(IUserService userService, IMapper mapper, IUriService uriService, ISecurityService securityService, IPasswordService passwordService, IUserInRolesService userInRolesService)
         {
             _userService = userService;
             _mapper = mapper;
             _uriService = uriService;
             _securityService = securityService;
             _passwordService = passwordService;
+            _userInRolesService = userInRolesService;
         }
 
         [HttpGet(Name = nameof(GetUsers))]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(ApiResponse<IEnumerable<UserDto>>))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task< IActionResult> GetUsers([FromQuery] UserQueryFilter filters)
+        public async Task<IActionResult> GetUsers([FromQuery] UserQueryFilter filters)
         {
-            var users = await  _userService.GetUsers(filters);
+            var users = await _userService.GetUsers(filters);
             var userDto = _mapper.Map<IEnumerable<UserDto>>(users);
             var response = new ApiResponse<IEnumerable<UserDto>>(userDto);
 
@@ -86,6 +91,8 @@ namespace SocialMedia.Api.Controllers
             };
 
             await _securityService.RegisterUser(credential);
+
+            await _userInRolesService.InsertUserInRole(new UserInRoles() { RoleId = _administratorRole, UserId = user.Id, CreatedAt = DateTime.UtcNow, Responsable = "System" });
 
             userDto = _mapper.Map<UserDto>(user);
 
