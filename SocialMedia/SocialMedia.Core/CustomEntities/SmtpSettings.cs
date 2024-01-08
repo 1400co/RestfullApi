@@ -7,5 +7,6 @@
         public string Username { get; set; }
         public string Password { get; set; }
         public bool UseSSL { get; set; }
+        public string Url { get; set; }
     }
 }

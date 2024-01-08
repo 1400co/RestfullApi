@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Hangfire;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -7,6 +8,7 @@ using SocialMedia.Api.Responses;
 using SocialMedia.Core.CustomEntities;
 using SocialMedia.Core.Dtos;
 using SocialMedia.Core.Entities;
+using SocialMedia.Core.Exceptions;
 using SocialMedia.Core.Interfaces;
 using SocialMedia.Core.QueryFilters;
 using SocialMedia.Infrastructure.Interfaces;
@@ -18,21 +20,28 @@ using System.Threading.Tasks;
 
 namespace SocialMedia.Api.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class PasswordRecoveryController : ControllerBase
     {
         private readonly IPasswordRecoveryService _passwordRecoveryService;
+        private readonly ISecurityService _securityService;
         private readonly IMapper _mapper;
         private readonly IUriService _uriService;
         private readonly IEmailService _emailService;
+        private readonly IUserService _userService;
+        private readonly IPasswordService passwordService;
 
-        public PasswordRecoveryController(IPasswordRecoveryService passwordRecoveryService, IMapper mapper, IUriService uriService, IEmailService emailService)
+        public PasswordRecoveryController(IPasswordRecoveryService passwordRecoveryService, IMapper mapper, IUriService uriService, IEmailService emailService, ISecurityService securityService, IUserService userService, IPasswordService passwordService)
         {
             _passwordRecoveryService = passwordRecoveryService;
             _mapper = mapper;
             _uriService = uriService;
             _emailService = emailService;
+            _securityService = securityService;
+            _userService = userService;
+            this.passwordService = passwordService;
         }
 
         [HttpGet(Name = nameof(GetpasswordRecoverys))]
@@ -70,13 +79,24 @@ namespace SocialMedia.Api.Controllers
         }
 
         [HttpPost]
+        [AllowAnonymous]
         public async Task<IActionResult> Post(PasswordRecoveryDto passwordRecoveryDto)
         {
+            var security = await this._securityService.GetCredentialsByUserName(passwordRecoveryDto.UserName);
+
+            if (security == null)
+            {
+                throw new BusinessException("User Does not exists");
+            }
+
+            passwordRecoveryDto.UserId = security.UserId;
+            passwordRecoveryDto.ExpiryDate = DateTime.Now.AddMinutes(30);
+
             var passwordRecovery = _mapper.Map<PasswordRecovery>(passwordRecoveryDto);
 
             var recovery = await _passwordRecoveryService.InsertRecovery(passwordRecovery);
 
-            BackgroundJob.Enqueue(() => this.SendRecoveryEmail(recovery.Id));
+            BackgroundJob.Enqueue(() => this._emailService.SendEmailAsync("", "Passord recovery", $"password recovery {recovery.Id}", false));
 
             passwordRecoveryDto.Id = recovery.Id;
 
@@ -95,6 +115,32 @@ namespace SocialMedia.Api.Controllers
             return Ok();
         }
 
+        [HttpPut()]
+        [AllowAnonymous]
+        [Route("PasswordUpdate")]
+        public async Task<IActionResult> PasswordUpdate(PasswordUpdate passwordUpdate)
+        {
+            var renewToken = await this._passwordRecoveryService.GetRecovery(passwordUpdate.Id);
+
+            if (renewToken == null)
+            {
+                throw new BusinessException("Token expired.");
+            }
+
+            if (renewToken.ExpiryDate < DateTime.Now)
+            {
+                throw new BusinessException("Token expired.");
+            }
+
+            var user = await this._userService.GetUser(renewToken.UserId);
+
+            if (user == null) { throw new BusinessException("User Dont exists."); }
+
+            await this._securityService.UpdateRecoveryPassword(user.Id, passwordService.Hash(passwordUpdate.Password));
+
+            return Ok();
+        }
+
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
@@ -102,9 +148,6 @@ namespace SocialMedia.Api.Controllers
             return Ok();
         }
 
-        private async Task SendRecoveryEmail(Guid recoveryId)
-        {
-           await this._emailService.SendEmailAsync("", "Passord recovery", "password recovery", false);
-        }
+
     }
 }
