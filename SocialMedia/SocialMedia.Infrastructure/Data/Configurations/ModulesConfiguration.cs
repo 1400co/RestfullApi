@@ -58,6 +58,13 @@ namespace SocialMedia.Infrastructure.Data
                         ModuleName = "Modules",
                         CreatedAt = DateTime.UtcNow,
                         Responsable = "System"
+                    },
+                    new Modules
+                    {
+                        Id = new Guid("A23E6ADA-2BB4-44B5-B7AD-69581F198E1C"),
+                        ModuleName = "Demo",
+                        CreatedAt = DateTime.UtcNow,
+                        Responsable = "System"
                     }
             );
 

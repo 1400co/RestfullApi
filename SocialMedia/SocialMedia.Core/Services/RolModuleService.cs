@@ -5,8 +5,10 @@ using SocialMedia.Core.Exceptions;
 using SocialMedia.Core.Interfaces;
 using SocialMedia.Core.QueryFilters;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using TransforSerPu.Core.Dtos;
 
 namespace SocialMedia.Core.Services
 {
@@ -77,6 +79,64 @@ namespace SocialMedia.Core.Services
         {
             await _unitOfWork.RolModuleRepository.Delete(id);
             await _unitOfWork.SaveChangesAsync();
+        }
+
+        public IEnumerable<RolModuleCombinadoDto> ObtenerModulosUsuario(Guid userId)
+        {
+            var listaRoles = this._unitOfWork.UserInRolesRepository
+                .Get().Where(x => x.UserId == userId).Select(x => x.RoleId).ToList();
+
+            //Si contiene el rol administrador, responde full permisos a todos los modulos.
+            if (listaRoles.Contains(Guid.Parse("3A9A7CE2-9A5C-4AFF-A47A-C5FDFCD955AE")))
+            {
+                return this._unitOfWork.ModuleRepository.Get()
+                .Select(x => new RolModuleCombinadoDto()
+                {
+                    Module = x.ModuleName,
+                    Created = true,
+                    Deleted = true,
+                    Edited = true,
+                    Listed = true,
+                    Printed = true
+                }).ToList();
+            }
+
+            var rolesModules = this._unitOfWork.RolModuleRepository.Get(x => x.Module, y => y.Rol)
+                .Where(x => listaRoles.Contains(x.IdRol)).ToList();
+
+            var combinedPermissions = CombineRolesPermissions(rolesModules)
+                .Select(x => new RolModuleCombinadoDto()
+                {
+                    Module = x.Module.ModuleName,
+                    Created = x.Created,
+                    Deleted = x.Deleted,
+                    Edited = x.Edited,
+                    Listed = x.Listed,
+                    Printed = x.Printed,
+                }).ToList();
+
+            return combinedPermissions;
+        }
+
+        private RolModule MergePermissions(RolModule perm1, RolModule perm2)
+        {
+            return new RolModule
+            {
+                Module = perm1.Module,
+                Created = perm1.Created || perm2.Created,
+                Edited = perm1.Edited || perm2.Edited,
+                Listed = perm1.Listed || perm2.Listed,
+                Deleted = perm1.Deleted || perm2.Deleted,
+                Printed = perm1.Printed || perm2.Printed
+            };
+        }
+
+        public IEnumerable<RolModule> CombineRolesPermissions(List<RolModule> rolesModules)
+        {
+            return rolesModules
+                .GroupBy(rm => rm.Module) // Agrupar por módulo
+                .Select(group => group.Aggregate((merged, next) => MergePermissions(merged, next))) // Combina los permisos
+                .ToList();
         }
     }
 

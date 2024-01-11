@@ -24,12 +24,13 @@ namespace SocialMedia.Api.Controllers
         private readonly ISecurityService _securityService;
         private readonly IPasswordService _passwordService;
         private readonly ITokenService _tokenService;
+        private readonly IRolModuleService _rolModuleService;
 
         private string issuer;
         private string audience;
         private string secret;
 
-        public TokenController(IConfiguration configuration, ISecurityService securityService, IPasswordService passwordService, ITokenService tokenService)
+        public TokenController(IConfiguration configuration, ISecurityService securityService, IPasswordService passwordService, ITokenService tokenService, IRolModuleService rolModuleService)
         {
             _configuration = configuration;
             _securityService = securityService;
@@ -39,6 +40,7 @@ namespace SocialMedia.Api.Controllers
             issuer = _configuration["Authentication:Issuer"];
             audience = _configuration["Authentication:Audience"];
             secret = _configuration["Authentication:SecretKey"];
+            _rolModuleService = rolModuleService;
         }
 
         [HttpPost]
@@ -68,6 +70,7 @@ namespace SocialMedia.Api.Controllers
             };
                 var accessToken = _tokenService.GenerateAccessToken(claims, issuer, audience, secret);
                 var refreshToken = _tokenService.GenerateRefreshToken();
+                var permisos = _rolModuleService.ObtenerModulosUsuario(security.UserId);
 
                 await _securityService.UpdateRefreshToken(security.UserName, refreshToken);
 
@@ -77,6 +80,7 @@ namespace SocialMedia.Api.Controllers
                     RefreshToken = refreshToken,
                     UserId = security.Id,
                     UserName = security.UserName,
+                    Permisos = permisos
                 });
             }
             catch (Exception ex)
