@@ -2,6 +2,7 @@
 using SocialMedia.Core.Entities;
 using SocialMedia.Core.QueryFilters;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace SocialMedia.Core.Interfaces
@@ -13,5 +14,6 @@ namespace SocialMedia.Core.Interfaces
         Task<PagedList<Roles>> GetRoles(RolesQueryFilter filters);
         Task InsertRole(Roles role);
         Task<bool> UpdateRole(Roles role);
+        IEnumerable<Roles> GetAll();
     }
 }

@@ -27,4 +27,8 @@
     <ProjectReference Include="..\SocialMedia.Api\SocialMedia.Api.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Security\" />
+  </ItemGroup>
+
 </Project>

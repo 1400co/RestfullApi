@@ -23,6 +23,12 @@ namespace SocialMedia.Core.Services
             _paginationOptions = paginationOptions.Value;
         }
 
+        public IEnumerable<Roles> GetAll()
+        {
+            var barrios = _unitOfWork.RolesRepository.Get();
+            return barrios;
+        }
+
         public async Task InsertRole(Roles role)
         {
             if (string.IsNullOrEmpty(role.RolName))

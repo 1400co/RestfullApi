@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
-using Azure;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using SocialMedia.Api.Responses;
@@ -9,16 +10,14 @@ using SocialMedia.Core.Entities;
 using SocialMedia.Core.Interfaces;
 using SocialMedia.Core.QueryFilters;
 using SocialMedia.Infrastructure.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
-using System;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Authorization;
 
 namespace SocialMedia.Api.Controllers
 {
-    //[Authorize]
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class RolesController : ControllerBase
@@ -32,6 +31,26 @@ namespace SocialMedia.Api.Controllers
             _rolesService = rolesService;
             _mapper = mapper;
             _uriService = uriService;
+        }
+
+        /// <summary>
+        /// Obtiene todos los roles disponibles.
+        /// </summary>
+        /// <returns>Un resultado HTTP que contiene una lista de roles en forma de objetos RolesDto.</returns>
+        /// <remarks>
+        /// Este método se utiliza para obtener todos los roles disponibles en el sistema. 
+        /// Utiliza el servicio correspondiente (`_rolesService.GetAll()`) para recuperar la lista de roles desde la base de datos.
+        /// Luego, mapea estos roles a objetos RolesDto y los devuelve en una respuesta HTTP.
+        /// </remarks>
+        [HttpGet]
+        [Route("getAll")]
+        public IActionResult getAll()
+        {
+            var barriosList = _rolesService.GetAll();
+            var barriosDto = _mapper.Map<IEnumerable<RolesDto>>(barriosList);
+            var response = new ApiResponse<IEnumerable<RolesDto>>(barriosDto);
+
+            return Ok(response);
         }
 
         [HttpGet(Name = nameof(GetRoles))]
