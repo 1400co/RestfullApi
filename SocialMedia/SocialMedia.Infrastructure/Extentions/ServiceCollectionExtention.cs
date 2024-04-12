@@ -16,6 +16,7 @@ using Hangfire;
 using System.IO;
 using TransforSerPu.Core.Interfaces;
 using Hangfire.PostgreSql;
+using SocialMedia.Core.Entities;
 
 namespace SocialMedia.Infrastructure.Extentions
 {
@@ -87,6 +88,9 @@ namespace SocialMedia.Infrastructure.Extentions
 
         public static IServiceCollection AddServices(this IServiceCollection services)
         {
+            services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
+            services.AddScoped(typeof(IGenericService<>), typeof(GenericService<>));
+            services.AddTransient<IUnitOfWork, UnitOfWork>();
             services.AddTransient<IEmailService, EmailService>();
             services.AddTransient<ITokenService, TokenService>();
             services.AddTransient<IUserService, UserService>();

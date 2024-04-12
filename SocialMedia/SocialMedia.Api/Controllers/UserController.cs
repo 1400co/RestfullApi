@@ -7,11 +7,13 @@ using SocialMedia.Api.Responses;
 using SocialMedia.Core.CustomEntities;
 using SocialMedia.Core.Dtos;
 using SocialMedia.Core.Entities;
+using SocialMedia.Core.Exceptions;
 using SocialMedia.Core.Interfaces;
 using SocialMedia.Core.QueryFilters;
 using SocialMedia.Infrastructure.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -47,6 +49,17 @@ namespace SocialMedia.Api.Controllers
         {
             var users = await _userService.GetUsers(filters);
             var userDto = _mapper.Map<IEnumerable<UserDto>>(users);
+
+            userDto.ToList().ForEach(user =>
+            {
+                var roles = this._userInRolesService.GetAll(user.Id)
+                    .Select(role => role.Roles.RolName) 
+                    .ToList();
+
+                // Usamos string.Join para concatenar los nombres de los roles separados por comas
+                user.Roles = string.Join(", ", roles);
+            });
+
             var response = new ApiResponse<IEnumerable<UserDto>>(userDto);
 
             var metaData = new Metadata
@@ -74,9 +87,17 @@ namespace SocialMedia.Api.Controllers
             return Ok(response);
         }
 
+        [AllowAnonymous]
         [HttpPost]
         public async Task<IActionResult> Post(UserDto userDto)
         {
+            var sec = await _securityService.GetCredentialsByUserName(userDto.Email);
+
+            if (sec != null )
+            {
+                throw new BusinessException("Usuario ya existe.");
+            }
+
             var user = _mapper.Map<User>(userDto);
 
             await _userService.InsertUser(user);
@@ -85,7 +106,7 @@ namespace SocialMedia.Api.Controllers
             {
                 UserId = user.Id,
                 Role = Core.Enumerations.RoleType.Consumer,
-                UserName = userDto.UserName,
+                UserName = userDto.Email,
                 Password = _passwordService.Hash(userDto.Password),
                 RefreshTokenExpiryTime = DateTime.Now.AddHours(1),
             };

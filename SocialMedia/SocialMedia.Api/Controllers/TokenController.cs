@@ -1,10 +1,14 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using SocialMedia.Core.Dtos;
 using SocialMedia.Core.Entities;
 using SocialMedia.Core.Interfaces;
 using SocialMedia.Infrastructure.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using TransforSerPu.Core.Dtos;
@@ -12,6 +16,8 @@ using TransforSerPu.Core.Interfaces;
 
 namespace SocialMedia.Api.Controllers
 {
+
+    [AllowAnonymous]
     [Route("api/[Controller]")]
     [ApiController]
     public class TokenController : ControllerBase
@@ -21,12 +27,14 @@ namespace SocialMedia.Api.Controllers
         private readonly IPasswordService _passwordService;
         private readonly ITokenService _tokenService;
         private readonly IRolModuleService _rolModuleService;
+        private readonly IUserInRolesService _userInRole;
+        private readonly IPasswordRecoveryService _passwordRecoveryService;
 
         private string issuer;
         private string audience;
         private string secret;
 
-        public TokenController(IConfiguration configuration, ISecurityService securityService, IPasswordService passwordService, ITokenService tokenService, IRolModuleService rolModuleService)
+        public TokenController(IConfiguration configuration, ISecurityService securityService, IPasswordService passwordService, ITokenService tokenService, IRolModuleService rolModuleService, IUserInRolesService userInRole, IPasswordRecoveryService passwordRecoveryService)
         {
             _configuration = configuration;
             _securityService = securityService;
@@ -37,6 +45,8 @@ namespace SocialMedia.Api.Controllers
             audience = _configuration["Authentication:Audience"];
             secret = _configuration["Authentication:SecretKey"];
             _rolModuleService = rolModuleService;
+            _userInRole = userInRole;
+            _passwordRecoveryService = passwordRecoveryService;
         }
 
         [HttpPost]
@@ -110,12 +120,50 @@ namespace SocialMedia.Api.Controllers
             return NoContent();
         }
 
+        [HttpGet]
+        [Route("me")]
+        public async Task<IActionResult> Me()
+        {
+            var user = await this.GetCallerUser();
+            if (user == null) return BadRequest();
+
+            return Ok(user);
+        }
+
         private async Task<(bool, Security)> ValidateUser(UserLoginDto login)
         {
             var user = await _securityService.GetLoginByCredentials(login);
 
+
             var isValid = _passwordService.Check(user.Password, login.Password);
             return (isValid, user);
+        }
+
+        private async Task<UserModelDto> GetCallerUser()
+        {
+            try
+            {
+                if (!User.Identity.IsAuthenticated)
+                {
+                    return null;
+                }
+
+                var username = User.Identity.Name;
+                var user = await _securityService.GetLoginByCredentials(new UserLoginDto() { User = username });
+                var roles = await _userInRole.GetUsersRoles(user.User.Id);
+
+                return new UserModelDto()
+                {
+                    FullName = user.User.FullName,
+                    Email = user.User.Email,    
+                    UserName = username,
+                    Roles = roles.Select(x=> x.Roles.RolName).ToList()
+                };
+            }
+            catch (System.Exception e)
+            {
+                return null;
+            }
         }
 
     }

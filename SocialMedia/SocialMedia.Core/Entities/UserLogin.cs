@@ -7,5 +7,6 @@ namespace SocialMedia.Core.Entities
         public string User { get; set; }
         public string Password { get; set; }
         public virtual Guid  UserId { get; set; }
+        public User Users { get; set; }
     }
 }

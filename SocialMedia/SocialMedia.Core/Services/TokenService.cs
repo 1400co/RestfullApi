@@ -78,7 +78,7 @@ namespace SocialMedia.Core.Services
                 issuer: issuer,
                 audience: audience,
                 claims: claims,
-                expires: DateTime.Now.AddHours(4),
+                expires: DateTime.Now.AddHours(24),
                 signingCredentials: signinCredentials
             );
 

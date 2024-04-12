@@ -33,6 +33,25 @@ namespace SocialMedia.Api.Controllers
             _uriService = uriService;
         }
 
+        /// <summary>
+        /// Obtiene todos los roles de usuario para un usuario específico.
+        /// </summary>
+        /// <param name="userId">El identificador único del usuario para el que se obtienen los roles.</param>
+        /// <returns>Un resultado HTTP que contiene la lista de roles de usuario para el usuario especificado.</returns>
+        /// <remarks>
+        /// Este método permite obtener todos los roles de usuario asociados a un usuario específico en la base de datos. Recibe el identificador único del usuario a través del parámetro `userId` y utiliza el servicio correspondiente (`_userInRolesService`) para obtener los roles. Luego, se crea una respuesta HTTP que contiene la lista de roles de usuario.
+        /// </remarks>
+        [HttpGet]
+        [Route("getAll")]
+        public IActionResult getAll(Guid userId)
+        {
+            var barriosList = _userInRolesService.GetAll(userId);
+            var barriosDto = _mapper.Map<IEnumerable<UserInRolesDto>>(barriosList);
+            var response = new ApiResponse<IEnumerable<UserInRolesDto>>(barriosDto);
+
+            return Ok(response);
+        }
+
         [HttpGet(Name = nameof(GetUserInRoles))]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(ApiResponse<IEnumerable<UserInRolesDto>>))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]

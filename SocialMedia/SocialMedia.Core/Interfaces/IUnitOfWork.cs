@@ -17,6 +17,7 @@ namespace SocialMedia.Core.Interfaces
         ISecurityRepository SecurityRepository { get; }
         void SaveChanges();
         Task SaveChangesAsync();
+        IRepository<T> GetRepository<T>() where T : BaseEntity;
 
     }
 }

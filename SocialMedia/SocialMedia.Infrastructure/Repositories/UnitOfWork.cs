@@ -52,6 +52,10 @@ namespace SocialMedia.Infrastructure.Repositories
           await  socialMediaContext.SaveChangesAsync();
         }
 
+        public IRepository<T> GetRepository<T>() where T : BaseEntity
+        {
+            return new BaseRepository<T>(socialMediaContext);
+        }
 
     }
 }

@@ -61,22 +61,6 @@ namespace SocialMedia.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "UserLogin",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    User = table.Column<string>(type: "text", nullable: true),
-                    Password = table.Column<string>(type: "text", nullable: true),
-                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    Responsable = table.Column<string>(type: "text", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_UserLogin", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Usuario",
                 columns: table => new
                 {
@@ -201,7 +185,6 @@ namespace SocialMedia.Infrastructure.Migrations
                     IdUserInRoles = table.Column<Guid>(type: "uuid", nullable: false),
                     IdUser = table.Column<Guid>(type: "uuid", nullable: false),
                     IdRol = table.Column<Guid>(type: "uuid", nullable: false),
-                    RolId = table.Column<Guid>(type: "uuid", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     Responsable = table.Column<string>(type: "text", nullable: true)
                 },
@@ -209,13 +192,35 @@ namespace SocialMedia.Infrastructure.Migrations
                 {
                     table.PrimaryKey("PK_UserInRoles", x => x.IdUserInRoles);
                     table.ForeignKey(
-                        name: "FK_UserInRoles_Roles_RolId",
-                        column: x => x.RolId,
+                        name: "FK_UserInRoles_Roles_IdRol",
+                        column: x => x.IdRol,
                         principalTable: "Roles",
                         principalColumn: "IdRol");
                     table.ForeignKey(
                         name: "FK_UserInRoles_Usuario_IdUser",
                         column: x => x.IdUser,
+                        principalTable: "Usuario",
+                        principalColumn: "IdUsuario",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserLogin",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    User = table.Column<string>(type: "text", nullable: true),
+                    Password = table.Column<string>(type: "text", nullable: true),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Responsable = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserLogin", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_UserLogin_Usuario_UserId",
+                        column: x => x.UserId,
                         principalTable: "Usuario",
                         principalColumn: "IdUsuario",
                         onDelete: ReferentialAction.Cascade);
@@ -254,12 +259,13 @@ namespace SocialMedia.Infrastructure.Migrations
                 columns: new[] { "IdModulo", "CreatedAt", "NombreModulo", "Responsable" },
                 values: new object[,]
                 {
-                    { new Guid("1885be8d-aa27-4221-abdf-7affc845c63a"), new DateTime(2023, 12, 27, 17, 31, 22, 210, DateTimeKind.Utc).AddTicks(5688), "Permisos", "System" },
-                    { new Guid("1885be8d-aa27-4221-abdf-7affc845c63b"), new DateTime(2023, 12, 27, 17, 31, 22, 210, DateTimeKind.Utc).AddTicks(5689), "Home", "System" },
-                    { new Guid("24c51d74-d6f3-4409-a2b4-fccc8a4193b4"), new DateTime(2023, 12, 27, 17, 31, 22, 210, DateTimeKind.Utc).AddTicks(5691), "Modules", "System" },
-                    { new Guid("642812ea-344e-4008-b4b6-4f74fba9b091"), new DateTime(2023, 12, 27, 17, 31, 22, 210, DateTimeKind.Utc).AddTicks(5686), "Roles", "System" },
-                    { new Guid("88b9cb17-dc3d-47e4-b60e-0bc75de3cae1"), new DateTime(2023, 12, 27, 17, 31, 22, 210, DateTimeKind.Utc).AddTicks(5681), "Usuarios", "System" },
-                    { new Guid("d9e00690-bef3-483c-8275-49624fdeca2b"), new DateTime(2023, 12, 27, 17, 31, 22, 210, DateTimeKind.Utc).AddTicks(5685), "Credenciales", "System" }
+                    { new Guid("1885be8d-aa27-4221-abdf-7affc845c63a"), new DateTime(2024, 4, 12, 16, 30, 43, 171, DateTimeKind.Utc).AddTicks(9066), "Permisos", "System" },
+                    { new Guid("1885be8d-aa27-4221-abdf-7affc845c63b"), new DateTime(2024, 4, 12, 16, 30, 43, 171, DateTimeKind.Utc).AddTicks(9068), "Home", "System" },
+                    { new Guid("24c51d74-d6f3-4409-a2b4-fccc8a4193b4"), new DateTime(2024, 4, 12, 16, 30, 43, 171, DateTimeKind.Utc).AddTicks(9070), "Modules", "System" },
+                    { new Guid("642812ea-344e-4008-b4b6-4f74fba9b091"), new DateTime(2024, 4, 12, 16, 30, 43, 171, DateTimeKind.Utc).AddTicks(9064), "Roles", "System" },
+                    { new Guid("88b9cb17-dc3d-47e4-b60e-0bc75de3cae1"), new DateTime(2024, 4, 12, 16, 30, 43, 171, DateTimeKind.Utc).AddTicks(9056), "Usuarios", "System" },
+                    { new Guid("a23e6ada-2bb4-44b5-b7ad-69581f198e1c"), new DateTime(2024, 4, 12, 16, 30, 43, 171, DateTimeKind.Utc).AddTicks(9072), "Demo", "System" },
+                    { new Guid("d9e00690-bef3-483c-8275-49624fdeca2b"), new DateTime(2024, 4, 12, 16, 30, 43, 171, DateTimeKind.Utc).AddTicks(9060), "Credenciales", "System" }
                 });
 
             migrationBuilder.InsertData(
@@ -267,24 +273,24 @@ namespace SocialMedia.Infrastructure.Migrations
                 columns: new[] { "IdRol", "CreatedAt", "Responsable", "RolName" },
                 values: new object[,]
                 {
-                    { new Guid("3a9a7ce2-9a5c-4aff-a47a-c5fdfcd955ae"), new DateTime(2023, 12, 27, 17, 31, 22, 209, DateTimeKind.Utc).AddTicks(3064), "System", "Super Administrator" },
-                    { new Guid("7c2e1e9b-410b-4a6b-b9ae-8b078422eb2d"), new DateTime(2023, 12, 27, 17, 31, 22, 209, DateTimeKind.Utc).AddTicks(3075), "System", "Administrator" }
+                    { new Guid("3a9a7ce2-9a5c-4aff-a47a-c5fdfcd955ae"), new DateTime(2024, 4, 12, 16, 30, 43, 170, DateTimeKind.Utc).AddTicks(3962), "System", "Super Administrator" },
+                    { new Guid("7c2e1e9b-410b-4a6b-b9ae-8b078422eb2d"), new DateTime(2024, 4, 12, 16, 30, 43, 170, DateTimeKind.Utc).AddTicks(3967), "System", "Administrator" }
                 });
 
             migrationBuilder.InsertData(
                 table: "Usuario",
                 columns: new[] { "IdUsuario", "BornDate", "CreatedAt", "Email", "FullName", "IsActive", "Phone", "Responsable", "Subscription" },
-                values: new object[] { new Guid("53aeeca4-a5b1-4751-abcb-3207a01b97dc"), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2023, 12, 27, 17, 31, 22, 210, DateTimeKind.Utc).AddTicks(2528), "oruedar@yopmail.com", "Oscar", true, null, "System", 0 });
+                values: new object[] { new Guid("53aeeca4-a5b1-4751-abcb-3207a01b97dc"), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 4, 12, 16, 30, 43, 171, DateTimeKind.Utc).AddTicks(2985), "oruedar@yopmail.com", "Oscar", true, null, "System", 0 });
 
             migrationBuilder.InsertData(
                 table: "Seguridad",
                 columns: new[] { "IdSeguridad", "CreatedAt", "Password", "RefreshToken", "RefreshTokenExpiryTime", "Responsable", "Rol", "UserId", "UserName" },
-                values: new object[] { new Guid("bd38e82f-ca84-494a-b3a2-918f591193fd"), new DateTime(2023, 12, 27, 17, 31, 22, 210, DateTimeKind.Utc).AddTicks(980), "10000.mmlVX3xzYuLQromOzqELBQ==.JIwrJbVGsgYiTMjqWqcvulmXk8Fv6c7hxbl8mEqixTI=", null, null, "System", "Administrator", new Guid("53aeeca4-a5b1-4751-abcb-3207a01b97dc"), "admin" });
+                values: new object[] { new Guid("d6a320bc-7134-4871-a01b-935075d2cadd"), new DateTime(2024, 4, 12, 16, 30, 43, 171, DateTimeKind.Utc).AddTicks(1477), "10000.mmlVX3xzYuLQromOzqELBQ==.JIwrJbVGsgYiTMjqWqcvulmXk8Fv6c7hxbl8mEqixTI=", null, null, "System", "Administrator", new Guid("53aeeca4-a5b1-4751-abcb-3207a01b97dc"), "admin" });
 
             migrationBuilder.InsertData(
                 table: "UserInRoles",
-                columns: new[] { "IdUserInRoles", "CreatedAt", "Responsable", "RolId", "IdRol", "IdUser" },
-                values: new object[] { new Guid("62bbd8d9-0df5-4777-839a-cf2f95fd2a7a"), new DateTime(2023, 12, 27, 17, 31, 22, 210, DateTimeKind.Utc).AddTicks(4072), "System", null, new Guid("3a9a7ce2-9a5c-4aff-a47a-c5fdfcd955ae"), new Guid("53aeeca4-a5b1-4751-abcb-3207a01b97dc") });
+                columns: new[] { "IdUserInRoles", "CreatedAt", "Responsable", "IdRol", "IdUser" },
+                values: new object[] { new Guid("19ba277a-e977-4e10-b743-f5148bf9487d"), new DateTime(2024, 4, 12, 16, 30, 43, 171, DateTimeKind.Utc).AddTicks(7225), "System", new Guid("3a9a7ce2-9a5c-4aff-a47a-c5fdfcd955ae"), new Guid("53aeeca4-a5b1-4751-abcb-3207a01b97dc") });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Comentario_IdPublicacion",
@@ -322,14 +328,19 @@ namespace SocialMedia.Infrastructure.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_UserInRoles_IdRol",
+                table: "UserInRoles",
+                column: "IdRol");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_UserInRoles_IdUser",
                 table: "UserInRoles",
                 column: "IdUser");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserInRoles_RolId",
-                table: "UserInRoles",
-                column: "RolId");
+                name: "IX_UserLogin_UserId",
+                table: "UserLogin",
+                column: "UserId");
         }
 
         /// <inheritdoc />

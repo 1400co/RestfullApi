@@ -16,6 +16,15 @@ namespace SocialMedia.Core.Services
             _unitOfWork = unitOfWork;
         }
 
+        public async Task<Security> GetSecurityUser(Guid idUsuario)
+        {
+
+            var listSecurity = _unitOfWork.SecurityRepository.Get(x => x.User)
+                .Where(x => x.UserId == idUsuario).FirstOrDefault();
+
+            return listSecurity;
+        }
+
         public async Task<Security> GetLoginByCredentials(UserLoginDto userLogin)
         {
             return await _unitOfWork.SecurityRepository.GetLoginByCredentials(userLogin);
@@ -23,12 +32,24 @@ namespace SocialMedia.Core.Services
 
         public async Task<Security> GetCredentialsByUserName(string userLogin)
         {
-            return await _unitOfWork.SecurityRepository.Get().Where( x=> x.UserName == userLogin).FirstOrDefaultAsync();
+            return await _unitOfWork.SecurityRepository.Get().Where(x => x.UserName == userLogin).FirstOrDefaultAsync();
         }
 
         public async Task RegisterUser(Security security)
         {
             await _unitOfWork.SecurityRepository.Add(security);
+            await _unitOfWork.SaveChangesAsync();
+        }
+
+        public async Task UpdateCredentials(Security data)
+        {
+            var sec = await _unitOfWork.SecurityRepository.GetById(data.Id);
+
+            //sec.UserName = data.UserName;
+            //sec.Role = data.Role;
+            sec.Password = data.Password;
+
+            await _unitOfWork.SecurityRepository.Update(sec);
             await _unitOfWork.SaveChangesAsync();
         }
 

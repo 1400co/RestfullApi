@@ -16,6 +16,12 @@ namespace SocialMedia.Infrastructure.Data.Configurations
             builder.Property(e => e.UserId).HasColumnName("IdUser").ValueGeneratedNever();
             builder.Property(e => e.RoleId).HasColumnName("IdRol").ValueGeneratedNever();
 
+            builder.HasOne(concepto => concepto.Roles)
+             .WithMany(tipoAplicacion => tipoAplicacion.UserInRoles)
+             .HasForeignKey(concepto => concepto.RoleId)
+             .OnDelete(DeleteBehavior.NoAction)
+             .IsRequired();
+
             builder.HasData(
                    new UserInRoles
                    {

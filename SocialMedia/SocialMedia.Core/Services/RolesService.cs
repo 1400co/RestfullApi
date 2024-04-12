@@ -67,9 +67,9 @@ namespace SocialMedia.Core.Services
             filters.PageSize = filters.PageSize;
 
             // Additional filtering logic if necessary
-            if (!string.IsNullOrEmpty(filters.RoleName))
+            if (!string.IsNullOrEmpty(filters.Filter))
             {
-                roles = roles.Where(x => x.RolName.Contains(filters.RoleName));
+                roles = roles.Where(x => x.RolName.ToLower().Contains(filters.Filter.ToLower()));
             }
 
             var pagedRoles = await PagedList<Roles>.CreateAsync(roles, filters.PageNumber, filters.PageSize);

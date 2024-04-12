@@ -1,4 +1,6 @@
-﻿using SocialMedia.Core.CustomEntities;
+﻿using Microsoft.EntityFrameworkCore;
+using SocialMedia.Core.CustomEntities;
+using SocialMedia.Core.Dtos;
 using SocialMedia.Core.Entities;
 using SocialMedia.Core.Exceptions;
 using SocialMedia.Core.Interfaces;
@@ -45,16 +47,22 @@ namespace SocialMedia.Core.Services
             return await _unitOfWork.UserRepository.GetById(id);
         }
 
-        public async Task<PagedList<User>> GetUsers(UserQueryFilter filters)
+        public async Task<User> GetUserByEmail(string email)
         {
-            var users = _unitOfWork.UserRepository.Get();
+            return await _unitOfWork.UserRepository.Get().FirstOrDefaultAsync(x => x.Email == email);
+        }
+
+        public async Task<PagedList<User>> GetUsers(BaseQueryFilter filters)
+        {
+            var users = _unitOfWork.UserRepository.Get(x=> x.UserInRoles);
 
             filters.PageNumber = filters.PageNumber;
             filters.PageSize = filters.PageSize;
 
-            if (!string.IsNullOrEmpty(filters.Email))
+            if (!string.IsNullOrEmpty(filters.Filter))
             {
-                users = users.Where(x => x.Email.Contains(filters.Email));
+                users = users.Where(x => x.Email.ToLower().Contains(filters.Filter.ToLower()));
+                users = users.Where(x => x.FullName.ToLower().Contains(filters.Filter.ToLower()));
             }
 
             var pagedUsers = await PagedList<User>.CreateAsync(users, filters.PageNumber, filters.PageSize);

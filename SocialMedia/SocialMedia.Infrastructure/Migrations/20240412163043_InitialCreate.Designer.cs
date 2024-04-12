@@ -12,7 +12,7 @@ using SocialMedia.Infrastructure.Data;
 namespace SocialMedia.Infrastructure.Migrations
 {
     [DbContext(typeof(SocialMediaContext))]
-    [Migration("20231227173122_InitialCreate")]
+    [Migration("20240412163043_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -119,43 +119,50 @@ namespace SocialMedia.Infrastructure.Migrations
                         new
                         {
                             Id = new Guid("88b9cb17-dc3d-47e4-b60e-0bc75de3cae1"),
-                            CreatedAt = new DateTime(2023, 12, 27, 17, 31, 22, 210, DateTimeKind.Utc).AddTicks(5681),
+                            CreatedAt = new DateTime(2024, 4, 12, 16, 30, 43, 171, DateTimeKind.Utc).AddTicks(9056),
                             ModuleName = "Usuarios",
                             Responsable = "System"
                         },
                         new
                         {
                             Id = new Guid("d9e00690-bef3-483c-8275-49624fdeca2b"),
-                            CreatedAt = new DateTime(2023, 12, 27, 17, 31, 22, 210, DateTimeKind.Utc).AddTicks(5685),
+                            CreatedAt = new DateTime(2024, 4, 12, 16, 30, 43, 171, DateTimeKind.Utc).AddTicks(9060),
                             ModuleName = "Credenciales",
                             Responsable = "System"
                         },
                         new
                         {
                             Id = new Guid("642812ea-344e-4008-b4b6-4f74fba9b091"),
-                            CreatedAt = new DateTime(2023, 12, 27, 17, 31, 22, 210, DateTimeKind.Utc).AddTicks(5686),
+                            CreatedAt = new DateTime(2024, 4, 12, 16, 30, 43, 171, DateTimeKind.Utc).AddTicks(9064),
                             ModuleName = "Roles",
                             Responsable = "System"
                         },
                         new
                         {
                             Id = new Guid("1885be8d-aa27-4221-abdf-7affc845c63a"),
-                            CreatedAt = new DateTime(2023, 12, 27, 17, 31, 22, 210, DateTimeKind.Utc).AddTicks(5688),
+                            CreatedAt = new DateTime(2024, 4, 12, 16, 30, 43, 171, DateTimeKind.Utc).AddTicks(9066),
                             ModuleName = "Permisos",
                             Responsable = "System"
                         },
                         new
                         {
                             Id = new Guid("1885be8d-aa27-4221-abdf-7affc845c63b"),
-                            CreatedAt = new DateTime(2023, 12, 27, 17, 31, 22, 210, DateTimeKind.Utc).AddTicks(5689),
+                            CreatedAt = new DateTime(2024, 4, 12, 16, 30, 43, 171, DateTimeKind.Utc).AddTicks(9068),
                             ModuleName = "Home",
                             Responsable = "System"
                         },
                         new
                         {
                             Id = new Guid("24c51d74-d6f3-4409-a2b4-fccc8a4193b4"),
-                            CreatedAt = new DateTime(2023, 12, 27, 17, 31, 22, 210, DateTimeKind.Utc).AddTicks(5691),
+                            CreatedAt = new DateTime(2024, 4, 12, 16, 30, 43, 171, DateTimeKind.Utc).AddTicks(9070),
                             ModuleName = "Modules",
+                            Responsable = "System"
+                        },
+                        new
+                        {
+                            Id = new Guid("a23e6ada-2bb4-44b5-b7ad-69581f198e1c"),
+                            CreatedAt = new DateTime(2024, 4, 12, 16, 30, 43, 171, DateTimeKind.Utc).AddTicks(9072),
+                            ModuleName = "Demo",
                             Responsable = "System"
                         });
                 });
@@ -299,14 +306,14 @@ namespace SocialMedia.Infrastructure.Migrations
                         new
                         {
                             Id = new Guid("3a9a7ce2-9a5c-4aff-a47a-c5fdfcd955ae"),
-                            CreatedAt = new DateTime(2023, 12, 27, 17, 31, 22, 209, DateTimeKind.Utc).AddTicks(3064),
+                            CreatedAt = new DateTime(2024, 4, 12, 16, 30, 43, 170, DateTimeKind.Utc).AddTicks(3962),
                             Responsable = "System",
                             RolName = "Super Administrator"
                         },
                         new
                         {
                             Id = new Guid("7c2e1e9b-410b-4a6b-b9ae-8b078422eb2d"),
-                            CreatedAt = new DateTime(2023, 12, 27, 17, 31, 22, 209, DateTimeKind.Utc).AddTicks(3075),
+                            CreatedAt = new DateTime(2024, 4, 12, 16, 30, 43, 170, DateTimeKind.Utc).AddTicks(3967),
                             Responsable = "System",
                             RolName = "Administrator"
                         });
@@ -355,8 +362,8 @@ namespace SocialMedia.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("bd38e82f-ca84-494a-b3a2-918f591193fd"),
-                            CreatedAt = new DateTime(2023, 12, 27, 17, 31, 22, 210, DateTimeKind.Utc).AddTicks(980),
+                            Id = new Guid("d6a320bc-7134-4871-a01b-935075d2cadd"),
+                            CreatedAt = new DateTime(2024, 4, 12, 16, 30, 43, 171, DateTimeKind.Utc).AddTicks(1477),
                             Password = "10000.mmlVX3xzYuLQromOzqELBQ==.JIwrJbVGsgYiTMjqWqcvulmXk8Fv6c7hxbl8mEqixTI=",
                             Responsable = "System",
                             Role = "Administrator",
@@ -404,7 +411,7 @@ namespace SocialMedia.Infrastructure.Migrations
                         {
                             Id = new Guid("53aeeca4-a5b1-4751-abcb-3207a01b97dc"),
                             BornDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CreatedAt = new DateTime(2023, 12, 27, 17, 31, 22, 210, DateTimeKind.Utc).AddTicks(2528),
+                            CreatedAt = new DateTime(2024, 4, 12, 16, 30, 43, 171, DateTimeKind.Utc).AddTicks(2985),
                             Email = "oruedar@yopmail.com",
                             FullName = "Oscar",
                             IsActive = true,
@@ -426,9 +433,6 @@ namespace SocialMedia.Infrastructure.Migrations
                     b.Property<string>("Responsable")
                         .HasColumnType("text");
 
-                    b.Property<Guid?>("RolId")
-                        .HasColumnType("uuid");
-
                     b.Property<Guid>("RoleId")
                         .HasColumnType("uuid")
                         .HasColumnName("IdRol");
@@ -439,7 +443,7 @@ namespace SocialMedia.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("RolId");
+                    b.HasIndex("RoleId");
 
                     b.HasIndex("UserId");
 
@@ -448,8 +452,8 @@ namespace SocialMedia.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("62bbd8d9-0df5-4777-839a-cf2f95fd2a7a"),
-                            CreatedAt = new DateTime(2023, 12, 27, 17, 31, 22, 210, DateTimeKind.Utc).AddTicks(4072),
+                            Id = new Guid("19ba277a-e977-4e10-b743-f5148bf9487d"),
+                            CreatedAt = new DateTime(2024, 4, 12, 16, 30, 43, 171, DateTimeKind.Utc).AddTicks(7225),
                             Responsable = "System",
                             RoleId = new Guid("3a9a7ce2-9a5c-4aff-a47a-c5fdfcd955ae"),
                             UserId = new Guid("53aeeca4-a5b1-4751-abcb-3207a01b97dc")
@@ -478,6 +482,8 @@ namespace SocialMedia.Infrastructure.Migrations
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("UserLogin");
                 });
@@ -557,9 +563,11 @@ namespace SocialMedia.Infrastructure.Migrations
 
             modelBuilder.Entity("SocialMedia.Core.Entities.UserInRoles", b =>
                 {
-                    b.HasOne("SocialMedia.Core.Entities.Roles", "Rol")
+                    b.HasOne("SocialMedia.Core.Entities.Roles", "Roles")
                         .WithMany("UserInRoles")
-                        .HasForeignKey("RolId");
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
 
                     b.HasOne("SocialMedia.Core.Entities.User", "User")
                         .WithMany("UserInRoles")
@@ -567,9 +575,20 @@ namespace SocialMedia.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Rol");
+                    b.Navigation("Roles");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("SocialMedia.Core.Entities.UserLogin", b =>
+                {
+                    b.HasOne("SocialMedia.Core.Entities.User", "Users")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Users");
                 });
 
             modelBuilder.Entity("SocialMedia.Core.Entities.Modules", b =>

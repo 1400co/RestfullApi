@@ -57,10 +57,12 @@ namespace SocialMedia.Infrastructure.Repositories
         /// </summary>
         /// <param name="entity"></param>
         /// <returns></returns>
-        public async Task Insert(T entity)
+        public async Task<T> Insert(T entity)
         {
             await entities.AddAsync(entity);
             await socialMediaContext.SaveChangesAsync();
+            return entity;  
+
         }
 
         public async Task<List<T>> Insert(List<T> entities)

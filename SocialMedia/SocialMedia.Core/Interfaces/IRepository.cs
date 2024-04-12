@@ -12,7 +12,7 @@ namespace SocialMedia.Core.Interfaces
         Task<T> GetById(Guid id, params Expression<Func<T, object>>[] includes);
         IQueryable<T> Get(params Expression<Func<T, object>>[] includes);
         IEnumerable<T> GetByAll();
-        Task Insert(T entity);
+        Task<T> Insert(T entity);
         Task<List<T>> Insert(List<T> entities);
         Task Update(T entity);
         Task Delete(Guid id);

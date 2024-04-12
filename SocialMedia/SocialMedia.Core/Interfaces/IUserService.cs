@@ -10,8 +10,9 @@ namespace SocialMedia.Core.Interfaces
     {
         Task DeleteUser(Guid id);
         Task<User> GetUser(Guid id);
-        Task<PagedList<User>> GetUsers(UserQueryFilter filters);
+        Task<PagedList<User>> GetUsers(BaseQueryFilter filters);
         Task InsertUser(User user);
         Task<bool> UpdateUser(User user);
+        Task<User> GetUserByEmail(string email);
     }
 }

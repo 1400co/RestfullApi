@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Options;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using SocialMedia.Core.CustomEntities;
 using SocialMedia.Core.Entities;
 using SocialMedia.Core.Exceptions;
@@ -6,6 +7,7 @@ using SocialMedia.Core.Interfaces;
 using SocialMedia.Core.QueryFilters;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -20,6 +22,13 @@ namespace SocialMedia.Core.Services
         {
             _unitOfWork = unitOfWork;
             _paginationOptions = paginationOptions.Value;
+        }
+
+        public IEnumerable<UserInRoles> GetAll(Guid userId)
+        {
+            var barrios = _unitOfWork.UserInRolesRepository.Get(x => x.User, y => y.Roles)
+                .Where(x => x.UserId == userId);
+            return barrios;
         }
 
         public async Task InsertUserInRole(UserInRoles userInRole)
@@ -49,6 +58,12 @@ namespace SocialMedia.Core.Services
         public async Task<UserInRoles> GetUserInRole(Guid id)
         {
             return await _unitOfWork.UserInRolesRepository.GetById(id);
+        }
+
+        public async Task<List<UserInRoles>> GetUsersRoles(Guid id)
+        {
+            return await _unitOfWork.UserInRolesRepository.Get(x => x.Roles, y => y.User)
+                .Where(x => x.UserId == id).ToListAsync();
         }
 
         public async Task<PagedList<UserInRoles>> GetUserInRoles(UserInRolesQueryFilter filters)

@@ -8,7 +8,7 @@ namespace SocialMedia.Core.Entities
         public virtual User User { get; set; }
 
         public virtual Guid RoleId { get; set; }
-        public virtual Roles Rol { get; set; }
+        public virtual Roles Roles { get; set; }
 
     }
 }

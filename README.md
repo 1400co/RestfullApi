@@ -32,6 +32,8 @@
 30. added auth to swagger
 31. added auth and permissions entities
 32. fixed cors
+33. Added Generic Service
+34. Updated Base Repository
 
 Special thanks to 
 @force4Win - Alvaro Andres Obregon.

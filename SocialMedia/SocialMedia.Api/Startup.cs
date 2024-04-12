@@ -3,6 +3,7 @@ using Hangfire;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -13,6 +14,7 @@ using SocialMedia.Infrastructure.Filters;
 using System;
 using System.Reflection;
 using System.Text;
+using Microsoft.AspNetCore.Http.Features;
 
 namespace SocialMedia.Api
 {
@@ -56,6 +58,13 @@ namespace SocialMedia.Api
                     {
                         //options.SuppressModelStateInvalidFilter = true;
                     });
+
+            services.Configure<FormOptions>(options =>
+            {
+                options.ValueLengthLimit = int.MaxValue; // Límite de tamaño de carga (en bytes). En este caso, sin límite.
+                options.MultipartBodyLengthLimit = long.MaxValue; // Límite de tamaño del cuerpo multipart. En este caso, sin límite.
+                options.MultipartHeadersLengthLimit = int.MaxValue; // Límite de tamaño de los encabezados multipart. En este caso, sin límite.
+            });
 
             //Use extentions methods from infraestructure Extentions.
             services.AddOptions(Configuration);

@@ -96,7 +96,7 @@ namespace SocialMedia.Api.Controllers
 
             var recovery = await _passwordRecoveryService.InsertRecovery(passwordRecovery);
 
-            BackgroundJob.Enqueue(() => this._emailService.SendEmailAsync("", "Passord recovery", $"password recovery {recovery.Id}", false));
+            BackgroundJob.Enqueue(() => this._emailService.SendEmailAsync(security.UserName, "Passord recovery", $"password recovery {recovery.Id}", false));
 
             passwordRecoveryDto.Id = recovery.Id;
 
@@ -120,14 +120,14 @@ namespace SocialMedia.Api.Controllers
         [Route("PasswordUpdate")]
         public async Task<IActionResult> PasswordUpdate(PasswordUpdate passwordUpdate)
         {
-            var renewToken = await this._passwordRecoveryService.GetRecovery(passwordUpdate.Id);
+            var renewToken = await this._passwordRecoveryService.GetRecovery(passwordUpdate.PasswordRecoveryToken);
 
             if (renewToken == null)
             {
                 throw new BusinessException("Token expired.");
             }
 
-            if (renewToken.ExpiryDate < DateTime.Now)
+            if (renewToken.ExpiryDate > DateTime.Now)
             {
                 throw new BusinessException("Token expired.");
             }
