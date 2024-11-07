@@ -1,39 +1,44 @@
-# RestfullApi
+# Restful API
 
-1. added EF
-2. added FluentApi configuration for each model
-3. added method for Get all posts and single post
-4. added insert posts
-5. have technical dept on api due to is using same class of repository
-6. fix technical dept removing remository objects for DTOs and use automapper for mapping objects from repository to dto
-7. Filter using decorators on Dto and a middleware 
-8. Web Api Configuration and Fluent Validations
-9. CRUD Operations with EF Core
-10. Added Bussines Logic and repository pattern to Solution.
-11. Added Repository pattern and Unit of work.
-12. Added Exception handler and some refactors.
-13. Added Filtering Data and Return Types
-14. Added Paging on querys
-15. Added Configuration
-16. Added Documenting API with Swagger
-17. Added Securing API with JWT
-18. Added Register and Login User
-19. Added Storing Hashing Passwords
-20. Final Refactor
-21. Added JWT to Swagger
-22. Added Insert and updates with lists to Base Repository
-23. Added includes to Base Repository on Get and GetById
-24. Replaced int to Guid on Id's
-25. Added support for Postgress EF
-26. Added Refresh Token
-27. Added Serilog
-28. updated to .net Core 8
-29. added audit historic changes to all models
-30. added auth to swagger
-31. added auth and permissions entities
-32. fixed cors
-33. Added Generic Service
-34. Updated Base Repository
+Este proyecto es una API RESTful que utiliza .NET Core y EF Core. Incluye configuraciones avanzadas y mejoras para facilitar la implementación de prácticas sólidas en desarrollo web.
 
-Special thanks to 
-@force4Win - Alvaro Andres Obregon.
+## Características
+
+1. **Entity Framework (EF)**: Añadido para la gestión de datos.
+2. **Fluent API Configuration**: Configuración detallada de modelos mediante Fluent API.
+3. **Métodos GET**: Implementación de métodos para obtener todos los posts y un solo post.
+4. **Inserción de Posts**: Método para insertar posts en la base de datos.
+5. **Technical Debt en API**: La API utiliza la misma clase del repositorio.
+6. **Refactorización para Eliminar Debt**: Se sustituyen objetos de repositorio por DTOs y se usa AutoMapper para mapear objetos.
+7. **Filtrado**: Uso de decoradores en DTOs y middleware para aplicar filtros.
+8. **Configuración de la Web API**: Incluye validaciones con Fluent Validation.
+9. **Operaciones CRUD con EF Core**: Implementación de operaciones básicas CRUD.
+10. **Lógica de Negocio y Patrón de Repositorio**: Añadidos a la solución para una estructura limpia.
+11. **Unit of Work**: Implementación del patrón Unit of Work.
+12. **Manejo de Excepciones**: Añadido un manejador de excepciones y algunos refactores.
+13. **Filtrado y Tipos de Retorno**: Mejora en los datos filtrados y en los tipos de retorno de la API.
+14. **Paginación en Consultas**: Añadida paginación para mejorar la eficiencia en consultas.
+15. **Configuración Adicional**: Mejoras en la configuración general de la API.
+16. **Documentación con Swagger**: Documentación detallada de la API usando Swagger.
+17. **Seguridad con JWT**: Integración de JSON Web Tokens (JWT) para asegurar la API.
+18. **Registro e Inicio de Sesión de Usuario**: Funcionalidad de registro e inicio de sesión.
+19. **Hashing de Contraseñas**: Almacenamiento seguro de contraseñas con hashing.
+20. **Refactor Final**: Limpieza de código y ajustes finales.
+21. **JWT en Swagger**: Integración de JWT en Swagger para pruebas autenticadas.
+22. **Inserciones y Actualizaciones en Listas**: Añadido soporte para operaciones masivas en el repositorio base.
+23. **Incluye Relaciones en Get y GetById**: Soporte para relaciones en las operaciones de obtención.
+24. **Cambio de Id de int a Guid**: Uso de Guid para identificadores únicos.
+25. **Soporte para PostgreSQL**: Añadido soporte para PostgreSQL en EF Core.
+26. **Token de Refresco**: Implementación de refresh tokens para sesiones extendidas.
+27. **Serilog**: Añadido Serilog para el manejo avanzado de logs.
+28. **Actualización a .NET Core 8**: Migración y actualización a la última versión de .NET Core.
+29. **Historial de Cambios en Modelos**: Auditoría para todos los modelos.
+30. **Autenticación en Swagger**: Autenticación habilitada en Swagger.
+31. **Entidades de Autorización y Permisos**: Estructura de permisos y autenticación en la base de datos.
+32. **CORS**: Configuración de CORS para mejorar la seguridad de acceso.
+33. **Servicio Genérico**: Añadido un servicio genérico para reutilización.
+34. **Repositorio Base Actualizado**: Mejoras en la implementación del repositorio base.
+
+## Agradecimientos Especiales
+
+Gracias a @force4Win - Alvaro Andres Obregon por su colaboración y apoyo en este proyecto.

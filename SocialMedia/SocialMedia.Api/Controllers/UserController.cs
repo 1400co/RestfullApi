@@ -99,21 +99,44 @@ namespace SocialMedia.Api.Controllers
             }
 
             var user = _mapper.Map<User>(userDto);
-
-            await _userService.InsertUser(user);
-
-            var credential = new Security()
+            user.Id = Guid.NewGuid();
+            user.Security.Add(new Security()
             {
                 UserId = user.Id,
                 Role = Core.Enumerations.RoleType.Consumer,
                 UserName = userDto.Email,
                 Password = _passwordService.Hash(userDto.Password),
                 RefreshTokenExpiryTime = DateTime.Now.AddHours(1),
-            };
+            });
 
-            await _securityService.RegisterUser(credential);
+            user.UserInRoles.Add(
+                new UserInRoles()
+                {
+                    RoleId = _tiendaRole,
+                    UserId = user.Id,
+                    CreatedAt = DateTime.UtcNow,
+                    Responsable = "System"
+                });
 
-            await _userInRolesService.InsertUserInRole(new UserInRoles() { RoleId = _administratorRole, UserId = user.Id, CreatedAt = DateTime.UtcNow, Responsable = "System" });
+            user.Tiendas.Add(
+               new Tienda()
+               {
+                   CorreoElectronico = userDto.Email,
+                   ConsecutivoFactura = 1000,
+                   CreatedAt = DateTime.UtcNow,
+                   Responsable = "System",
+                   Bodegas =  new List<Bodega>() { new Bodega() { Nombre = "Principal" } }
+               });
+
+            await _userService.InsertUser(user);
+
+
+            BackgroundJob.Enqueue(() => this._emailService.SendEmailAsync(
+                userDto.UserName,
+                "Bienvenido",
+                $"¡Bienvenido a nuestra plataforma!\n\nTu clave de usuario es: {userDto.Password}\n\nPara empezar a utilizar la plataforma, haz clic en el siguiente enlace:\n\n<a href='URL_DE_LA_PLATAFORMA'>Ingresar a la plataforma</a>",
+                true
+            ));
 
             userDto = _mapper.Map<UserDto>(user);
 

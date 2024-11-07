@@ -10,7 +10,6 @@ using System.Linq;
 using System.Linq.Dynamic.Core;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace SocialMedia.Core.Services
 {
@@ -27,7 +26,7 @@ namespace SocialMedia.Core.Services
 
         public IEnumerable<T> GetAll(params Expression<Func<T, object>>[] includes)
         {
-            var existingEntities = _unitOfWork.GetRepository<T>().Get(includes);
+            var existingEntities = _unitOfWork.GetRepository<T>().Get(null, includes);
             return existingEntities;
         }
 
@@ -61,7 +60,7 @@ namespace SocialMedia.Core.Services
 
         public async Task<PagedList<T>> Get(GeneralQueryFilter filters, params Expression<Func<T, object>>[] includes)
         {
-            var entities = _unitOfWork.GetRepository<T>().Get(includes);
+            var entities = _unitOfWork.GetRepository<T>().Get(null, includes);
 
             if (!string.IsNullOrWhiteSpace(filters.Filter))
             {

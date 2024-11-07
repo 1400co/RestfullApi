@@ -60,7 +60,7 @@ namespace SocialMedia.Core.Services
 
         public async Task<PagedList<Post>> GetPosts(PostQueryFilter filters)
         {
-            var posts = _unitOfWork.PostRepository.Get(u => u.User);
+            var posts = _unitOfWork.PostRepository.Get(null, u => u.User);
 
             filters.PageNumber = _paginationOptions.DefaultPageNumber;
             filters.PageSize = _paginationOptions.DefaultPageSize;

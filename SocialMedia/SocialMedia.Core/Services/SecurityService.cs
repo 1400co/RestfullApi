@@ -19,7 +19,7 @@ namespace SocialMedia.Core.Services
         public async Task<Security> GetSecurityUser(Guid idUsuario)
         {
 
-            var listSecurity = _unitOfWork.SecurityRepository.Get(x => x.User)
+            var listSecurity = _unitOfWork.SecurityRepository.Get(null, x => x.User)
                 .Where(x => x.UserId == idUsuario).FirstOrDefault();
 
             return listSecurity;

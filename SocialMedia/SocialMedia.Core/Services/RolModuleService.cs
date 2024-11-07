@@ -101,7 +101,7 @@ namespace SocialMedia.Core.Services
                 }).ToList();
             }
 
-            var rolesModules = this._unitOfWork.RolModuleRepository.Get(x => x.Module, y => y.Rol)
+            var rolesModules = this._unitOfWork.RolModuleRepository.Get(null, x => x.Module, y => y.Rol)
                 .Where(x => listaRoles.Contains(x.IdRol)).ToList();
 
             var combinedPermissions = CombineRolesPermissions(rolesModules)

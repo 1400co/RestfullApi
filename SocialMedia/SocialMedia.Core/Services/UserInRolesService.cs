@@ -26,7 +26,7 @@ namespace SocialMedia.Core.Services
 
         public IEnumerable<UserInRoles> GetAll(Guid userId)
         {
-            var barrios = _unitOfWork.UserInRolesRepository.Get(x => x.User, y => y.Roles)
+            var barrios = _unitOfWork.UserInRolesRepository.Get(null, x => x.User, y => y.Roles)
                 .Where(x => x.UserId == userId);
             return barrios;
         }
@@ -62,7 +62,7 @@ namespace SocialMedia.Core.Services
 
         public async Task<List<UserInRoles>> GetUsersRoles(Guid id)
         {
-            return await _unitOfWork.UserInRolesRepository.Get(x => x.Roles, y => y.User)
+            return await _unitOfWork.UserInRolesRepository.Get(null, x => x.Roles, y => y.User)
                 .Where(x => x.UserId == id).ToListAsync();
         }
 

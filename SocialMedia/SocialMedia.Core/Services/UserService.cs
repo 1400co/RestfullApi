@@ -54,7 +54,7 @@ namespace SocialMedia.Core.Services
 
         public async Task<PagedList<User>> GetUsers(BaseQueryFilter filters)
         {
-            var users = _unitOfWork.UserRepository.Get(x=> x.UserInRoles);
+            var users = _unitOfWork.UserRepository.Get(null, x=> x.UserInRoles);
 
             filters.PageNumber = filters.PageNumber;
             filters.PageSize = filters.PageSize;

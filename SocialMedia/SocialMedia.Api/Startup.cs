@@ -14,7 +14,6 @@ using SocialMedia.Infrastructure.Filters;
 using System;
 using System.Reflection;
 using System.Text;
-using Microsoft.AspNetCore.Http.Features;
 
 namespace SocialMedia.Api
 {

@@ -20,12 +20,30 @@ namespace SocialMedia.Infrastructure.Repositories
             entities = socialMediaContext.Set<T>();
         }
 
-        public IEnumerable<T> GetByAll()
-        {
-            return entities.AsEnumerable();
+       public IEnumerable<T> GetByAll(
+            Expression<Func<T, bool>> additionalConditions = null,
+            params Expression<Func<T, object>>[] includes)
+                {
+            var query = entities.AsQueryable();
+
+            if (includes != null)
+            {
+                foreach (var include in includes)
+                {
+                    query = query.Include(include);
+                }
+            }
+
+            if (additionalConditions != null)
+            {
+                query = query.Where(additionalConditions);
+            }
+
+            return query.AsEnumerable();
         }
 
-        public IQueryable<T> Get(params Expression<Func<T, object>>[] includes)
+
+        public IQueryable<T> Get(Expression<Func<T, bool>> additionalConditions = null, params Expression<Func<T, object>>[] includes)
         {
             var query = entities.AsQueryable();
 
@@ -34,6 +52,11 @@ namespace SocialMedia.Infrastructure.Repositories
                 {
                     query = query.Include(include);
                 }
+
+            if (additionalConditions != null)
+            {
+                query = query.Where(additionalConditions);
+            }
 
             return query;
         }
@@ -75,12 +98,17 @@ namespace SocialMedia.Infrastructure.Repositories
         public async Task Update(T entity)
         {
             entities.Update(entity);
+            socialMediaContext.Entry(entity).State = EntityState.Modified;
             await socialMediaContext.SaveChangesAsync();
         }
 
         public async Task Update(List<T> entities)
         {
-            this.entities.UpdateRange(entities);
+            foreach (var entity in entities)
+            {
+                this.entities.Attach(entity);
+                socialMediaContext.Entry(entity).State = EntityState.Modified;
+            }
             await socialMediaContext.SaveChangesAsync(); // You might want to save the changes after updating.
         }
 
@@ -88,6 +116,11 @@ namespace SocialMedia.Infrastructure.Repositories
         {
             T entity = await GetById(id);
             entities.Remove(entity);
+        }
+
+        public void Detach(T entity)
+        {
+            socialMediaContext.Entry(entity).State = EntityState.Detached;
         }
 
         /// <summary>
@@ -98,6 +131,16 @@ namespace SocialMedia.Infrastructure.Repositories
         public async Task Add(T entity)
         {
             await entities.AddAsync(entity);
+        }
+
+        public async Task AddRangeAsync(IEnumerable<T> entities)
+        {
+            await this.entities.AddRangeAsync(entities);
+        }
+
+        public async Task UpdateRangeAsync(IEnumerable<T> entities)
+        {
+            this.entities.UpdateRange(entities);
         }
     }
 }
