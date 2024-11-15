@@ -1,11 +1,12 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
+﻿using Hangfire;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using SocialMedia.Core.Dtos;
 using SocialMedia.Core.Entities;
 using SocialMedia.Core.Interfaces;
 using SocialMedia.Infrastructure.Interfaces;
+using SocialMedia.Infrastructure.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,13 +29,15 @@ namespace SocialMedia.Api.Controllers
         private readonly ITokenService _tokenService;
         private readonly IRolModuleService _rolModuleService;
         private readonly IUserInRolesService _userInRole;
-        private readonly IPasswordRecoveryService _passwordRecoveryService;
+        private readonly IUserService _userService;
+        private readonly IEmailService _emailService;
 
         private string issuer;
         private string audience;
         private string secret;
 
-        public TokenController(IConfiguration configuration, ISecurityService securityService, IPasswordService passwordService, ITokenService tokenService, IRolModuleService rolModuleService, IUserInRolesService userInRole, IPasswordRecoveryService passwordRecoveryService)
+        public TokenController(IConfiguration configuration, ISecurityService securityService, IPasswordService passwordService,
+            ITokenService tokenService, IRolModuleService rolModuleService, IUserInRolesService userInRole, IUserService userService, IEmailService emailService)
         {
             _configuration = configuration;
             _securityService = securityService;
@@ -46,11 +49,51 @@ namespace SocialMedia.Api.Controllers
             secret = _configuration["Authentication:SecretKey"];
             _rolModuleService = rolModuleService;
             _userInRole = userInRole;
-            _passwordRecoveryService = passwordRecoveryService;
+            _userService = userService;
+            _emailService = emailService;
         }
 
         [HttpPost]
-        public async Task<IActionResult> GetToken(UserLoginDto login)
+        [Route("RequestToken")]
+        public async Task<IActionResult> RequestToken(string email)
+        {
+            var user = await this._userService.GetUserByEmail(email);
+
+            if (user == null) { return NotFound(); }
+
+            var otp = await _securityService.GetOneTimePassword(user.Id);
+
+            // Estructura HTML para el cuerpo del mensaje
+            var emailBody = $@"
+                <html>
+                    <body style='font-family: Arial, sans-serif; color: #333;'>
+                        <h2 style='color: #0056b3;'>¡Bienvenido a nuestra plataforma!</h2>
+                        <p>Estamos encantados de que te unas a nosotros.</p>
+                        <p>Tu clave de un solo uso (OTP) es:</p>
+                        <h3 style='color: #ff6600;'>{otp.Password}</h3>
+                        <p>Para empezar a utilizar la plataforma, haz clic en el siguiente enlace:</p>
+                        <p>Si no solicitaste este código, por favor ignora este mensaje.</p>
+                        <br>
+                        <p>Atentamente,<br>El equipo de soporte</p>
+                    </body>
+                </html>";
+
+            // Envío del correo electrónico usando HTML
+            BackgroundJob.Enqueue(() => this._emailService.SendEmailAsync(
+                user.Email,
+                "Bienvenido",
+                emailBody,
+                true // Activa el modo HTML para el correo electrónico
+            ));
+
+            return Ok();
+        }
+
+
+
+        [HttpPost]
+        [Route("Login")]
+        public async Task<IActionResult> Login(Login login)
         {
             try
             {
@@ -67,25 +110,29 @@ namespace SocialMedia.Api.Controllers
                     return Unauthorized();
                 }
 
-                var security = result.Item2;
+                var user = result.Item2;
 
                 var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Name, security.UserName),
-                    new Claim(ClaimTypes.Role, security.Role.ToString()),
+                new Claim(ClaimTypes.Name, user.Email),
+                    new Claim(ClaimTypes.Role, user.Role.ToString()),
             };
                 var accessToken = _tokenService.GenerateAccessToken(claims, issuer, audience, secret);
                 var refreshToken = _tokenService.GenerateRefreshToken();
-                var permisos = _rolModuleService.ObtenerModulosUsuario(security.UserId);
+                var permisos = _rolModuleService.ObtenerModulosUsuario(user.Id);
 
-                await _securityService.UpdateRefreshToken(security.UserName, refreshToken);
+
+                user.RefreshToken = refreshToken;
+                user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(2);
+
+                await this._userService.UpdateUser(user);
 
                 return Ok(new AuthenticatedResponse
                 {
                     AuthToken = accessToken,
                     RefreshToken = refreshToken,
-                    UserId = security.Id,
-                    UserName = security.UserName,
+                    UserId = user.Id,
+                    UserName = user.Email,
                     Permisos = permisos
                 });
             }
@@ -112,10 +159,13 @@ namespace SocialMedia.Api.Controllers
         public async Task<IActionResult> Revoke()
         {
             var username = User.Identity.Name;
-            var user = await _securityService.GetLoginByCredentials(new UserLoginDto() { User = username });
+            var user = await _userService.GetUserByEmail(username);
             if (user == null) return BadRequest();
 
-            await _securityService.UpdateRefreshToken(username, null);
+            user.RefreshToken = null;
+            user.RefreshTokenExpiryTime = DateTime.UtcNow;
+
+            await _userService.UpdateUser(user);
 
             return NoContent();
         }
@@ -130,13 +180,13 @@ namespace SocialMedia.Api.Controllers
             return Ok(user);
         }
 
-        private async Task<(bool, Security)> ValidateUser(UserLoginDto login)
+        private async Task<(bool, User)> ValidateUser(Login login)
         {
-            var user = await _securityService.GetLoginByCredentials(login);
+            var user = await this._userService.GetUserByEmail(login.Email);
 
+            var result = await _securityService.ValidateCredentials(login.Email, login.Otp);
 
-            var isValid = _passwordService.Check(user.Password, login.Password);
-            return (isValid, user);
+            return (result, user);
         }
 
         private async Task<UserModelDto> GetCallerUser()
@@ -149,15 +199,15 @@ namespace SocialMedia.Api.Controllers
                 }
 
                 var username = User.Identity.Name;
-                var user = await _securityService.GetLoginByCredentials(new UserLoginDto() { User = username });
-                var roles = await _userInRole.GetUsersRoles(user.User.Id);
+                var user = await _userService.GetUserByEmail(username);
+                var roles = await _userInRole.GetUsersRoles(user.Id);
 
                 return new UserModelDto()
                 {
-                    FullName = user.User.FullName,
-                    Email = user.User.Email,    
+                    FullName = user.FullName,
+                    Email = user.Email,
                     UserName = username,
-                    Roles = roles.Select(x=> x.Roles.RolName).ToList()
+                    Roles = roles.Select(x => x.Roles.RolName).ToList()
                 };
             }
             catch (System.Exception e)

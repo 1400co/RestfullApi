@@ -6,12 +6,8 @@ namespace SocialMedia.Core.Interfaces
 {
     public interface ISecurityService
     {
-        Task<Security> GetCredentialsByUserName(string userLogin);
-        Task<Security> GetLoginByCredentials(UserLoginDto userLogin);
-        Task RegisterUser(Security security);
-        Task UpdateRefreshToken(string userName, string refreshToken);
-        Task UpdateRecoveryPassword(Guid userId, string password);
-        Task UpdateCredentials(Security data);
-        Task<Security> GetSecurityUser(Guid idUsuario);
+        Task<Otp> GetOneTimePassword(Guid userId);
+        Task<User> GetUserByEmail(string email);
+        Task<bool> ValidateCredentials(string userLogin, string oneTimePassword);
     }
 }

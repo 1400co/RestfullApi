@@ -9,12 +9,11 @@ namespace SocialMedia.Core.Interfaces
         IPostRepository PostRepository { get; }
         IRepository<User> UserRepository { get; }
         IRepository<Comment> CommentRepository { get; }
-        IRepository<PasswordRecovery> PasswordRecoveryRepository { get; }
         IRepository<Roles> RolesRepository { get; }
         IRepository<RolModule> RolModuleRepository { get; }
         IRepository<UserInRoles> UserInRolesRepository { get; }
         IRepository<Modules> ModuleRepository { get; }
-        ISecurityRepository SecurityRepository { get; }
+        IRepository<Otp> OtpRepository { get; }
         void SaveChanges();
         Task SaveChangesAsync();
         IRepository<T> GetRepository<T>() where T : BaseEntity;

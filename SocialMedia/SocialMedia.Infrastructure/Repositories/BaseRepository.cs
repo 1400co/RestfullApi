@@ -128,7 +128,7 @@ namespace SocialMedia.Infrastructure.Repositories
         /// </summary>
         /// <param name="entity"></param>
         /// <returns></returns>
-        public async Task Add(T entity)
+        public async Task AddAsync(T entity)
         {
             await entities.AddAsync(entity);
         }

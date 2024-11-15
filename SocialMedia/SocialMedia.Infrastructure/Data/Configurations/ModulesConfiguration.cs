@@ -26,13 +26,6 @@ namespace SocialMedia.Infrastructure.Data
                     },
                     new Modules
                     {
-                        Id = new Guid("d9e00690-bef3-483c-8275-49624fdeca2b"),
-                        ModuleName = "Credenciales",
-                        CreatedAt = DateTime.UtcNow,
-                        Responsable = "System"
-                    },
-                    new Modules
-                    {
                         Id = new Guid("642812ea-344e-4008-b4b6-4f74fba9b091"),
                         ModuleName = "Roles",
                         CreatedAt = DateTime.UtcNow,

@@ -11,9 +11,7 @@ namespace SocialMedia.Core.Entities
         {
             Comments = new HashSet<Comment>();
             Post = new HashSet<Post>();
-            Security = new HashSet<Security>();
             UserInRoles = new HashSet<UserInRoles>();
-            PasswordRecovery = new HashSet<PasswordRecovery>();
         }
 
         public string FullName { get; set; }
@@ -21,13 +19,14 @@ namespace SocialMedia.Core.Entities
         public DateTime BornDate { get; set; }
         public string Phone { get; set; }
         public bool IsActive { get; set; }
+        public string RefreshToken { get; set; }
+        public DateTime RefreshTokenExpiryTime { get; set; }
         public Subscription Subscription { get; set; }
+        public RoleType Role { get; set; }
 
         public virtual ICollection<Comment> Comments { get; set; }
         public virtual ICollection<Post> Post { get; set; }
-        public virtual ICollection<Security> Security { get; set; }
         public virtual ICollection<UserInRoles> UserInRoles { get; set; }
-        public virtual ICollection<PasswordRecovery> PasswordRecovery { get; set; }
         
     }
 }

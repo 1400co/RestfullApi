@@ -26,12 +26,10 @@ namespace SocialMedia.Infrastructure.Data
         public virtual DbSet<Comment> Comments { get; set; }
         public virtual DbSet<Post> Posts { get; set; }
         public virtual DbSet<User> Users { get; set; }
-        public virtual DbSet<PasswordRecovery> PasswordRecovery { get; set; }
         public virtual DbSet<Roles> Roles { get; set; }
         public virtual DbSet<RolModule> RolModule { get; set; }
         public virtual DbSet<UserInRoles> UserInRoles { get; set; }
-        public virtual DbSet<Security> Security { get; set; }
-        public virtual DbSet<UserLogin> UserLogin { get; set; }
+        public virtual DbSet<Otp> Otp { get; set; }
 
         public override int SaveChanges()
         {
@@ -181,12 +179,22 @@ namespace SocialMedia.Infrastructure.Data
         //    optionsBuilder.UseSqlServer("Server=localhost;Initial Catalog=SocialMedia;Persist Security Info=False;User ID=sa;Password=Pass@Word;Connection Timeout=30;TrustServerCertificate=True");
         //}
 
+        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        //{
+        //    if (!optionsBuilder.IsConfigured)
+        //    {
+        //        optionsBuilder
+        //        .UseNpgsql("host=localhost;port=5432;database=SocialMedia;username=opinor_crm;password=opinor_crm");
+        //    }
+        //}
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
+            // Lanzar una excepción si el contexto no está configurado correctamente.
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder
-                .UseNpgsql("host=localhost;port=5432;database=SocialMedia;username=opinor_crm;password=opinor_crm");
+                optionsBuilder.EnableSensitiveDataLogging().UseNpgsql("host=localhost;port=5433;database=SocialMedia;username=admin_postgres;password=XPa8exBDAH6SzxkC");
+                //throw new InvalidOperationException("DbContextOptions were not configured. Make sure to configure the DbContext in the startup code using either SQL Server or PostgreSQL.");
             }
         }
 

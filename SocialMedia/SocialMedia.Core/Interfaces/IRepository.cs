@@ -17,7 +17,7 @@ namespace SocialMedia.Core.Interfaces
         Task Update(T entity);
         Task Delete(Guid id);
         Task Update(List<T> entities);
-        Task Add(T entity);
+        Task AddAsync(T entity);
         Task AddRangeAsync(IEnumerable<T> entities);
         Task UpdateRangeAsync(IEnumerable<T> entities);
         void Detach(T entity);

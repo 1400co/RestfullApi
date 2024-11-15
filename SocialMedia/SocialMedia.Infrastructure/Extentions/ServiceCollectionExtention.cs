@@ -29,7 +29,7 @@ namespace SocialMedia.Infrastructure.Extentions
         /// <param name="configuration"></param>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
-        public static IServiceCollection AddDbContexts(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection AddDbContextsSqlServer(this IServiceCollection services, IConfiguration configuration)
         {
             var engine = configuration["Database:Engine"];
             var connectionStringName = "MyConn"; // Asumiendo que quieres usar la misma cadena de conexión para ambos
@@ -97,7 +97,6 @@ namespace SocialMedia.Infrastructure.Extentions
             services.AddTransient<IUserInRolesService, UserInRolesService>();
             services.AddTransient<IRolModuleService, RolModuleService>();
             services.AddTransient<IRolesService, RolesService>();
-            services.AddTransient<IPasswordRecoveryService, PasswordRecoveryService>();
             services.AddTransient<ICommentService, CommentService>();
             services.AddTransient<IPostService, PostService>();
             services.AddTransient<ISecurityService, SecurityService>();

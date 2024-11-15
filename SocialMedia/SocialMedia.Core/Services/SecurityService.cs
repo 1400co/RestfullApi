@@ -2,7 +2,6 @@
 using SocialMedia.Core.Entities;
 using SocialMedia.Core.Interfaces;
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace SocialMedia.Core.Services
@@ -16,68 +15,78 @@ namespace SocialMedia.Core.Services
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<Security> GetSecurityUser(Guid idUsuario)
+        public async Task<Otp> GetOneTimePassword(Guid userId)
         {
+            // Buscar un OTP existente para el usuario
+            var otp = await _unitOfWork.GetRepository<Otp>()
+                .Get(x => x.UserId == userId && x.ExpireDate > DateTime.UtcNow)
+                .SingleOrDefaultAsync();
 
-            var listSecurity = _unitOfWork.SecurityRepository.Get(null, x => x.User)
-                .Where(x => x.UserId == idUsuario).FirstOrDefault();
+            // Si existe un OTP y no ha expirado, devolverlo
+            if (otp != null)
+            {
+                return otp;
+            }
 
-            return listSecurity;
-        }
+            // Si no existe un OTP o ha expirado, generar uno nuevo
+            otp = new Otp
+            {
+                UserId = userId,
+                Password = GenerateOtpCode(), // Método para generar el código OTP
+                ExpireDate = DateTime.UtcNow.AddMinutes(5), // Expira en 5 minutos
+                CreatedAt = DateTime.UtcNow,
+                Responsable = "System" // Puedes ajustar esto según tus necesidades
+            };
 
-        public async Task<Security> GetLoginByCredentials(UserLoginDto userLogin)
-        {
-            return await _unitOfWork.SecurityRepository.GetLoginByCredentials(userLogin);
-        }
-
-        public async Task<Security> GetCredentialsByUserName(string userLogin)
-        {
-            return await _unitOfWork.SecurityRepository.Get().Where(x => x.UserName == userLogin).FirstOrDefaultAsync();
-        }
-
-        public async Task RegisterUser(Security security)
-        {
-            await _unitOfWork.SecurityRepository.Add(security);
+            // Guardar el nuevo OTP en la base de datos
+            await _unitOfWork.GetRepository<Otp>().AddAsync(otp);
             await _unitOfWork.SaveChangesAsync();
+
+            return otp;
         }
 
-        public async Task UpdateCredentials(Security data)
+        private string GenerateOtpCode()
         {
-            var sec = await _unitOfWork.SecurityRepository.GetById(data.Id);
-
-            //sec.UserName = data.UserName;
-            //sec.Role = data.Role;
-            sec.Password = data.Password;
-
-            await _unitOfWork.SecurityRepository.Update(sec);
-            await _unitOfWork.SaveChangesAsync();
+            var random = new Random();
+            return random.Next(100000000, 999999999).ToString(); // Genera un número de 9 dígitos
         }
 
-        public async Task UpdateRefreshToken(string userName, string refreshToken)
+
+        public async Task<User> GetUserByEmail(string email)
         {
-            var sec = _unitOfWork.SecurityRepository
-                .Get().Where(x => x.UserName == userName).FirstOrDefault();
-
-            sec.RefreshToken = refreshToken;
-            sec.RefreshTokenExpiryTime = DateTime.Now.AddDays(7);
-
-            await _unitOfWork.SecurityRepository.Update(sec);
-            await _unitOfWork.SaveChangesAsync();
+            return await _unitOfWork.UserRepository.Get(x => x.Email == email).FirstOrDefaultAsync();
         }
 
-        public async Task UpdateRecoveryPassword(Guid userId, string password)
+        public async Task<bool> ValidateCredentials(string userLogin, string oneTimePassword)
         {
-            var sec = _unitOfWork.SecurityRepository
-                .Get().Where(x => x.UserId == userId).FirstOrDefault();
+            try
+            {
+                // Buscar al usuario por correo electrónico
+                var user = await _unitOfWork.UserRepository
+                    .Get(x => x.Email.ToLower() == userLogin.ToLower()).FirstOrDefaultAsync();
 
-            if (sec == null)
-                return;
+                // Verificar si el usuario existe
+                if (user == null)
+                {
+                    return false; // El usuario no fue encontrado
+                }
 
-            sec.Password = password;
-            sec.RefreshTokenExpiryTime = DateTime.Now.AddDays(7);
+                // Buscar OTP para el usuario específico
+                var otp = await _unitOfWork.GetRepository<Otp>()
+                    .Get(x => x.UserId == user.Id 
+                    && x.Password == oneTimePassword
+                    && x.ExpireDate >  DateTime.UtcNow)
+                    .SingleOrDefaultAsync();
 
-            await _unitOfWork.SecurityRepository.Update(sec);
-            await _unitOfWork.SaveChangesAsync();
+                // Devolver true si OTP existe, de lo contrario, false
+                return otp != null;
+            }
+            catch (Exception)
+            {
+                // Manejo de excepción (puedes registrar el error aquí si es necesario)
+                return false;
+            }
         }
+
     }
 }

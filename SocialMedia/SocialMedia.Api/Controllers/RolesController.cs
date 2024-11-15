@@ -18,6 +18,7 @@ using System.Threading.Tasks;
 namespace SocialMedia.Api.Controllers
 {
     [Authorize]
+    [Produces("application/json")]
     [ApiController]
     [Route("api/[controller]")]
     public class RolesController : ControllerBase

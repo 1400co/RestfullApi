@@ -17,6 +17,7 @@ using System.Threading.Tasks;
 
 namespace SocialMedia.Api.Controllers
 {
+    //[Authorize(Roles = nameof(RoleType.Administrator))]
     [Authorize]
     [ApiController]
     [Route("api/[controller]")]

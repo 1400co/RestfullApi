@@ -21,7 +21,8 @@ namespace SocialMedia.Core.Services
     public class TokenService : ITokenService
     {
         
-        private readonly ISecurityService _securityService;
+        
+        private readonly IUserService _userService;
         private readonly AuthenticationOptions _authenticationOptions;
 
 
@@ -29,18 +30,16 @@ namespace SocialMedia.Core.Services
         private string audience;
         private string secret;
 
-        public TokenService( ISecurityService securityService,
-            IOptions<AuthenticationOptions> authenticationOptions)
+        public TokenService(IOptions<AuthenticationOptions> authenticationOptions,
+            IUserService userService)
         {
-            _securityService = securityService;
             _authenticationOptions = authenticationOptions.Value;
 
             issuer = _authenticationOptions.Issuer;
             audience = _authenticationOptions.Audience;
             secret = _authenticationOptions.SecretKey;
+            _userService = userService;
         }
-
-        
 
         public async Task<AuthenticatedResponse> RenewToken(TokenDto tokenApiModel)
         {
@@ -50,17 +49,18 @@ namespace SocialMedia.Core.Services
             var principal = GetPrincipalFromExpiredToken(accessToken, secret);
             var username = principal.Identity.Name; //this is mapped to the Name claim by default
 
-            var user = await _securityService.GetLoginByCredentials(new UserLoginDto() { User = username });
+            var user = await _userService.GetUserByEmail(username);
 
-            if (user is null || user.RefreshToken != refreshToken || user.RefreshTokenExpiryTime <= DateTime.Now)
+            if (user is null || user.RefreshToken != refreshToken || user.RefreshTokenExpiryTime <= DateTime.UtcNow)
                 throw new BusinessException("Invalid client request");
 
             var newAccessToken = GenerateAccessToken(principal.Claims, issuer, audience, secret);
             var newRefreshToken = GenerateRefreshToken();
 
             user.RefreshToken = newRefreshToken;
+            user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(2);
 
-            await _securityService.UpdateRefreshToken(username, newRefreshToken);
+            await _userService.UpdateUser(user);
 
             return new AuthenticatedResponse()
             {

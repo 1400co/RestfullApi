@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Hangfire;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -30,9 +31,12 @@ namespace SocialMedia.Api.Controllers
         private readonly ISecurityService _securityService;
         private readonly IPasswordService _passwordService;
         private readonly IUserInRolesService _userInRolesService;
+        private readonly IEmailService _emailService;
         private readonly Guid _administratorRole = Guid.Parse("7C2E1E9B-410B-4A6B-B9AE-8B078422EB2D");
+        private readonly Guid _usuarioRole = Guid.Parse("7c2e1e9b-410b-4a6b-b9ae-8b078422eb2c");
 
-        public UserController(IUserService userService, IMapper mapper, IUriService uriService, ISecurityService securityService, IPasswordService passwordService, IUserInRolesService userInRolesService)
+        public UserController(IUserService userService, IMapper mapper, IUriService uriService, ISecurityService securityService, 
+        IPasswordService passwordService, IUserInRolesService userInRolesService, IEmailService emailService)
         {
             _userService = userService;
             _mapper = mapper;
@@ -40,6 +44,7 @@ namespace SocialMedia.Api.Controllers
             _securityService = securityService;
             _passwordService = passwordService;
             _userInRolesService = userInRolesService;
+            _emailService = emailService;
         }
 
         [HttpGet(Name = nameof(GetUsers))]
@@ -91,7 +96,7 @@ namespace SocialMedia.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> Post(UserDto userDto)
         {
-            var sec = await _securityService.GetCredentialsByUserName(userDto.Email);
+            var sec = await _securityService.GetUserByEmail(userDto.Email);
 
             if (sec != null )
             {
@@ -100,41 +105,23 @@ namespace SocialMedia.Api.Controllers
 
             var user = _mapper.Map<User>(userDto);
             user.Id = Guid.NewGuid();
-            user.Security.Add(new Security()
-            {
-                UserId = user.Id,
-                Role = Core.Enumerations.RoleType.Consumer,
-                UserName = userDto.Email,
-                Password = _passwordService.Hash(userDto.Password),
-                RefreshTokenExpiryTime = DateTime.Now.AddHours(1),
-            });
+            user.Role = Core.Enumerations.RoleType.Consumer;
 
             user.UserInRoles.Add(
                 new UserInRoles()
                 {
-                    RoleId = _tiendaRole,
+                    RoleId = _usuarioRole,
                     UserId = user.Id,
                     CreatedAt = DateTime.UtcNow,
                     Responsable = "System"
                 });
 
-            user.Tiendas.Add(
-               new Tienda()
-               {
-                   CorreoElectronico = userDto.Email,
-                   ConsecutivoFactura = 1000,
-                   CreatedAt = DateTime.UtcNow,
-                   Responsable = "System",
-                   Bodegas =  new List<Bodega>() { new Bodega() { Nombre = "Principal" } }
-               });
-
             await _userService.InsertUser(user);
 
-
             BackgroundJob.Enqueue(() => this._emailService.SendEmailAsync(
-                userDto.UserName,
+                userDto.Email,
                 "Bienvenido",
-                $"¡Bienvenido a nuestra plataforma!\n\nTu clave de usuario es: {userDto.Password}\n\nPara empezar a utilizar la plataforma, haz clic en el siguiente enlace:\n\n<a href='URL_DE_LA_PLATAFORMA'>Ingresar a la plataforma</a>",
+                $"¡Bienvenido a nuestra plataforma!\n\nPara empezar a utilizar la plataforma, haz clic en el siguiente enlace:\n\n<a href='URL_DE_LA_PLATAFORMA'>Ingresar a la plataforma</a>",
                 true
             ));
 
