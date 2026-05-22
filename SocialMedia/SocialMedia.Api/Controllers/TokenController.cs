@@ -1,6 +1,7 @@
 ﻿using Hangfire;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.Extensions.Configuration;
 using SocialMedia.Core.Dtos;
 using SocialMedia.Core.Entities;
@@ -18,7 +19,6 @@ using TransforSerPu.Core.Interfaces;
 namespace SocialMedia.Api.Controllers
 {
 
-    [AllowAnonymous]
     [Route("api/[Controller]")]
     [ApiController]
     public class TokenController : ControllerBase
@@ -46,13 +46,16 @@ namespace SocialMedia.Api.Controllers
 
             issuer = _configuration["Authentication:Issuer"];
             audience = _configuration["Authentication:Audience"];
-            secret = _configuration["Authentication:SecretKey"];
+            secret = Environment.GetEnvironmentVariable("JWT_SECRET_KEY")
+                ?? _configuration["Authentication:SecretKey"];
             _rolModuleService = rolModuleService;
             _userInRole = userInRole;
             _userService = userService;
             _emailService = emailService;
         }
 
+        [AllowAnonymous]
+        [EnableRateLimiting("AuthPolicy")]
         [HttpPost]
         [Route("RequestToken")]
         public async Task<IActionResult> RequestToken(string email)
@@ -91,6 +94,8 @@ namespace SocialMedia.Api.Controllers
 
 
 
+        [AllowAnonymous]
+        [EnableRateLimiting("AuthPolicy")]
         [HttpPost]
         [Route("Login")]
         public async Task<IActionResult> Login(Login login)
@@ -210,7 +215,7 @@ namespace SocialMedia.Api.Controllers
                     Roles = roles.Select(x => x.Roles.RolName).ToList()
                 };
             }
-            catch (System.Exception e)
+            catch (System.Exception)
             {
                 return null;
             }

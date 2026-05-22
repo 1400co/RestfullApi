@@ -2,6 +2,7 @@
 using SocialMedia.Core.Entities;
 using SocialMedia.Core.Interfaces;
 using System;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 
 namespace SocialMedia.Core.Services
@@ -47,8 +48,7 @@ namespace SocialMedia.Core.Services
 
         private string GenerateOtpCode()
         {
-            var random = new Random();
-            return random.Next(100000000, 999999999).ToString(); // Genera un número de 9 dígitos
+            return RandomNumberGenerator.GetInt32(100000000, 999999999).ToString();
         }
 
 
@@ -61,29 +61,31 @@ namespace SocialMedia.Core.Services
         {
             try
             {
-                // Buscar al usuario por correo electrónico
                 var user = await _unitOfWork.UserRepository
                     .Get(x => x.Email.ToLower() == userLogin.ToLower()).FirstOrDefaultAsync();
 
-                // Verificar si el usuario existe
                 if (user == null)
                 {
-                    return false; // El usuario no fue encontrado
+                    return false;
                 }
 
-                // Buscar OTP para el usuario específico
                 var otp = await _unitOfWork.GetRepository<Otp>()
-                    .Get(x => x.UserId == user.Id 
+                    .Get(x => x.UserId == user.Id
                     && x.Password == oneTimePassword
-                    && x.ExpireDate >  DateTime.UtcNow)
+                    && x.ExpireDate > DateTime.UtcNow)
                     .SingleOrDefaultAsync();
 
-                // Devolver true si OTP existe, de lo contrario, false
-                return otp != null;
+                if (otp == null)
+                    return false;
+
+                // Delete OTP after successful validation to prevent reuse
+                await _unitOfWork.GetRepository<Otp>().Delete(otp.Id);
+                await _unitOfWork.SaveChangesAsync();
+
+                return true;
             }
             catch (Exception)
             {
-                // Manejo de excepción (puedes registrar el error aquí si es necesario)
                 return false;
             }
         }

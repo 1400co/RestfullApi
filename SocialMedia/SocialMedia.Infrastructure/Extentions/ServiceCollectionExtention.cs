@@ -65,8 +65,9 @@ namespace SocialMedia.Infrastructure.Extentions
             .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
             .UseSimpleAssemblyNameTypeSerializer()
             .UseRecommendedSerializerSettings()
-            .UsePostgreSqlStorage(configurations.GetConnectionString("MyConn")));
+            .UsePostgreSqlStorage(options => options.UseNpgsqlConnection(configurations.GetConnectionString("MyConn"))));
             //.UseSqlServerStorage(configurations.GetConnectionString("MyConn")));
+            //Previous: .UsePostgreSqlStorage(configurations.GetConnectionString("MyConn"))
 
             services.AddHangfireServer(options =>
             {

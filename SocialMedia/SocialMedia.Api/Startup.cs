@@ -1,9 +1,11 @@
+using FluentValidation;
 using FluentValidation.AspNetCore;
 using Hangfire;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -14,6 +16,7 @@ using SocialMedia.Infrastructure.Filters;
 using System;
 using System.Reflection;
 using System.Text;
+using System.Threading.RateLimiting;
 
 namespace SocialMedia.Api
 {
@@ -31,7 +34,7 @@ namespace SocialMedia.Api
         public void ConfigureServices(IServiceCollection services)
         {
             //read all automapper from assembly on infraestructure/Mappers
-            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+            services.AddAutoMapper(cfg => { }, AppDomain.CurrentDomain.GetAssemblies());
 
             services.AddCors(options =>
             {
@@ -60,9 +63,21 @@ namespace SocialMedia.Api
 
             services.Configure<FormOptions>(options =>
             {
-                options.ValueLengthLimit = int.MaxValue; // Límite de tamaño de carga (en bytes). En este caso, sin límite.
-                options.MultipartBodyLengthLimit = long.MaxValue; // Límite de tamaño del cuerpo multipart. En este caso, sin límite.
-                options.MultipartHeadersLengthLimit = int.MaxValue; // Límite de tamaño de los encabezados multipart. En este caso, sin límite.
+                options.ValueLengthLimit = int.MaxValue; // Lï¿½mite de tamaï¿½o de carga (en bytes). En este caso, sin lï¿½mite.
+                options.MultipartBodyLengthLimit = long.MaxValue; // Lï¿½mite de tamaï¿½o del cuerpo multipart. En este caso, sin lï¿½mite.
+                options.MultipartHeadersLengthLimit = int.MaxValue; // Lï¿½mite de tamaï¿½o de los encabezados multipart. En este caso, sin lï¿½mite.
+            });
+
+            services.AddRateLimiter(options =>
+            {
+                options.AddFixedWindowLimiter("AuthPolicy", config =>
+                {
+                    config.PermitLimit = 5;
+                    config.Window = TimeSpan.FromMinutes(1);
+                    config.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+                    config.QueueLimit = 0;
+                });
+                options.RejectionStatusCode = Microsoft.AspNetCore.Http.StatusCodes.Status429TooManyRequests;
             });
 
             //Use extentions methods from infraestructure Extentions.
@@ -72,8 +87,12 @@ namespace SocialMedia.Api
             services.AddDbContextsPostgress(Configuration); //Postgress
 
             services.AddHangfire(Configuration);
+            services.AddFluentValidationAutoValidation();
             services.AddServices();
             services.AddSwagger($"{Assembly.GetExecutingAssembly().GetName().Name}.xml");
+
+            var jwtSecret = Environment.GetEnvironmentVariable("JWT_SECRET_KEY")
+                ?? Configuration["Authentication:SecretKey"];
 
             services.AddAuthentication(options =>
             {
@@ -89,20 +108,11 @@ namespace SocialMedia.Api
                     ValidateIssuerSigningKey = true,
                     ValidIssuer = Configuration["Authentication:Issuer"],
                     ValidAudience = Configuration["Authentication:Audience"],
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Authentication:SecretKey"]))
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecret))
                 };
             });
 
-            services.AddMvc(options =>
-            {
-                options.Filters.Add<ValidationFilter>();
-
-            })
-            .AddFluentValidation(options =>
-            {
-                //read all validatos from assembly on infraestructure/validators
-                options.RegisterValidatorsFromAssemblies(AppDomain.CurrentDomain.GetAssemblies());
-            });
+            services.AddValidatorsFromAssemblies(AppDomain.CurrentDomain.GetAssemblies());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -125,6 +135,8 @@ namespace SocialMedia.Api
             });
 
             app.UseCors("AllowAllOrigins");
+
+            app.UseRateLimiter();
 
             app.UseHangfireDashboard();
 

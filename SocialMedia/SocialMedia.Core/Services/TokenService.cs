@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using SocialMedia.Core.CustomEntities;
 using SocialMedia.Core.Entities;
@@ -8,7 +7,6 @@ using SocialMedia.Core.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Net.Sockets;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
@@ -37,7 +35,8 @@ namespace SocialMedia.Core.Services
 
             issuer = _authenticationOptions.Issuer;
             audience = _authenticationOptions.Audience;
-            secret = _authenticationOptions.SecretKey;
+            secret = Environment.GetEnvironmentVariable("JWT_SECRET_KEY")
+                ?? _authenticationOptions.SecretKey;
             _userService = userService;
         }
 
