@@ -20,12 +20,8 @@ namespace SocialMedia.Infrastructure.Repositories
             entities = socialMediaContext.Set<T>();
         }
 
-       public IEnumerable<T> GetByAll(
-            Expression<Func<T, bool>> additionalConditions = null,
-            params Expression<Func<T, object>>[] includes)
-                {
-            var query = entities.AsQueryable();
-
+        private IQueryable<T> ApplyIncludes(IQueryable<T> query, Expression<Func<T, object>>[] includes)
+        {
             if (includes != null)
             {
                 foreach (var include in includes)
@@ -33,73 +29,55 @@ namespace SocialMedia.Infrastructure.Repositories
                     query = query.Include(include);
                 }
             }
-
-            if (additionalConditions != null)
-            {
-                query = query.Where(additionalConditions);
-            }
-
-            return query.AsEnumerable();
+            return query;
         }
-
 
         public IQueryable<T> Get(Expression<Func<T, bool>> additionalConditions = null, params Expression<Func<T, object>>[] includes)
         {
             var query = entities.AsQueryable();
 
-            if (includes != null)
-                foreach (var include in includes)
-                {
-                    query = query.Include(include);
-                }
-
             if (additionalConditions != null)
             {
                 query = query.Where(additionalConditions);
             }
 
-            return query;
+            return ApplyIncludes(query, includes);
+        }
+
+        public IQueryable<T> GetAsNoTracking(Expression<Func<T, bool>> additionalConditions = null, params Expression<Func<T, object>>[] includes)
+        {
+            return Get(additionalConditions, includes).AsNoTracking();
         }
 
         public async Task<T> GetById(Guid id, params Expression<Func<T, object>>[] includes)
         {
             var query = entities.AsQueryable();
-
-            if (includes != null)
-                foreach (var include in includes)
-                {
-                    query = query.Include(include);
-                }
-
+            query = ApplyIncludes(query, includes);
             return await query.FirstOrDefaultAsync(e => e.Id == id);
         }
 
+        public async Task<T> GetByIdAsNoTracking(Guid id, params Expression<Func<T, object>>[] includes)
+        {
+            var query = entities.AsQueryable().AsNoTracking();
+            query = ApplyIncludes(query, includes);
+            return await query.FirstOrDefaultAsync(e => e.Id == id);
+        }
 
-        /// <summary>
-        /// Insert with Commit
-        /// </summary>
-        /// <param name="entity"></param>
-        /// <returns></returns>
         public async Task<T> Insert(T entity)
         {
             await entities.AddAsync(entity);
-            await socialMediaContext.SaveChangesAsync();
-            return entity;  
-
+            return entity;
         }
 
         public async Task<List<T>> Insert(List<T> entities)
         {
             await this.entities.AddRangeAsync(entities);
-            await socialMediaContext.SaveChangesAsync(); // You might want to save the changes after adding.
             return entities;
         }
 
         public async Task Update(T entity)
         {
             entities.Update(entity);
-            socialMediaContext.Entry(entity).State = EntityState.Modified;
-            await socialMediaContext.SaveChangesAsync();
         }
 
         public async Task Update(List<T> entities)
@@ -109,7 +87,6 @@ namespace SocialMedia.Infrastructure.Repositories
                 this.entities.Attach(entity);
                 socialMediaContext.Entry(entity).State = EntityState.Modified;
             }
-            await socialMediaContext.SaveChangesAsync(); // You might want to save the changes after updating.
         }
 
         public async Task Delete(Guid id)
@@ -118,16 +95,41 @@ namespace SocialMedia.Infrastructure.Repositories
             entities.Remove(entity);
         }
 
+        public Task Delete(T entity)
+        {
+            entities.Remove(entity);
+            return Task.CompletedTask;
+        }
+
+        public async Task<bool> AnyAsync(Expression<Func<T, bool>> predicate = null)
+        {
+            return predicate == null
+                ? await entities.AnyAsync()
+                : await entities.AnyAsync(predicate);
+        }
+
+        public async Task<int> CountAsync(Expression<Func<T, bool>> predicate = null)
+        {
+            return predicate == null
+                ? await entities.CountAsync()
+                : await entities.CountAsync(predicate);
+        }
+
+        public async Task<T> FirstOrDefaultAsync(Expression<Func<T, bool>> predicate = null, params Expression<Func<T, object>>[] includes)
+        {
+            var query = entities.AsQueryable();
+            query = ApplyIncludes(query, includes);
+
+            return predicate == null
+                ? await query.FirstOrDefaultAsync()
+                : await query.FirstOrDefaultAsync(predicate);
+        }
+
         public void Detach(T entity)
         {
             socialMediaContext.Entry(entity).State = EntityState.Detached;
         }
 
-        /// <summary>
-        /// Add with session, no commit.
-        /// </summary>
-        /// <param name="entity"></param>
-        /// <returns></returns>
         public async Task AddAsync(T entity)
         {
             await entities.AddAsync(entity);
