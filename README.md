@@ -20,14 +20,14 @@ API RESTful construida con **ASP.NET Core 10** y **EF Core**, siguiendo **Clean 
 ```
 SocialMedia.sln
 ├── SocialMedia.Api              # ASP.NET Core Web API (entry point)
-│   ├── Controllers/             #   Post, User, Token, Roles, Modules, etc.
+│   ├── Controllers/             #   Post, User, Token, Modules, etc.
 │   ├── Startup.cs               #   DI, middleware, auth config
 │   └── Program.cs               #   Host builder, Serilog, Npgsql timestamp
 │
 ├── SocialMedia.Core             # Capa de dominio y aplicación
 │   ├── Entities/                #   Modelos de dominio (Post, User, Comment, etc.)
 │   ├── Dtos/                    #   Objetos de transferencia
-│   ├── Interfaces/              #   Contratos de servicios y repositorios
+│   ├── Interfaces/              #   Contratos de servicios y repositorios (incl. ISessionService)
 │   ├── Services/                #   Lógica de negocio
 │   ├── QueryFilters/            #   Filtros con paginación
 │   ├── CustomEntities/          #   PagedList, Metadata, opciones de config
@@ -36,7 +36,7 @@ SocialMedia.sln
 ├── SocialMedia.Infrastructure   # Capa de infraestructura
 │   ├── Data/                    #   DbContext + Fluent API configurations
 │   ├── Repositories/            #   BaseRepository, PostRepository, UnitOfWork
-│   ├── Services/                #   EmailService, PasswordService, UriService
+│   ├── Services/                #   EmailService, PasswordService, UriService, SessionService
 │   ├── Filters/                 #   GlobalExceptionFilter, ValidationFilter
 │   ├── Validators/              #   FluentValidation validators
 │   ├── Mappings/                #   AutoMapper profiles
@@ -58,7 +58,15 @@ SocialMedia.sln
 - **Refresh tokens**: Rotación de tokens con fecha de expiración.
 - **Autorización por endpoint**: `Revoke` y `Me` requieren JWT. Solo `Login` y `RequestToken` son anónimos.
 - **Hashing de contraseñas**: PBKDF2 con salt configurable.
-- **Estructura de permisos**: Roles por usuario + módulos con permisos CRUD por rol.
+- **JWT Claims**: `ClaimTypes.Name` (email), `ClaimTypes.NameIdentifier` (userId), `ClaimTypes.Role` (roles).
+- **SessionService**: Helper que lee usuario/roles desde los claims JWT vía `IHttpContextAccessor` — sin roundtrip a BD.
+
+### Roles y Permisos
+- **Roles predefinidos vía enum `RoleType`** (`Administrator`, `Consumer`) — sin tablas dinámicas.
+- Cada `User` tiene una `List<RoleType> Roles` almacenada como columna separada por comas en la BD.
+- Autorización granular vía `RolModule` (entidad) que asigna permisos CRUD por `RoleType` y `Module`.
+- El rol `Administrator` obtiene permisos totales en todos los módulos automáticamente.
+- **Estructura de permisos**: Módulos con permisos CRUD combinados cuando un usuario tiene múltiples roles.
 
 ### API
 - Endpoints RESTful bajo `api/[Controller]`.

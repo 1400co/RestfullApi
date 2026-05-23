@@ -93,6 +93,7 @@ namespace SocialMedia.Infrastructure.Extentions
             services.AddScoped(typeof(IGenericService<>), typeof(GenericService<>));
             services.AddTransient<IUnitOfWork, UnitOfWork>();
             services.AddTransient<IEmailService, EmailService>();
+            services.AddTransient<ISessionService, SessionService>();
             services.AddTransient<ITokenService, TokenService>();
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<IRolModuleService, RolModuleService>();

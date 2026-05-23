@@ -30,13 +30,15 @@ namespace SocialMedia.Api.Controllers
         private readonly IRolModuleService _rolModuleService;
         private readonly IUserService _userService;
         private readonly IEmailService _emailService;
+        private readonly ISessionService _sessionService;
 
         private string issuer;
         private string audience;
         private string secret;
 
         public TokenController(IConfiguration configuration, ISecurityService securityService, IPasswordService passwordService,
-            ITokenService tokenService, IRolModuleService rolModuleService, IUserService userService, IEmailService emailService)
+            ITokenService tokenService, IRolModuleService rolModuleService, IUserService userService, IEmailService emailService,
+            ISessionService sessionService)
         {
             _configuration = configuration;
             _securityService = securityService;
@@ -50,6 +52,7 @@ namespace SocialMedia.Api.Controllers
             _rolModuleService = rolModuleService;
             _userService = userService;
             _emailService = emailService;
+            _sessionService = sessionService;
         }
 
         [AllowAnonymous]
@@ -118,6 +121,7 @@ namespace SocialMedia.Api.Controllers
                 var claims = new List<Claim>
                 {
                     new Claim(ClaimTypes.Name, user.Email),
+                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 };
                 user.Roles.ForEach(role => claims.Add(new Claim(ClaimTypes.Role, role.ToString())));
                 var accessToken = _tokenService.GenerateAccessToken(claims, issuer, audience, secret);
@@ -161,7 +165,7 @@ namespace SocialMedia.Api.Controllers
         [Route("revoke")]
         public async Task<IActionResult> Revoke()
         {
-            var username = User.Identity.Name;
+            var username = _sessionService.GetUserName();
             var user = await _userService.GetUserByEmail(username);
             if (user == null) return BadRequest();
 
@@ -175,9 +179,9 @@ namespace SocialMedia.Api.Controllers
 
         [HttpGet]
         [Route("me")]
-        public async Task<IActionResult> Me()
+        public IActionResult Me()
         {
-            var user = await this.GetCallerUser();
+            var user = _sessionService.GetCurrentUser();
             if (user == null) return BadRequest();
 
             return Ok(user);
@@ -190,32 +194,6 @@ namespace SocialMedia.Api.Controllers
             var result = await _securityService.ValidateCredentials(login.Email, login.Otp);
 
             return (result, user);
-        }
-
-        private async Task<UserModelDto> GetCallerUser()
-        {
-            try
-            {
-                if (!User.Identity.IsAuthenticated)
-                {
-                    return null;
-                }
-
-                var username = User.Identity.Name;
-                var user = await _userService.GetUserByEmail(username);
-
-                return new UserModelDto()
-                {
-                    FullName = user.FullName,
-                    Email = user.Email,
-                    UserName = username,
-                    Roles = user.Roles.Select(x => x.ToString()).ToList()
-                };
-            }
-            catch (System.Exception)
-            {
-                return null;
-            }
         }
 
     }
