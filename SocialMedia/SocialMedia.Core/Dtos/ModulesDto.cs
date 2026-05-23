@@ -1,7 +1,7 @@
 ﻿namespace SocialMedia.Core.Dtos
 {
-    public class ModulesDto : BaseDto
+    public record ModulesDto : BaseDto
     {
-        public string ModuleName { get; set; }
+        public string ModuleName { get; set; } = string.Empty;
     }
 }

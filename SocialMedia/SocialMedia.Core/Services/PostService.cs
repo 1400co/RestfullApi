@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Options;
 using SocialMedia.Core.CustomEntities;
 using SocialMedia.Core.Entities;
 using SocialMedia.Core.Exceptions;
@@ -10,27 +10,19 @@ using System.Threading.Tasks;
 
 namespace SocialMedia.Core.Services
 {
-    public class PostService : IPostService
+    public class PostService(IUnitOfWork unitOfWork, IOptions<PaginationOptions> paginationOptions) : IPostService
     {
-
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly PaginationOptions _paginationOptions;
-        public PostService(IUnitOfWork unitOfWork, IOptions<PaginationOptions> paginationOptions)
-        {
-            _unitOfWork = unitOfWork;
-            _paginationOptions = paginationOptions.Value;
-        }
 
         public async Task InsertPost(Post post)
         {
-            var user = await _unitOfWork.UserRepository.GetById(post.UserId);
+            var user = await unitOfWork.UserRepository.GetById(post.UserId).ConfigureAwait(false);
             if (user == null)
                 throw new BusinessException("User doesnt exist");
 
             if (post.Description.Contains("sexo"))
                 throw new BusinessException("Content not allowed");
 
-            var userPosts = await _unitOfWork.PostRepository.GetPostsByUser(post.UserId);
+            var userPosts = await unitOfWork.PostRepository.GetPostsByUser(post.UserId).ConfigureAwait(false);
             if (userPosts.Count() < 10)
             {
                 var lastPost = userPosts.OrderByDescending(x => x.CreatedAt).FirstOrDefault();
@@ -40,30 +32,32 @@ namespace SocialMedia.Core.Services
                 }
             }
 
-            await _unitOfWork.PostRepository.Insert(post);
+            await unitOfWork.PostRepository.Insert(post).ConfigureAwait(false);
         }
 
         public async Task<bool> UpdatePost(Post post)
         {
-            var existingPost = await _unitOfWork.PostRepository.GetById(post.Id, u => u.User);
+            var existingPost = await unitOfWork.PostRepository.GetById(post.Id, u => u.User).ConfigureAwait(false);
+            if (existingPost == null)
+                throw new BusinessException("Post doesn't exist");
 
             post.CopyPropertiesTo(existingPost);
 
-            await _unitOfWork.PostRepository.Update(existingPost);
+            await unitOfWork.PostRepository.Update(existingPost).ConfigureAwait(false);
             return true;
         }
 
-        public async Task<Post> GetPost(Guid id)
+        public async Task<Post?> GetPost(Guid id)
         {
-            return await _unitOfWork.PostRepository.GetById(id, u => u.User);
+            return await unitOfWork.PostRepository.GetById(id, u => u.User).ConfigureAwait(false);
         }
 
         public async Task<PagedList<Post>> GetPosts(PostQueryFilter filters)
         {
-            var posts = _unitOfWork.PostRepository.Get(null, u => u.User);
+            var posts = unitOfWork.PostRepository.Get(null, u => u.User);
 
-            filters.PageNumber = _paginationOptions.DefaultPageNumber;
-            filters.PageSize = _paginationOptions.DefaultPageSize;
+            if (filters.PageNumber == 0) filters.PageNumber = paginationOptions.Value.DefaultPageNumber;
+            if (filters.PageSize == 0) filters.PageSize = paginationOptions.Value.DefaultPageSize;
 
             if (filters.UserId != null)
             {
@@ -75,15 +69,15 @@ namespace SocialMedia.Core.Services
                 posts = posts.Where(x => x.Description.ToLower().Contains(filters.Description.ToLower()));
             }
 
-            var pagedPosts = await PagedList<Post>.CreateAsync(posts, filters.PageSize, filters.PageSize);
+            var pagedPosts = await PagedList<Post>.CreateAsync(posts, filters.PageNumber, filters.PageSize).ConfigureAwait(false);
 
             return pagedPosts;
         }
 
         public async Task DeletePost(Guid id)
         {
-            await _unitOfWork.PostRepository.Delete(id);
-            await _unitOfWork.SaveChangesAsync();
+            await unitOfWork.PostRepository.Delete(id).ConfigureAwait(false);
+            await unitOfWork.SaveChangesAsync().ConfigureAwait(false);
         }
     }
 }

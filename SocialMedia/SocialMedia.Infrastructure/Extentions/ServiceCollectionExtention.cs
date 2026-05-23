@@ -11,12 +11,11 @@ using SocialMedia.Infrastructure.Interfaces;
 using SocialMedia.Infrastructure.Options;
 using SocialMedia.Infrastructure.Repositories;
 using SocialMedia.Infrastructure.Services;
-using System;
 using Hangfire;
+using System;
 using System.IO;
-using TransforSerPu.Core.Interfaces;
 using Hangfire.PostgreSql;
-using SocialMedia.Core.Entities;
+using TransforSerPu.Core.Interfaces;
 
 namespace SocialMedia.Infrastructure.Extentions
 {
@@ -101,13 +100,11 @@ namespace SocialMedia.Infrastructure.Extentions
             services.AddTransient<IPostService, PostService>();
             services.AddTransient<ISecurityService, SecurityService>();
             services.AddTransient<IModuleService, ModuleService>();
-            services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
-            services.AddTransient<IUnitOfWork, UnitOfWork>();
             services.AddSingleton<IPasswordService, PasswordService>();
             services.AddSingleton<IUriService>(provider =>
             {
                 var accesor = provider.GetRequiredService<IHttpContextAccessor>();
-                var request = accesor.HttpContext.Request;
+                var request = accesor.HttpContext!.Request;
                 var absoluteUri = string.Concat(request.Scheme, "://", request.Host.ToUriComponent());
                 return new UriService(absoluteUri);
             });

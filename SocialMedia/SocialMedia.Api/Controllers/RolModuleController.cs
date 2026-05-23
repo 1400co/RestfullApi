@@ -9,7 +9,6 @@ using SocialMedia.Core.Dtos;
 using SocialMedia.Core.Entities;
 using SocialMedia.Core.Interfaces;
 using SocialMedia.Core.QueryFilters;
-using SocialMedia.Infrastructure.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -20,26 +19,16 @@ namespace SocialMedia.Api.Controllers
     [Authorize]
     [ApiController]
     [Route("api/[controller]")]
-    public class RolModuleController : ControllerBase
+    public class RolModuleController(IRolModuleService rolModuleService, IMapper mapper) : ControllerBase
     {
-        private readonly IRolModuleService _rolModuleService;
-        private readonly IMapper _mapper;
-        private readonly IUriService _uriService;
-
-        public RolModuleController(IRolModuleService rolModuleService, IMapper mapper, IUriService uriService)
-        {
-            _rolModuleService = rolModuleService;
-            _mapper = mapper;
-            _uriService = uriService;
-        }
 
         [HttpGet(Name = nameof(GetRolModules))]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(ApiResponse<IEnumerable<RolModuleDto>>))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetRolModules([FromQuery] RolModuleQueryFilter filters)
         {
-            var rolModules = await _rolModuleService.GetRolModules(filters);
-            var rolModuleDto = _mapper.Map<IEnumerable<RolModuleDto>>(rolModules);
+            var rolModules = await rolModuleService.GetRolModules(filters);
+            var rolModuleDto = mapper.Map<IEnumerable<RolModuleDto>>(rolModules);
             var response = new ApiResponse<IEnumerable<RolModuleDto>>(rolModuleDto);
 
             var metaData = new Metadata
@@ -61,8 +50,9 @@ namespace SocialMedia.Api.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(Guid id)
         {
-            var rolModule = await _rolModuleService.GetRolModule(id);
-            var rolModuleDto = _mapper.Map<RolModuleDto>(rolModule);
+            var rolModule = await rolModuleService.GetRolModule(id);
+            if (rolModule == null) return NotFound();
+            var rolModuleDto = mapper.Map<RolModuleDto>(rolModule);
             var response = new ApiResponse<RolModuleDto>(rolModuleDto);
             return Ok(response);
         }
@@ -70,11 +60,11 @@ namespace SocialMedia.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> Post(RolModuleDto rolModuleDto)
         {
-            var rolModule = _mapper.Map<RolModule>(rolModuleDto);
+            var rolModule = mapper.Map<RolModule>(rolModuleDto);
 
-            await _rolModuleService.InsertRolModule(rolModule);
+            await rolModuleService.InsertRolModule(rolModule);
 
-            rolModuleDto = _mapper.Map<RolModuleDto>(rolModule);
+            rolModuleDto = mapper.Map<RolModuleDto>(rolModule);
 
             var response = new ApiResponse<RolModuleDto>(rolModuleDto);
             return Ok(response);
@@ -83,10 +73,10 @@ namespace SocialMedia.Api.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(Guid id, RolModuleDto rolModuleDto)
         {
-            var rolModule = _mapper.Map<RolModule>(rolModuleDto);
+            var rolModule = mapper.Map<RolModule>(rolModuleDto);
             rolModule.Id = id;
 
-            await _rolModuleService.UpdateRolModule(rolModule);
+            await rolModuleService.UpdateRolModule(rolModule);
 
             return Ok();
         }
@@ -94,7 +84,7 @@ namespace SocialMedia.Api.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
-            await _rolModuleService.DeleteRolModule(id);
+            await rolModuleService.DeleteRolModule(id);
             return Ok();
         }
     }

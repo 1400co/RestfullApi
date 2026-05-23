@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using SocialMedia.Core.Entities;
 using SocialMedia.Core.Interfaces;
 using SocialMedia.Infrastructure.Data;
@@ -32,7 +32,7 @@ namespace SocialMedia.Infrastructure.Repositories
             return query;
         }
 
-        public IQueryable<T> Get(Expression<Func<T, bool>> additionalConditions = null, params Expression<Func<T, object>>[] includes)
+        public IQueryable<T> Get(Expression<Func<T, bool>>? additionalConditions = null, params Expression<Func<T, object>>[] includes)
         {
             var query = entities.AsQueryable();
 
@@ -44,34 +44,34 @@ namespace SocialMedia.Infrastructure.Repositories
             return ApplyIncludes(query, includes);
         }
 
-        public IQueryable<T> GetAsNoTracking(Expression<Func<T, bool>> additionalConditions = null, params Expression<Func<T, object>>[] includes)
+        public IQueryable<T> GetAsNoTracking(Expression<Func<T, bool>>? additionalConditions = null, params Expression<Func<T, object>>[] includes)
         {
             return Get(additionalConditions, includes).AsNoTracking();
         }
 
-        public async Task<T> GetById(Guid id, params Expression<Func<T, object>>[] includes)
+        public async Task<T?> GetById(Guid id, params Expression<Func<T, object>>[] includes)
         {
             var query = entities.AsQueryable();
             query = ApplyIncludes(query, includes);
-            return await query.FirstOrDefaultAsync(e => e.Id == id);
+            return await query.FirstOrDefaultAsync(e => e.Id == id).ConfigureAwait(false);
         }
 
-        public async Task<T> GetByIdAsNoTracking(Guid id, params Expression<Func<T, object>>[] includes)
+        public async Task<T?> GetByIdAsNoTracking(Guid id, params Expression<Func<T, object>>[] includes)
         {
             var query = entities.AsQueryable().AsNoTracking();
             query = ApplyIncludes(query, includes);
-            return await query.FirstOrDefaultAsync(e => e.Id == id);
+            return await query.FirstOrDefaultAsync(e => e.Id == id).ConfigureAwait(false);
         }
 
         public async Task<T> Insert(T entity)
         {
-            await entities.AddAsync(entity);
+            await entities.AddAsync(entity).ConfigureAwait(false);
             return entity;
         }
 
         public async Task<List<T>> Insert(List<T> entities)
         {
-            await this.entities.AddRangeAsync(entities);
+            await this.entities.AddRangeAsync(entities).ConfigureAwait(false);
             return entities;
         }
 
@@ -91,8 +91,9 @@ namespace SocialMedia.Infrastructure.Repositories
 
         public async Task Delete(Guid id)
         {
-            T entity = await GetById(id);
-            entities.Remove(entity);
+            var entity = await GetById(id).ConfigureAwait(false);
+            if (entity is not null)
+                entities.Remove(entity);
         }
 
         public Task Delete(T entity)
@@ -101,28 +102,28 @@ namespace SocialMedia.Infrastructure.Repositories
             return Task.CompletedTask;
         }
 
-        public async Task<bool> AnyAsync(Expression<Func<T, bool>> predicate = null)
+        public async Task<bool> AnyAsync(Expression<Func<T, bool>>? predicate = null)
         {
             return predicate == null
                 ? await entities.AnyAsync()
-                : await entities.AnyAsync(predicate);
+                : await entities.AnyAsync(predicate).ConfigureAwait(false);
         }
 
-        public async Task<int> CountAsync(Expression<Func<T, bool>> predicate = null)
+        public async Task<int> CountAsync(Expression<Func<T, bool>>? predicate = null)
         {
             return predicate == null
                 ? await entities.CountAsync()
-                : await entities.CountAsync(predicate);
+                : await entities.CountAsync(predicate).ConfigureAwait(false);
         }
 
-        public async Task<T> FirstOrDefaultAsync(Expression<Func<T, bool>> predicate = null, params Expression<Func<T, object>>[] includes)
+        public async Task<T?> FirstOrDefaultAsync(Expression<Func<T, bool>>? predicate = null, params Expression<Func<T, object>>[] includes)
         {
             var query = entities.AsQueryable();
             query = ApplyIncludes(query, includes);
 
             return predicate == null
                 ? await query.FirstOrDefaultAsync()
-                : await query.FirstOrDefaultAsync(predicate);
+                : await query.FirstOrDefaultAsync(predicate).ConfigureAwait(false);
         }
 
         public void Detach(T entity)
@@ -132,12 +133,12 @@ namespace SocialMedia.Infrastructure.Repositories
 
         public async Task AddAsync(T entity)
         {
-            await entities.AddAsync(entity);
+            await entities.AddAsync(entity).ConfigureAwait(false);
         }
 
         public async Task AddRangeAsync(IEnumerable<T> entities)
         {
-            await this.entities.AddRangeAsync(entities);
+            await this.entities.AddRangeAsync(entities).ConfigureAwait(false);
         }
 
         public async Task UpdateRangeAsync(IEnumerable<T> entities)

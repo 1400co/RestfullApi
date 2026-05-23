@@ -10,7 +10,7 @@ namespace SocialMedia.Core.Interfaces
     public interface IModuleService
     {
         Task Delete(Guid id);
-        Task<Modules> Get(Guid id);
+        Task<Modules?> Get(Guid id);
         PagedList<Modules> Get(ModulesQueryFilter filters);
         Task Insert(Modules input);
         Task<bool> Update(Modules role); 

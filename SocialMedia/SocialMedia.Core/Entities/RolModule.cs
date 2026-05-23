@@ -14,6 +14,6 @@ namespace SocialMedia.Core.Entities
 
         public RoleType Role { get; set; }
         public Guid ModuleId { get; set; }
-        public virtual Modules Module { get; set; }
+        public virtual Modules Module { get; set; } = null!;
     }
 }

@@ -10,7 +10,7 @@ namespace SocialMedia.Core.Interfaces
     {
         Task InsertPost(Post post);
         Task<bool> UpdatePost(Post post);
-        Task<Post> GetPost(Guid id);
+        Task<Post?> GetPost(Guid id);
         Task<PagedList<Post>> GetPosts(PostQueryFilter filters);
         Task DeletePost(Guid id);
     }

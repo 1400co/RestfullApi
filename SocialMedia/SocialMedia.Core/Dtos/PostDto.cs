@@ -2,12 +2,12 @@
 
 namespace SocialMedia.Core.Dtos
 {
-    public class PostDto
+    public record PostDto
     {
         public Guid Id { get; set; }
         public Guid UserId { get; set; }
         public DateTime? Date { get; set; }
-        public string Description { get; set; }
-        public string Image { get; set; }
+        public string Description { get; set; } = string.Empty;
+        public string Image { get; set; } = string.Empty;
     }
 }

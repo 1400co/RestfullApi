@@ -6,7 +6,7 @@ namespace SocialMedia.Core.Dtos
 {
     public partial class RolModuleDto : BaseEntity
     {
-        public string Module { get; set; }
+        public string Module { get; set; } = string.Empty;
         public bool Created { get; set; }
         public bool Edited { get; set; }
         public bool Listed { get; set; }

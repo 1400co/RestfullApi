@@ -92,7 +92,7 @@ namespace SocialMedia.Api
             services.AddSwagger($"{Assembly.GetExecutingAssembly().GetName().Name}.xml");
 
             var jwtSecret = Environment.GetEnvironmentVariable("JWT_SECRET_KEY")
-                ?? Configuration["Authentication:SecretKey"];
+                ?? Configuration["Authentication:SecretKey"]!;
 
             services.AddAuthentication(options =>
             {

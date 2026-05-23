@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using SocialMedia.Core.CustomEntities;
 using SocialMedia.Core.Entities;
@@ -42,13 +42,13 @@ namespace SocialMedia.Core.Services
 
         public async Task<AuthenticatedResponse> RenewToken(TokenDto tokenApiModel)
         {
-            string accessToken = tokenApiModel.AccessToken;
-            string refreshToken = tokenApiModel.RefreshToken;
+            var accessToken = tokenApiModel.AccessToken!;
+            var refreshToken = tokenApiModel.RefreshToken!;
 
             var principal = GetPrincipalFromExpiredToken(accessToken, secret);
-            var username = principal.Identity.Name; //this is mapped to the Name claim by default
+            var username = principal.Identity!.Name!;
 
-            var user = await _userService.GetUserByEmail(username);
+            var user = await _userService.GetUserByEmail(username).ConfigureAwait(false);
 
             if (user is null || user.RefreshToken != refreshToken || user.RefreshTokenExpiryTime <= DateTime.UtcNow)
                 throw new BusinessException("Invalid client request");
@@ -59,7 +59,7 @@ namespace SocialMedia.Core.Services
             user.RefreshToken = newRefreshToken;
             user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(2);
 
-            await _userService.UpdateUser(user);
+            await _userService.UpdateUser(user).ConfigureAwait(false);
 
             return new AuthenticatedResponse()
             {

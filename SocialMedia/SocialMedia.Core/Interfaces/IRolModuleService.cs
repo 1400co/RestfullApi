@@ -11,7 +11,7 @@ namespace SocialMedia.Core.Interfaces
     public interface IRolModuleService
     {
         Task DeleteRolModule(Guid id);
-        Task<RolModule> GetRolModule(Guid id);
+        Task<RolModule?> GetRolModule(Guid id);
         Task<PagedList<RolModule>> GetRolModules(RolModuleQueryFilter filters);
         Task InsertRolModule(RolModule rolModule);
         Task<bool> UpdateRolModule(RolModule rolModule);

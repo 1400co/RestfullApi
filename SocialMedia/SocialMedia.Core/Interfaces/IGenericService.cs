@@ -12,7 +12,7 @@ namespace SocialMedia.Core.Interfaces
     {
         Task Delete(Guid id);
         Task<PagedList<T>> Get(GeneralQueryFilter filters, params Expression<Func<T, object>>[] includes);
-        Task<T> Get(Guid id);
+        Task<T?> Get(Guid id);
         Task Insert(T entity);
         Task<bool> Update(T entity);
         IEnumerable<T> GetAll(params Expression<Func<T, object>>[] includes);

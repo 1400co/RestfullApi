@@ -8,16 +8,10 @@ using System.Security.Claims;
 
 namespace SocialMedia.Infrastructure.Services
 {
-    public class SessionService : ISessionService
+    public class SessionService(IHttpContextAccessor httpContextAccessor) : ISessionService
     {
-        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public SessionService(IHttpContextAccessor httpContextAccessor)
-        {
-            _httpContextAccessor = httpContextAccessor;
-        }
-
-        private ClaimsPrincipal User => _httpContextAccessor.HttpContext?.User;
+        private ClaimsPrincipal? User => httpContextAccessor.HttpContext?.User;
 
         public Guid GetUserId()
         {
@@ -25,7 +19,7 @@ namespace SocialMedia.Infrastructure.Services
             return claim != null ? Guid.Parse(claim) : Guid.Empty;
         }
 
-        public string GetUserName()
+        public string? GetUserName()
         {
             return User?.Identity?.Name;
         }
@@ -38,16 +32,17 @@ namespace SocialMedia.Infrastructure.Services
                 .ToList() ?? new List<string>();
         }
 
-        public UserModelDto GetCurrentUser()
+        public UserModelDto? GetCurrentUser()
         {
-            if (User == null || !User.Identity.IsAuthenticated)
+            var user = User;
+            if (user == null || user.Identity?.IsAuthenticated != true)
                 return null;
 
             return new UserModelDto
             {
                 Id = GetUserId(),
-                UserName = GetUserName(),
-                Email = GetUserName(),
+                UserName = GetUserName() ?? string.Empty,
+                Email = GetUserName() ?? string.Empty,
                 Roles = GetRoles()
             };
         }

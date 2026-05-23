@@ -9,12 +9,12 @@ namespace SocialMedia.Core.CustomEntities
     public class AuditEntry
     {
         public EntityEntry Entry { get; }
-        public string TableName { get; set; }
-        public string ActionType { get; set; }
-        public Dictionary<string, object> KeyValues { get; } = new Dictionary<string, object>();
-        public Dictionary<string, object> OldValues { get; } = new Dictionary<string, object>();
-        public Dictionary<string, object> NewValues { get; } = new Dictionary<string, object>();
-        public List<PropertyEntry> TempProperties { get; } = new List<PropertyEntry>();
+        public string TableName { get; set; } = string.Empty;
+        public string ActionType { get; set; } = string.Empty;
+        public Dictionary<string, object?> KeyValues { get; } = [];
+        public Dictionary<string, object?> OldValues { get; } = [];
+        public Dictionary<string, object?> NewValues { get; } = [];
+        public List<PropertyEntry> TempProperties { get; } = [];
 
         public bool HasTemporaryProperties => TempProperties.Any();
 

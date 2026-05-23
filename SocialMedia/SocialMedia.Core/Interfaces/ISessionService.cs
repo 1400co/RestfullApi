@@ -7,8 +7,8 @@ namespace SocialMedia.Core.Interfaces
     public interface ISessionService
     {
         Guid GetUserId();
-        string GetUserName();
+        string? GetUserName();
         List<string> GetRoles();
-        UserModelDto GetCurrentUser();
+        UserModelDto? GetCurrentUser();
     }
 }

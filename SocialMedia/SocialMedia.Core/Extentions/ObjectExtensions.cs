@@ -4,7 +4,7 @@ using System.Reflection;
 public static class ObjectExtensions
 {
     public static void CopyPropertiesTo<T>(this T source, T destination,
-        List<string> excludedProperties = null)
+        List<string>? excludedProperties = null)
     {
         var properties = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance);
 

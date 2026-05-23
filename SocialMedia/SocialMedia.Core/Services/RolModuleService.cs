@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
+using Microsoft.EntityFrameworkCore;
 using SocialMedia.Core.CustomEntities;
 using SocialMedia.Core.Entities;
 using SocialMedia.Core.Enumerations;
@@ -14,49 +13,41 @@ using TransforSerPu.Core.Dtos;
 
 namespace SocialMedia.Core.Services
 {
-    public class RolModuleService : IRolModuleService
+    public class RolModuleService(IUnitOfWork unitOfWork) : IRolModuleService
     {
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly PaginationOptions _paginationOptions;
-
-        public RolModuleService(IUnitOfWork unitOfWork, IOptions<PaginationOptions> paginationOptions)
-        {
-            _unitOfWork = unitOfWork;
-            _paginationOptions = paginationOptions.Value;
-        }
 
         public async Task InsertRolModule(RolModule rolModule)
         {
-            await _unitOfWork.RolModuleRepository.Insert(rolModule);
-            await _unitOfWork.SaveChangesAsync();
+            await unitOfWork.RolModuleRepository.Insert(rolModule).ConfigureAwait(false);
+            await unitOfWork.SaveChangesAsync().ConfigureAwait(false);
         }
 
         public async Task<bool> UpdateRolModule(RolModule rolModule)
         {
-            var existingRolModule = await _unitOfWork.RolModuleRepository.GetById(rolModule.Id);
+            var existingRolModule = await unitOfWork.RolModuleRepository.GetById(rolModule.Id).ConfigureAwait(false);
             if (existingRolModule == null)
                 throw new BusinessException("RolModule doesn't exist");
 
             rolModule.CopyPropertiesTo(existingRolModule);
 
-            await _unitOfWork.RolModuleRepository.Update(existingRolModule);
-            await _unitOfWork.SaveChangesAsync();
+            await unitOfWork.RolModuleRepository.Update(existingRolModule).ConfigureAwait(false);
+            await unitOfWork.SaveChangesAsync().ConfigureAwait(false);
             return true;
         }
 
-        public async Task<RolModule> GetRolModule(Guid id)
+        public async Task<RolModule?> GetRolModule(Guid id)
         {
-            return await _unitOfWork.RolModuleRepository.GetById(id);
+            return await unitOfWork.RolModuleRepository.GetById(id).ConfigureAwait(false);
         }
 
         public async Task<PagedList<RolModule>> GetRolModules(RolModuleQueryFilter filters)
         {
-            var rolModules = _unitOfWork.RolModuleRepository.Get();
+            var rolModules = unitOfWork.RolModuleRepository.Get();
 
             filters.PageNumber = filters.PageNumber;
             filters.PageSize = filters.PageSize;
 
-            var pagedRolModules = await PagedList<RolModule>.CreateAsync(rolModules, filters.PageNumber, filters.PageSize);
+            var pagedRolModules = await PagedList<RolModule>.CreateAsync(rolModules, filters.PageNumber, filters.PageSize).ConfigureAwait(false);
 
             return pagedRolModules;
         }
@@ -64,13 +55,13 @@ namespace SocialMedia.Core.Services
 
         public async Task DeleteRolModule(Guid id)
         {
-            await _unitOfWork.RolModuleRepository.Delete(id);
-            await _unitOfWork.SaveChangesAsync();
+            await unitOfWork.RolModuleRepository.Delete(id).ConfigureAwait(false);
+            await unitOfWork.SaveChangesAsync().ConfigureAwait(false);
         }
 
         public async Task<IEnumerable<RolModuleCombinadoDto>> ObtenerModulosUsuario(Guid userId)
         {
-            var user = await _unitOfWork.UserRepository.GetById(userId);
+            var user = await unitOfWork.UserRepository.GetById(userId).ConfigureAwait(false);
             if (user == null)
                 return Enumerable.Empty<RolModuleCombinadoDto>();
 
@@ -78,7 +69,7 @@ namespace SocialMedia.Core.Services
 
             if (userRoles.Contains(RoleType.Administrator))
             {
-                return await this._unitOfWork.ModuleRepository.Get()
+                return await unitOfWork.ModuleRepository.Get()
                     .Select(x => new RolModuleCombinadoDto()
                     {
                         Module = x.ModuleName,
@@ -87,11 +78,11 @@ namespace SocialMedia.Core.Services
                         Edited = true,
                         Listed = true,
                         Printed = true
-                    }).ToListAsync();
+                    }).ToListAsync().ConfigureAwait(false);
             }
 
-            var rolesModules = await this._unitOfWork.RolModuleRepository.Get(null, x => x.Module)
-                .Where(x => userRoles.Contains(x.Role)).ToListAsync();
+            var rolesModules = await unitOfWork.RolModuleRepository.Get(null, x => x.Module)
+                .Where(x => userRoles.Contains(x.Role)).ToListAsync().ConfigureAwait(false);
 
             var combinedPermissions = CombineRolesPermissions(rolesModules)
                 .Select(x => new RolModuleCombinadoDto()

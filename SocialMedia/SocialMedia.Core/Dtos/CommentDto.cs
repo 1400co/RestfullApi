@@ -3,15 +3,14 @@ using System;
 
 namespace SocialMedia.Core.Dtos
 {
-    public partial class CommentDto : BaseDto
+    public partial record CommentDto : BaseDto
     {
-        public string Description { get; set; }
+        public string Description { get; set; } = string.Empty;
         public bool IsActive { get; set; }
 
-        //Relations
         public Guid PostId { get; set; }
-        public virtual Post Post { get; set; }
+        public virtual Post Post { get; set; } = null!;
         public Guid UserId { get; set; }
-        public virtual UserDto User { get; set; }
+        public virtual UserDto User { get; set; } = null!;
     }
 }

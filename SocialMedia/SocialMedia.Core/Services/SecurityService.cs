@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using SocialMedia.Core.Entities;
 using SocialMedia.Core.Interfaces;
 using System;
@@ -7,21 +7,15 @@ using System.Threading.Tasks;
 
 namespace SocialMedia.Core.Services
 {
-    public class SecurityService : ISecurityService
+    public class SecurityService(IUnitOfWork unitOfWork) : ISecurityService
     {
-        private readonly IUnitOfWork _unitOfWork;
-
-        public SecurityService(IUnitOfWork unitOfWork)
-        {
-            _unitOfWork = unitOfWork;
-        }
 
         public async Task<Otp> GetOneTimePassword(Guid userId)
         {
             // Buscar un OTP existente para el usuario
-            var otp = await _unitOfWork.GetRepository<Otp>()
+            var otp = (await unitOfWork.GetRepository<Otp>()
                 .Get(x => x.UserId == userId && x.ExpireDate > DateTime.UtcNow)
-                .SingleOrDefaultAsync();
+                .SingleOrDefaultAsync().ConfigureAwait(false))!;
 
             // Si existe un OTP y no ha expirado, devolverlo
             if (otp != null)
@@ -33,15 +27,15 @@ namespace SocialMedia.Core.Services
             otp = new Otp
             {
                 UserId = userId,
-                Password = GenerateOtpCode(), // Método para generar el código OTP
+                Password = GenerateOtpCode(), // M�todo para generar el c�digo OTP
                 ExpireDate = DateTime.UtcNow.AddMinutes(5), // Expira en 5 minutos
                 CreatedAt = DateTime.UtcNow,
-                Responsable = "System" // Puedes ajustar esto según tus necesidades
+                Responsable = "System" // Puedes ajustar esto seg�n tus necesidades
             };
 
             // Guardar el nuevo OTP en la base de datos
-            await _unitOfWork.GetRepository<Otp>().AddAsync(otp);
-            await _unitOfWork.SaveChangesAsync();
+            await unitOfWork.GetRepository<Otp>().AddAsync(otp).ConfigureAwait(false);
+            await unitOfWork.SaveChangesAsync().ConfigureAwait(false);
 
             return otp;
         }
@@ -52,35 +46,35 @@ namespace SocialMedia.Core.Services
         }
 
 
-        public async Task<User> GetUserByEmail(string email)
+        public async Task<User?> GetUserByEmail(string email)
         {
-            return await _unitOfWork.UserRepository.Get(x => x.Email == email).FirstOrDefaultAsync();
+            return await unitOfWork.UserRepository.Get(x => x.Email == email).FirstOrDefaultAsync().ConfigureAwait(false);
         }
 
         public async Task<bool> ValidateCredentials(string userLogin, string oneTimePassword)
         {
             try
             {
-                var user = await _unitOfWork.UserRepository
-                    .Get(x => x.Email.ToLower() == userLogin.ToLower()).FirstOrDefaultAsync();
+                var user = await unitOfWork.UserRepository
+                    .Get(x => x.Email.ToLower() == userLogin.ToLower()).FirstOrDefaultAsync().ConfigureAwait(false);
 
                 if (user == null)
                 {
                     return false;
                 }
 
-                var otp = await _unitOfWork.GetRepository<Otp>()
+                var otp = await unitOfWork.GetRepository<Otp>()
                     .Get(x => x.UserId == user.Id
                     && x.Password == oneTimePassword
                     && x.ExpireDate > DateTime.UtcNow)
-                    .SingleOrDefaultAsync();
+                    .SingleOrDefaultAsync().ConfigureAwait(false);
 
                 if (otp == null)
                     return false;
 
                 // Delete OTP after successful validation to prevent reuse
-                await _unitOfWork.GetRepository<Otp>().Delete(otp.Id);
-                await _unitOfWork.SaveChangesAsync();
+                await unitOfWork.GetRepository<Otp>().Delete(otp.Id).ConfigureAwait(false);
+                await unitOfWork.SaveChangesAsync().ConfigureAwait(false);
 
                 return true;
             }

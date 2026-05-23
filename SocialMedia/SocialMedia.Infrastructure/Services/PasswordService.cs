@@ -4,16 +4,12 @@ using SocialMedia.Infrastructure.Options;
 using System;
 using System.Linq;
 using System.Security.Cryptography;
+using System.Text;
 
 namespace SocialMedia.Infrastructure.Services
 {
-    public class PasswordService : IPasswordService
+    public class PasswordService(IOptions<PasswordOptions> options) : IPasswordService
     {
-        private readonly PasswordOptions _options;
-        public PasswordService(IOptions<PasswordOptions> options)
-        {
-            _options = options.Value;
-        }
 
         public bool Check(string hash, string password)
         {
@@ -27,31 +23,15 @@ namespace SocialMedia.Infrastructure.Services
             var salt = Convert.FromBase64String(parts[1]);
             var key = Convert.FromBase64String(parts[2]);
 
-            using (var algorithm = new Rfc2898DeriveBytes(
-                password,
-                salt,
-                iterations
-                ))
-            {
-                var keyToCheck = algorithm.GetBytes(_options.KeySize);
-                return keyToCheck.SequenceEqual(key);
-            }
+            var keyToCheck = Rfc2898DeriveBytes.Pbkdf2(Encoding.UTF8.GetBytes(password), salt, iterations, HashAlgorithmName.SHA256, options.Value.KeySize);
+            return keyToCheck.SequenceEqual(key);
         }
 
         public string Hash(string password)
         {
-            //PBKDF2 implementation
-            using (var algorithm = new Rfc2898DeriveBytes(
-                password,
-                _options.SaltSize,
-                _options.Iterations
-                ))
-            {
-                var key = Convert.ToBase64String(algorithm.GetBytes(_options.KeySize));
-                var salt = Convert.ToBase64String(algorithm.Salt);
-
-                return $"{_options.Iterations}.{salt}.{key}";
-            }
+            var salt = RandomNumberGenerator.GetBytes(options.Value.SaltSize);
+            var keyBytes = Rfc2898DeriveBytes.Pbkdf2(Encoding.UTF8.GetBytes(password), salt, options.Value.Iterations, HashAlgorithmName.SHA256, options.Value.KeySize);
+            return $"{options.Value.Iterations}.{Convert.ToBase64String(salt)}.{Convert.ToBase64String(keyBytes)}";
         }
     }
 }

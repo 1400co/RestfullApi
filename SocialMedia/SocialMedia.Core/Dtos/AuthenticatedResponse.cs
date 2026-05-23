@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace TransforSerPu.Core.Dtos
 {
-    public class AuthenticatedResponse
+    public record AuthenticatedResponse
     {
         public string? AuthToken { get; set; }
         public string? RefreshToken { get; set; }

@@ -4,6 +4,11 @@
     "microsoft_learn": {
       "type": "remote",
       "url": "https://learn.microsoft.com/api/mcp"
+    },
+    "angular-cli": {
+      "type": "local",
+      "command": ["npx", "-y", "@angular/cli", "mcp"],
+      "enabled": true
     }
   }
 }

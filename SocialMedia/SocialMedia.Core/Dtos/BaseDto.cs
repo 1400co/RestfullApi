@@ -2,10 +2,10 @@
 
 namespace SocialMedia.Core.Dtos
 {
-    public  class BaseDto 
+    public abstract record BaseDto
     {
         public Guid Id { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-        public string Responsable { get; set; }
+        public string Responsable { get; set; } = string.Empty;
     }
 }

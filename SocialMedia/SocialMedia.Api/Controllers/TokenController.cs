@@ -7,7 +7,6 @@ using SocialMedia.Core.Dtos;
 using SocialMedia.Core.Entities;
 using SocialMedia.Core.Interfaces;
 using SocialMedia.Infrastructure.Interfaces;
-using SocialMedia.Infrastructure.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,9 +31,9 @@ namespace SocialMedia.Api.Controllers
         private readonly IEmailService _emailService;
         private readonly ISessionService _sessionService;
 
-        private string issuer;
-        private string audience;
-        private string secret;
+        private readonly string issuer;
+        private readonly string audience;
+        private readonly string secret;
 
         public TokenController(IConfiguration configuration, ISecurityService securityService, IPasswordService passwordService,
             ITokenService tokenService, IRolModuleService rolModuleService, IUserService userService, IEmailService emailService,
@@ -45,10 +44,10 @@ namespace SocialMedia.Api.Controllers
             _passwordService = passwordService;
             _tokenService = tokenService;
 
-            issuer = _configuration["Authentication:Issuer"];
-            audience = _configuration["Authentication:Audience"];
+            issuer = _configuration["Authentication:Issuer"]!;
+            audience = _configuration["Authentication:Audience"]!;
             secret = Environment.GetEnvironmentVariable("JWT_SECRET_KEY")
-                ?? _configuration["Authentication:SecretKey"];
+                ?? _configuration["Authentication:SecretKey"]!;
             _rolModuleService = rolModuleService;
             _userService = userService;
             _emailService = emailService;
@@ -116,7 +115,7 @@ namespace SocialMedia.Api.Controllers
                     return Unauthorized();
                 }
 
-                var user = result.Item2;
+                var user = result.Item2!;
 
                 var claims = new List<Claim>
                 {
@@ -165,7 +164,7 @@ namespace SocialMedia.Api.Controllers
         [Route("revoke")]
         public async Task<IActionResult> Revoke()
         {
-            var username = _sessionService.GetUserName();
+            var username = _sessionService.GetUserName()!;
             var user = await _userService.GetUserByEmail(username);
             if (user == null) return BadRequest();
 
@@ -187,7 +186,7 @@ namespace SocialMedia.Api.Controllers
             return Ok(user);
         }
 
-        private async Task<(bool, User)> ValidateUser(Login login)
+        private async Task<(bool, User?)> ValidateUser(Login login)
         {
             var user = await this._userService.GetUserByEmail(login.Email);
 
