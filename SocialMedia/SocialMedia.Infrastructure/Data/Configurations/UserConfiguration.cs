@@ -1,7 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SocialMedia.Core.Entities;
+using SocialMedia.Core.Enumerations;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace SocialMedia.Infrastructure.Data.Configurations
 {
@@ -16,6 +19,18 @@ namespace SocialMedia.Infrastructure.Data.Configurations
             builder.Property(e => e.Id)
              .HasColumnName("IdUsuario").ValueGeneratedNever();
 
+            builder.Property(e => e.Roles)
+                .HasColumnName("Roles")
+                .HasConversion(
+                    v => string.Join(',', v),
+                    v => string.IsNullOrEmpty(v)
+                        ? new List<RoleType>()
+                        : v.Split(',', StringSplitOptions.RemoveEmptyEntries)
+                            .Select(s => Enum.Parse<RoleType>(s))
+                            .ToList()
+                )
+                .IsRequired();
+
             builder.HasData(
                 new User()
                 {
@@ -23,6 +38,7 @@ namespace SocialMedia.Infrastructure.Data.Configurations
                     FullName = "Oscar",
                     IsActive = true,
                     Email = "oruedar@yopmail.com",
+                    Roles = new List<RoleType> { RoleType.Administrator },
                     CreatedAt = DateTime.UtcNow,
                     Responsable = "System"
                 }

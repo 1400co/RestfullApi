@@ -26,9 +26,7 @@ namespace SocialMedia.Infrastructure.Data
         public virtual DbSet<Comment> Comments { get; set; }
         public virtual DbSet<Post> Posts { get; set; }
         public virtual DbSet<User> Users { get; set; }
-        public virtual DbSet<Roles> Roles { get; set; }
         public virtual DbSet<RolModule> RolModule { get; set; }
-        public virtual DbSet<UserInRoles> UserInRoles { get; set; }
         public virtual DbSet<Otp> Otp { get; set; }
 
         public override int SaveChanges()

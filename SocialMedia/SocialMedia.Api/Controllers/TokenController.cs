@@ -28,7 +28,6 @@ namespace SocialMedia.Api.Controllers
         private readonly IPasswordService _passwordService;
         private readonly ITokenService _tokenService;
         private readonly IRolModuleService _rolModuleService;
-        private readonly IUserInRolesService _userInRole;
         private readonly IUserService _userService;
         private readonly IEmailService _emailService;
 
@@ -37,7 +36,7 @@ namespace SocialMedia.Api.Controllers
         private string secret;
 
         public TokenController(IConfiguration configuration, ISecurityService securityService, IPasswordService passwordService,
-            ITokenService tokenService, IRolModuleService rolModuleService, IUserInRolesService userInRole, IUserService userService, IEmailService emailService)
+            ITokenService tokenService, IRolModuleService rolModuleService, IUserService userService, IEmailService emailService)
         {
             _configuration = configuration;
             _securityService = securityService;
@@ -49,7 +48,6 @@ namespace SocialMedia.Api.Controllers
             secret = Environment.GetEnvironmentVariable("JWT_SECRET_KEY")
                 ?? _configuration["Authentication:SecretKey"];
             _rolModuleService = rolModuleService;
-            _userInRole = userInRole;
             _userService = userService;
             _emailService = emailService;
         }
@@ -118,13 +116,13 @@ namespace SocialMedia.Api.Controllers
                 var user = result.Item2;
 
                 var claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.Name, user.Email),
-                    new Claim(ClaimTypes.Role, user.Role.ToString()),
-            };
+                {
+                    new Claim(ClaimTypes.Name, user.Email),
+                };
+                user.Roles.ForEach(role => claims.Add(new Claim(ClaimTypes.Role, role.ToString())));
                 var accessToken = _tokenService.GenerateAccessToken(claims, issuer, audience, secret);
                 var refreshToken = _tokenService.GenerateRefreshToken();
-                var permisos = _rolModuleService.ObtenerModulosUsuario(user.Id);
+                var permisos = await _rolModuleService.ObtenerModulosUsuario(user.Id);
 
 
                 user.RefreshToken = refreshToken;
@@ -205,14 +203,13 @@ namespace SocialMedia.Api.Controllers
 
                 var username = User.Identity.Name;
                 var user = await _userService.GetUserByEmail(username);
-                var roles = await _userInRole.GetUsersRoles(user.Id);
 
                 return new UserModelDto()
                 {
                     FullName = user.FullName,
                     Email = user.Email,
                     UserName = username,
-                    Roles = roles.Select(x => x.Roles.RolName).ToList()
+                    Roles = user.Roles.Select(x => x.ToString()).ToList()
                 };
             }
             catch (System.Exception)

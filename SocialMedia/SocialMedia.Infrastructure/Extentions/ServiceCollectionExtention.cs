@@ -95,9 +95,7 @@ namespace SocialMedia.Infrastructure.Extentions
             services.AddTransient<IEmailService, EmailService>();
             services.AddTransient<ITokenService, TokenService>();
             services.AddTransient<IUserService, UserService>();
-            services.AddTransient<IUserInRolesService, UserInRolesService>();
             services.AddTransient<IRolModuleService, RolModuleService>();
-            services.AddTransient<IRolesService, RolesService>();
             services.AddTransient<ICommentService, CommentService>();
             services.AddTransient<IPostService, PostService>();
             services.AddTransient<ISecurityService, SecurityService>();

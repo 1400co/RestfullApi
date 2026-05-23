@@ -17,9 +17,7 @@ namespace SocialMedia.Infrastructure.Repositories
         public IPostRepository PostRepository => new PostRepository(socialMediaContext);
         public IRepository<User> UserRepository => new BaseRepository<User>(socialMediaContext);
         public IRepository<Comment> CommentRepository => new BaseRepository<Comment>(socialMediaContext);
-        public IRepository<Roles> RolesRepository => new BaseRepository<Roles>(socialMediaContext);
         public IRepository<RolModule> RolModuleRepository => new BaseRepository<RolModule>(socialMediaContext);
-        public IRepository<UserInRoles> UserInRolesRepository => new BaseRepository<UserInRoles>(socialMediaContext);
         public IRepository<Modules> ModuleRepository => new BaseRepository<Modules>(socialMediaContext);
         public IRepository<Otp> OtpRepository => new BaseRepository<Otp>(socialMediaContext);
 

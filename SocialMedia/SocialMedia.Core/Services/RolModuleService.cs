@@ -1,6 +1,8 @@
-﻿using Microsoft.Extensions.Options;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using SocialMedia.Core.CustomEntities;
 using SocialMedia.Core.Entities;
+using SocialMedia.Core.Enumerations;
 using SocialMedia.Core.Exceptions;
 using SocialMedia.Core.Interfaces;
 using SocialMedia.Core.QueryFilters;
@@ -25,12 +27,6 @@ namespace SocialMedia.Core.Services
 
         public async Task InsertRolModule(RolModule rolModule)
         {
-            var role = await _unitOfWork.RolesRepository.GetById(rolModule.IdRol);
-            if (role == null)
-                throw new BusinessException("Role doesn't exist");
-
-            // Additional business validations if necessary
-
             await _unitOfWork.RolModuleRepository.Insert(rolModule);
             await _unitOfWork.SaveChangesAsync();
         }
@@ -41,7 +37,6 @@ namespace SocialMedia.Core.Services
             if (existingRolModule == null)
                 throw new BusinessException("RolModule doesn't exist");
 
-            // Complete properties mapping
             rolModule.CopyPropertiesTo(existingRolModule);
 
             await _unitOfWork.RolModuleRepository.Update(existingRolModule);
@@ -58,16 +53,8 @@ namespace SocialMedia.Core.Services
         {
             var rolModules = _unitOfWork.RolModuleRepository.Get();
 
-            // Using provided filters directly
             filters.PageNumber = filters.PageNumber;
             filters.PageSize = filters.PageSize;
-
-            // Additional filtering logic if necessary
-            // (Add properties to RolModuleQueryFilter as needed)
-            if (filters.RoleId != null)
-            {
-                rolModules = rolModules.Where(x => x.IdRol == filters.RoleId);
-            }
 
             var pagedRolModules = await PagedList<RolModule>.CreateAsync(rolModules, filters.PageNumber, filters.PageSize);
 
@@ -81,28 +68,30 @@ namespace SocialMedia.Core.Services
             await _unitOfWork.SaveChangesAsync();
         }
 
-        public IEnumerable<RolModuleCombinadoDto> ObtenerModulosUsuario(Guid userId)
+        public async Task<IEnumerable<RolModuleCombinadoDto>> ObtenerModulosUsuario(Guid userId)
         {
-            var listaRoles = this._unitOfWork.UserInRolesRepository
-                .Get().Where(x => x.UserId == userId).Select(x => x.RoleId).ToList();
+            var user = await _unitOfWork.UserRepository.GetById(userId);
+            if (user == null)
+                return Enumerable.Empty<RolModuleCombinadoDto>();
 
-            //Si contiene el rol administrador, responde full permisos a todos los modulos.
-            if (listaRoles.Contains(Guid.Parse("3A9A7CE2-9A5C-4AFF-A47A-C5FDFCD955AE")))
+            var userRoles = user.Roles;
+
+            if (userRoles.Contains(RoleType.Administrator))
             {
-                return this._unitOfWork.ModuleRepository.Get()
-                .Select(x => new RolModuleCombinadoDto()
-                {
-                    Module = x.ModuleName,
-                    Created = true,
-                    Deleted = true,
-                    Edited = true,
-                    Listed = true,
-                    Printed = true
-                }).ToList();
+                return await this._unitOfWork.ModuleRepository.Get()
+                    .Select(x => new RolModuleCombinadoDto()
+                    {
+                        Module = x.ModuleName,
+                        Created = true,
+                        Deleted = true,
+                        Edited = true,
+                        Listed = true,
+                        Printed = true
+                    }).ToListAsync();
             }
 
-            var rolesModules = this._unitOfWork.RolModuleRepository.Get(null, x => x.Module, y => y.Rol)
-                .Where(x => listaRoles.Contains(x.IdRol)).ToList();
+            var rolesModules = await this._unitOfWork.RolModuleRepository.Get(null, x => x.Module)
+                .Where(x => userRoles.Contains(x.Role)).ToListAsync();
 
             var combinedPermissions = CombineRolesPermissions(rolesModules)
                 .Select(x => new RolModuleCombinadoDto()
@@ -134,8 +123,8 @@ namespace SocialMedia.Core.Services
         public IEnumerable<RolModule> CombineRolesPermissions(List<RolModule> rolesModules)
         {
             return rolesModules
-                .GroupBy(rm => rm.Module) // Agrupar por módulo
-                .Select(group => group.Aggregate((merged, next) => MergePermissions(merged, next))) // Combina los permisos
+                .GroupBy(rm => rm.Module)
+                .Select(group => group.Aggregate((merged, next) => MergePermissions(merged, next)))
                 .ToList();
         }
     }

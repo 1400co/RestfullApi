@@ -8,6 +8,7 @@ using SocialMedia.Api.Responses;
 using SocialMedia.Core.CustomEntities;
 using SocialMedia.Core.Dtos;
 using SocialMedia.Core.Entities;
+using SocialMedia.Core.Enumerations;
 using SocialMedia.Core.Exceptions;
 using SocialMedia.Core.Interfaces;
 using SocialMedia.Core.QueryFilters;
@@ -30,20 +31,16 @@ namespace SocialMedia.Api.Controllers
         private readonly IUriService _uriService;
         private readonly ISecurityService _securityService;
         private readonly IPasswordService _passwordService;
-        private readonly IUserInRolesService _userInRolesService;
         private readonly IEmailService _emailService;
-        private readonly Guid _administratorRole = Guid.Parse("7C2E1E9B-410B-4A6B-B9AE-8B078422EB2D");
-        private readonly Guid _usuarioRole = Guid.Parse("7c2e1e9b-410b-4a6b-b9ae-8b078422eb2c");
 
         public UserController(IUserService userService, IMapper mapper, IUriService uriService, ISecurityService securityService, 
-        IPasswordService passwordService, IUserInRolesService userInRolesService, IEmailService emailService)
+        IPasswordService passwordService, IEmailService emailService)
         {
             _userService = userService;
             _mapper = mapper;
             _uriService = uriService;
             _securityService = securityService;
             _passwordService = passwordService;
-            _userInRolesService = userInRolesService;
             _emailService = emailService;
         }
 
@@ -57,12 +54,10 @@ namespace SocialMedia.Api.Controllers
 
             userDto.ToList().ForEach(user =>
             {
-                var roles = this._userInRolesService.GetAll(user.Id)
-                    .Select(role => role.Roles.RolName) 
-                    .ToList();
-
-                // Usamos string.Join para concatenar los nombres de los roles separados por comas
-                user.Roles = string.Join(", ", roles);
+                var dbUser = users.FirstOrDefault(u => u.Id == user.Id);
+                user.Roles = dbUser != null
+                    ? string.Join(", ", dbUser.Roles.Select(r => r.ToString()))
+                    : string.Empty;
             });
 
             var response = new ApiResponse<IEnumerable<UserDto>>(userDto);
@@ -105,16 +100,7 @@ namespace SocialMedia.Api.Controllers
 
             var user = _mapper.Map<User>(userDto);
             user.Id = Guid.NewGuid();
-            user.Role = Core.Enumerations.RoleType.Consumer;
-
-            user.UserInRoles.Add(
-                new UserInRoles()
-                {
-                    RoleId = _usuarioRole,
-                    UserId = user.Id,
-                    CreatedAt = DateTime.UtcNow,
-                    Responsable = "System"
-                });
+            user.Roles = new List<RoleType> { RoleType.Consumer };
 
             await _userService.InsertUser(user);
 

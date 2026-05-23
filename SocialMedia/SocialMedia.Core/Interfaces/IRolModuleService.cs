@@ -15,6 +15,6 @@ namespace SocialMedia.Core.Interfaces
         Task<PagedList<RolModule>> GetRolModules(RolModuleQueryFilter filters);
         Task InsertRolModule(RolModule rolModule);
         Task<bool> UpdateRolModule(RolModule rolModule);
-        IEnumerable<RolModuleCombinadoDto> ObtenerModulosUsuario(Guid userId);
+        Task<IEnumerable<RolModuleCombinadoDto>> ObtenerModulosUsuario(Guid userId);
     }
 }

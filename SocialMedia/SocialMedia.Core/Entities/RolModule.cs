@@ -1,4 +1,5 @@
 ﻿
+using SocialMedia.Core.Enumerations;
 using System;
 
 namespace SocialMedia.Core.Entities
@@ -11,8 +12,7 @@ namespace SocialMedia.Core.Entities
         public bool Deleted { get; set; }
         public bool Printed { get; set; }
 
-        public Guid IdRol { get; set; }
-        public virtual Roles Rol { get; set; }
+        public RoleType Role { get; set; }
         public Guid ModuleId { get; set; }
         public virtual Modules Module { get; set; }
     }
