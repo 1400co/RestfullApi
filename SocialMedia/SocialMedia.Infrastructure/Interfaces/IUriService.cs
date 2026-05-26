@@ -1,10 +1,9 @@
-﻿using SocialMedia.Core.QueryFilters;
-using System;
+﻿using System;
 
 namespace SocialMedia.Infrastructure.Interfaces
 {
     public interface IUriService
     {
-        Uri GetPostPaginationUri(PostQueryFilter filter, string actionUrl);
+        Uri GetPageUri(int pageNumber, int pageSize, string? filter, string actionUrl);
     }
 }

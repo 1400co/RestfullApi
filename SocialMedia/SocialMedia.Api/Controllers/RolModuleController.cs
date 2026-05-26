@@ -9,6 +9,7 @@ using SocialMedia.Core.Dtos;
 using SocialMedia.Core.Entities;
 using SocialMedia.Core.Interfaces;
 using SocialMedia.Core.QueryFilters;
+using SocialMedia.Infrastructure.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -18,17 +19,29 @@ namespace SocialMedia.Api.Controllers
 {
     [Authorize]
     [ApiController]
-    [Route("api/[controller]")]
-    public class RolModuleController(IRolModuleService rolModuleService, IMapper mapper) : ControllerBase
+    [Consumes("application/json")]
+    [Produces("application/json")]
+    [Route("api/v1/[controller]")]
+    public class RolModuleController : ControllerBase
     {
+        private readonly IRolModuleService _rolModuleService;
+        private readonly IMapper _mapper;
+        private readonly IUriService _uriService;
+
+        public RolModuleController(IRolModuleService rolModuleService, IMapper mapper, IUriService uriService)
+        {
+            _rolModuleService = rolModuleService;
+            _mapper = mapper;
+            _uriService = uriService;
+        }
 
         [HttpGet(Name = nameof(GetRolModules))]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(ApiResponse<IEnumerable<RolModuleDto>>))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetRolModules([FromQuery] RolModuleQueryFilter filters)
         {
-            var rolModules = await rolModuleService.GetRolModules(filters);
-            var rolModuleDto = mapper.Map<IEnumerable<RolModuleDto>>(rolModules);
+            var rolModules = await _rolModuleService.GetRolModules(filters);
+            var rolModuleDto = _mapper.Map<IEnumerable<RolModuleDto>>(rolModules);
             var response = new ApiResponse<IEnumerable<RolModuleDto>>(rolModuleDto);
 
             var metaData = new Metadata
@@ -39,53 +52,72 @@ namespace SocialMedia.Api.Controllers
                 TotalPages = rolModules.TotalPages,
                 HasNextPage = rolModules.HasNextPage,
                 HasPreviousPage = rolModules.HasPreviousPage,
+                NextPageUrl = rolModules.HasNextPage
+                    ? _uriService.GetPageUri(rolModules.CurrentPage + 1, rolModules.PageSize, filters.Filter, Request.Path.Value!).ToString()
+                    : null,
+                PreviousPageUrl = rolModules.HasPreviousPage
+                    ? _uriService.GetPageUri(rolModules.CurrentPage - 1, rolModules.PageSize, filters.Filter, Request.Path.Value!).ToString()
+                    : null,
+                Links = new List<LinkInfo>
+                {
+                    new() { Rel = "self", Href = Request.Path.Value!, Method = "GET" },
+                    new() { Rel = "create", Href = Request.Path.Value!, Method = "POST" },
+                }
             };
 
             response.Meta = metaData;
+            response.Links = metaData.Links;
             Response.Headers.Append("X-Pagination", JsonConvert.SerializeObject(metaData));
 
             return Ok(response);
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> Get(Guid id)
+        [HttpGet("{id}", Name = nameof(GetRolModuleById))]
+        public async Task<IActionResult> GetRolModuleById(Guid id)
         {
-            var rolModule = await rolModuleService.GetRolModule(id);
+            var rolModule = await _rolModuleService.GetRolModule(id);
             if (rolModule == null) return NotFound();
-            var rolModuleDto = mapper.Map<RolModuleDto>(rolModule);
+            var rolModuleDto = _mapper.Map<RolModuleDto>(rolModule);
             var response = new ApiResponse<RolModuleDto>(rolModuleDto);
+            response.Links = new List<LinkInfo>
+            {
+                new() { Rel = "self", Href = $"{Request.Path.Value}", Method = "GET" },
+                new() { Rel = "update", Href = $"{Request.Path.Value}", Method = "PUT" },
+                new() { Rel = "delete", Href = $"{Request.Path.Value}", Method = "DELETE" },
+                new() { Rel = "collection", Href = Request.Path.Value![..Request.Path.Value!.LastIndexOf('/')], Method = "GET" },
+            };
             return Ok(response);
         }
 
         [HttpPost]
         public async Task<IActionResult> Post(RolModuleDto rolModuleDto)
         {
-            var rolModule = mapper.Map<RolModule>(rolModuleDto);
+            var rolModule = _mapper.Map<RolModule>(rolModuleDto);
 
-            await rolModuleService.InsertRolModule(rolModule);
+            await _rolModuleService.InsertRolModule(rolModule);
 
-            rolModuleDto = mapper.Map<RolModuleDto>(rolModule);
+            rolModuleDto = _mapper.Map<RolModuleDto>(rolModule);
 
             var response = new ApiResponse<RolModuleDto>(rolModuleDto);
-            return Ok(response);
+            return CreatedAtAction(nameof(GetRolModuleById), new { id = rolModule.Id }, response);
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(Guid id, RolModuleDto rolModuleDto)
         {
-            var rolModule = mapper.Map<RolModule>(rolModuleDto);
+            var rolModule = _mapper.Map<RolModule>(rolModuleDto);
             rolModule.Id = id;
 
-            await rolModuleService.UpdateRolModule(rolModule);
+            await _rolModuleService.UpdateRolModule(rolModule);
 
-            return Ok();
+            return NoContent();
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
-            await rolModuleService.DeleteRolModule(id);
-            return Ok();
+            await _rolModuleService.DeleteRolModule(id);
+            return NoContent();
         }
     }
 }

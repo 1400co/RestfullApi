@@ -28,6 +28,7 @@ namespace SocialMedia.Infrastructure.Data
         public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<RolModule> RolModule { get; set; }
         public virtual DbSet<Otp> Otp { get; set; }
+        public virtual DbSet<Cervezas> Cervezas { get; set; }
 
         public override int SaveChanges()
         {

@@ -10,19 +10,23 @@ using System.Threading.Tasks;
 
 namespace SocialMedia.Core.Services
 {
-    public class PostService(IUnitOfWork unitOfWork, IOptions<PaginationOptions> paginationOptions) : IPostService
+    public class PostService : GenericService<Post>, IPostService
     {
+        public PostService(IUnitOfWork unitOfWork, IOptions<PaginationOptions> paginationOptions)
+            : base(unitOfWork, paginationOptions)
+        {
+        }
 
         public async Task InsertPost(Post post)
         {
-            var user = await unitOfWork.UserRepository.GetById(post.UserId).ConfigureAwait(false);
+            var user = await _unitOfWork.UserRepository.GetById(post.UserId).ConfigureAwait(false);
             if (user == null)
                 throw new BusinessException("User doesnt exist");
 
             if (post.Description.Contains("sexo"))
                 throw new BusinessException("Content not allowed");
 
-            var userPosts = await unitOfWork.PostRepository.GetPostsByUser(post.UserId).ConfigureAwait(false);
+            var userPosts = await _unitOfWork.PostRepository.GetPostsByUser(post.UserId).ConfigureAwait(false);
             if (userPosts.Count() < 10)
             {
                 var lastPost = userPosts.OrderByDescending(x => x.CreatedAt).FirstOrDefault();
@@ -32,32 +36,32 @@ namespace SocialMedia.Core.Services
                 }
             }
 
-            await unitOfWork.PostRepository.Insert(post).ConfigureAwait(false);
+            await _unitOfWork.PostRepository.Insert(post).ConfigureAwait(false);
         }
 
         public async Task<bool> UpdatePost(Post post)
         {
-            var existingPost = await unitOfWork.PostRepository.GetById(post.Id, u => u.User).ConfigureAwait(false);
+            var existingPost = await _unitOfWork.PostRepository.GetById(post.Id, u => u.User).ConfigureAwait(false);
             if (existingPost == null)
                 throw new BusinessException("Post doesn't exist");
 
             post.CopyPropertiesTo(existingPost);
 
-            await unitOfWork.PostRepository.Update(existingPost).ConfigureAwait(false);
+            await _unitOfWork.PostRepository.Update(existingPost).ConfigureAwait(false);
             return true;
         }
 
         public async Task<Post?> GetPost(Guid id)
         {
-            return await unitOfWork.PostRepository.GetById(id, u => u.User).ConfigureAwait(false);
+            return await _unitOfWork.PostRepository.GetById(id, u => u.User).ConfigureAwait(false);
         }
 
         public async Task<PagedList<Post>> GetPosts(PostQueryFilter filters)
         {
-            var posts = unitOfWork.PostRepository.Get(null, u => u.User);
+            var posts = _unitOfWork.PostRepository.Get(null, u => u.User);
 
-            if (filters.PageNumber == 0) filters.PageNumber = paginationOptions.Value.DefaultPageNumber;
-            if (filters.PageSize == 0) filters.PageSize = paginationOptions.Value.DefaultPageSize;
+            if (filters.PageNumber == 0) filters.PageNumber = _paginationOptions.DefaultPageNumber;
+            if (filters.PageSize == 0) filters.PageSize = _paginationOptions.DefaultPageSize;
 
             if (filters.UserId != null)
             {
@@ -76,8 +80,7 @@ namespace SocialMedia.Core.Services
 
         public async Task DeletePost(Guid id)
         {
-            await unitOfWork.PostRepository.Delete(id).ConfigureAwait(false);
-            await unitOfWork.SaveChangesAsync().ConfigureAwait(false);
+            await base.Delete(id).ConfigureAwait(false);
         }
     }
 }

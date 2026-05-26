@@ -1,4 +1,5 @@
 ﻿using SocialMedia.Core.CustomEntities;
+using System.Collections.Generic;
 
 namespace SocialMedia.Api.Responses
 {
@@ -11,5 +12,6 @@ namespace SocialMedia.Api.Responses
 
         public T Data { get; set; }
         public Metadata? Meta { get; set; }
+        public List<LinkInfo>? Links { get; set; }
     }
 }

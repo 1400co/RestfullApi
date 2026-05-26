@@ -2,6 +2,7 @@
 using Hangfire;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using SocialMedia.Api.Responses;
@@ -12,6 +13,7 @@ using SocialMedia.Core.Enumerations;
 using SocialMedia.Core.Exceptions;
 using SocialMedia.Core.Interfaces;
 using SocialMedia.Core.QueryFilters;
+using SocialMedia.Infrastructure.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,18 +24,34 @@ namespace SocialMedia.Api.Controllers
 {
     [Authorize]
     [ApiController]
-    [Route("api/[controller]")]
-    public class UserController(IUserService userService, IMapper mapper, ISecurityService securityService,
-        IEmailService emailService) : ControllerBase
+    [Consumes("application/json")]
+    [Produces("application/json")]
+    [Route("api/v1/[controller]")]
+    public class UserController : ControllerBase
     {
+        private readonly IUserService _userService;
+        private readonly IMapper _mapper;
+        private readonly ISecurityService _securityService;
+        private readonly IEmailService _emailService;
+        private readonly IUriService _uriService;
+
+        public UserController(IUserService userService, IMapper mapper, ISecurityService securityService,
+            IEmailService emailService, IUriService uriService)
+        {
+            _userService = userService;
+            _mapper = mapper;
+            _securityService = securityService;
+            _emailService = emailService;
+            _uriService = uriService;
+        }
 
         [HttpGet(Name = nameof(GetUsers))]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(ApiResponse<IEnumerable<UserDto>>))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetUsers([FromQuery] UserQueryFilter filters)
         {
-            var users = await userService.GetUsers(filters);
-            var userDto = mapper.Map<IEnumerable<UserDto>>(users);
+            var users = await _userService.GetUsers(filters);
+            var userDto = _mapper.Map<IEnumerable<UserDto>>(users);
 
             userDto.ToList().ForEach(user =>
             {
@@ -53,20 +71,40 @@ namespace SocialMedia.Api.Controllers
                 TotalPages = users.TotalPages,
                 HasNextPage = users.HasNextPage,
                 HasPreviousPage = users.HasPreviousPage,
+                NextPageUrl = users.HasNextPage
+                    ? _uriService.GetPageUri(users.CurrentPage + 1, users.PageSize, filters.Filter, Request.Path.Value!).ToString()
+                    : null,
+                PreviousPageUrl = users.HasPreviousPage
+                    ? _uriService.GetPageUri(users.CurrentPage - 1, users.PageSize, filters.Filter, Request.Path.Value!).ToString()
+                    : null,
+                Links = new List<LinkInfo>
+                {
+                    new() { Rel = "self", Href = Request.Path.Value!, Method = "GET" },
+                    new() { Rel = "create", Href = Request.Path.Value!, Method = "POST" },
+                }
             };
 
             response.Meta = metaData;
+            response.Links = metaData.Links;
             Response.Headers.Append("X-Pagination", JsonConvert.SerializeObject(metaData));
 
             return Ok(response);
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> Get(Guid id)
+        [HttpGet("{id}", Name = nameof(GetUserById))]
+        public async Task<IActionResult> GetUserById(Guid id)
         {
-            var user = await userService.GetUser(id);
-            var userDto = mapper.Map<UserDto>(user);
+            var user = await _userService.GetUser(id);
+            if (user == null) return NotFound();
+            var userDto = _mapper.Map<UserDto>(user);
             var response = new ApiResponse<UserDto>(userDto);
+            response.Links = new List<LinkInfo>
+            {
+                new() { Rel = "self", Href = $"{Request.Path.Value}", Method = "GET" },
+                new() { Rel = "update", Href = $"{Request.Path.Value}", Method = "PUT" },
+                new() { Rel = "delete", Href = $"{Request.Path.Value}", Method = "DELETE" },
+                new() { Rel = "collection", Href = Request.Path.Value![..Request.Path.Value!.LastIndexOf('/')], Method = "GET" },
+            };
             return Ok(response);
         }
 
@@ -74,48 +112,70 @@ namespace SocialMedia.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> Post(UserDto userDto)
         {
-            var sec = await securityService.GetUserByEmail(userDto.Email);
+            var sec = await _securityService.GetUserByEmail(userDto.Email);
 
-            if (sec != null )
+            if (sec != null)
             {
                 throw new BusinessException("Usuario ya existe.");
             }
 
-            var user = mapper.Map<User>(userDto);
+            var user = _mapper.Map<User>(userDto);
             user.Id = Guid.NewGuid();
             user.Roles = new List<RoleType> { RoleType.Consumer };
 
-            await userService.InsertUser(user);
+            await _userService.InsertUser(user);
 
-            BackgroundJob.Enqueue(() => emailService.SendEmailAsync(
+            BackgroundJob.Enqueue(() => _emailService.SendEmailAsync(
                 userDto.Email,
                 "Bienvenido",
                 $"¡Bienvenido a nuestra plataforma!\n\nPara empezar a utilizar la plataforma, haz clic en el siguiente enlace:\n\n<a href='URL_DE_LA_PLATAFORMA'>Ingresar a la plataforma</a>",
                 true
             ));
 
-            userDto = mapper.Map<UserDto>(user);
+            userDto = _mapper.Map<UserDto>(user);
 
             var response = new ApiResponse<UserDto>(userDto);
-            return Ok(response);
+            return CreatedAtAction(nameof(GetUserById), new { id = user.Id }, response);
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(Guid id, UserDto userDto)
         {
-            var user = mapper.Map<User>(userDto);
+            var user = _mapper.Map<User>(userDto);
             user.Id = id;
 
-            await userService.UpdateUser(user);
+            await _userService.UpdateUser(user);
 
-            return Ok();
+            return NoContent();
+        }
+
+        [HttpPatch("{id}")]
+        public async Task<IActionResult> Patch(Guid id, [FromBody] JsonPatchDocument<UserDto> patchDoc)
+        {
+            if (patchDoc == null)
+                return BadRequest();
+
+            var user = await _userService.GetUser(id);
+            if (user == null)
+                return NotFound();
+
+            var userDto = _mapper.Map<UserDto>(user);
+            patchDoc.ApplyTo(userDto, ModelState);
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            _mapper.Map(userDto, user);
+            await _userService.UpdateUser(user);
+
+            return NoContent();
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
-            await userService.DeleteUser(id);
-            return Ok();
+            await _userService.DeleteUser(id);
+            return NoContent();
         }
     }
 }

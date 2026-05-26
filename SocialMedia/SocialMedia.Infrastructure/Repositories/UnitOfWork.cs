@@ -20,6 +20,7 @@ namespace SocialMedia.Infrastructure.Repositories
         public IRepository<RolModule> RolModuleRepository => new BaseRepository<RolModule>(socialMediaContext);
         public IRepository<Modules> ModuleRepository => new BaseRepository<Modules>(socialMediaContext);
         public IRepository<Otp> OtpRepository => new BaseRepository<Otp>(socialMediaContext);
+        public IRepository<Cervezas> CervezasRepository => new BaseRepository<Cervezas>(socialMediaContext);
 
         public void Dispose()
         {

@@ -17,9 +17,10 @@ using TransforSerPu.Core.Interfaces;
 
 namespace SocialMedia.Api.Controllers
 {
-
-    [Route("api/[Controller]")]
+    [Route("api/v1/[controller]")]
     [ApiController]
+    [Consumes("application/json")]
+    [Produces("application/json")]
     public class TokenController : ControllerBase
     {
         private readonly IConfiguration _configuration;
@@ -56,17 +57,15 @@ namespace SocialMedia.Api.Controllers
 
         [AllowAnonymous]
         [EnableRateLimiting("AuthPolicy")]
-        [HttpPost]
-        [Route("RequestToken")]
-        public async Task<IActionResult> RequestToken(string email)
+        [HttpPost("otp")]
+        public async Task<IActionResult> RequestOtp(string email)
         {
-            var user = await this._userService.GetUserByEmail(email);
+            var user = await _userService.GetUserByEmail(email);
 
             if (user == null) { return NotFound(); }
 
             var otp = await _securityService.GetOneTimePassword(user.Id);
 
-            // Estructura HTML para el cuerpo del mensaje
             var emailBody = $@"
                 <html>
                     <body style='font-family: Arial, sans-serif; color: #333;'>
@@ -81,23 +80,19 @@ namespace SocialMedia.Api.Controllers
                     </body>
                 </html>";
 
-            // Envío del correo electrónico usando HTML
-            BackgroundJob.Enqueue(() => this._emailService.SendEmailAsync(
+            BackgroundJob.Enqueue(() => _emailService.SendEmailAsync(
                 user.Email,
                 "Bienvenido",
                 emailBody,
-                true // Activa el modo HTML para el correo electrónico
+                true
             ));
 
-            return Ok();
+            return NoContent();
         }
-
-
 
         [AllowAnonymous]
         [EnableRateLimiting("AuthPolicy")]
-        [HttpPost]
-        [Route("Login")]
+        [HttpPost("login")]
         public async Task<IActionResult> Login(Login login)
         {
             try
@@ -107,7 +102,6 @@ namespace SocialMedia.Api.Controllers
                     return BadRequest("Invalid client request");
                 }
 
-                //If valid user
                 var result = await ValidateUser(login);
 
                 if (!result.Item1)
@@ -127,11 +121,10 @@ namespace SocialMedia.Api.Controllers
                 var refreshToken = _tokenService.GenerateRefreshToken();
                 var permisos = await _rolModuleService.ObtenerModulosUsuario(user.Id);
 
-
                 user.RefreshToken = refreshToken;
                 user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(2);
 
-                await this._userService.UpdateUser(user);
+                await _userService.UpdateUser(user);
 
                 return Ok(new AuthenticatedResponse
                 {
@@ -148,20 +141,18 @@ namespace SocialMedia.Api.Controllers
             }
         }
 
-        [HttpPost]
-        [Route("RenewToken")]
+        [HttpPost("renew")]
         public async Task<IActionResult> RenewToken(TokenDto tokenApiModel)
         {
             if (tokenApiModel is null)
                 return BadRequest("Invalid client request");
 
-            var result = await this._tokenService.RenewToken(tokenApiModel);
+            var result = await _tokenService.RenewToken(tokenApiModel);
 
             return Ok(result);
         }
 
-        [HttpPost]
-        [Route("revoke")]
+        [HttpDelete]
         public async Task<IActionResult> Revoke()
         {
             var username = _sessionService.GetUserName()!;
@@ -176,8 +167,7 @@ namespace SocialMedia.Api.Controllers
             return NoContent();
         }
 
-        [HttpGet]
-        [Route("me")]
+        [HttpGet("me")]
         public IActionResult Me()
         {
             var user = _sessionService.GetCurrentUser();
@@ -188,12 +178,11 @@ namespace SocialMedia.Api.Controllers
 
         private async Task<(bool, User?)> ValidateUser(Login login)
         {
-            var user = await this._userService.GetUserByEmail(login.Email);
+            var user = await _userService.GetUserByEmail(login.Email);
 
             var result = await _securityService.ValidateCredentials(login.Email, login.Otp);
 
             return (result, user);
         }
-
     }
 }

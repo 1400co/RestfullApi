@@ -12,6 +12,7 @@ namespace SocialMedia.Core.Interfaces
         IRepository<RolModule> RolModuleRepository { get; }
         IRepository<Modules> ModuleRepository { get; }
         IRepository<Otp> OtpRepository { get; }
+        IRepository<Cervezas> CervezasRepository { get; }
         void SaveChanges();
         Task SaveChangesAsync();
         IRepository<T> GetRepository<T>() where T : BaseEntity;

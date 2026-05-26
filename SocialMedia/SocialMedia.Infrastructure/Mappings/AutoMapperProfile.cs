@@ -17,6 +17,7 @@ namespace SocialMedia.Infrastructure.Mappings
             CreateMap<User, UserDto>().ReverseMap();
             CreateMap<Modules, ModulesDto>().ReverseMap();
             CreateMap<Otp, OtpDto>().ReverseMap();
+            CreateMap<Cervezas, CervezasDto>().ReverseMap();
 
         }
     }

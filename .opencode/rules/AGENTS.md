@@ -73,3 +73,30 @@ docker build -t socialmedia-api -f Dockerfile .
 - Serilog writes to `logs/SocialMedia.txt` (rolling daily).
 - Hangfire uses PostgreSQL storage (configured in `AddHangfire()`).
 - The folder `SocialMedia.Infrastructure/Extentions/` is intentionally misspelled (keep the name).
+
+
+## MCP Usage
+
+### context7
+Use Context7 MCP to fetch current documentation whenever the user asks about a library, framework, SDK, API, CLI tool, or cloud service -- even well-known ones like React, Next.js, Prisma, Express, Tailwind, Django, or Spring Boot. This includes API syntax, configuration, version migration, library-specific debugging, setup instructions, and CLI tool usage. Use even when you think you know the answer -- your training data may not reflect recent changes. Prefer this over web search for library docs.
+
+Do not use for: refactoring, writing scripts from scratch, debugging business logic, code review, or general programming concepts.
+
+### microsoft_learn
+Use Microsoft Learn MCP to fetch official .NET, ASP.NET Core, EF Core, C#, Azure, and other Microsoft documentation. Use this when questions involve .NET APIs, SDKs, Azure services, or Microsoft-specific frameworks instead of general web search.
+
+### angular-cli
+Use Angular CLI MCP for Angular-specific tasks: generating components, services, guards, pipes, directives, and other artifacts. Also use it to query Angular CLI commands, schematics, and build configuration. Do NOT use for general Angular runtime concepts (use context7 for that).
+
+### sequential-thinking
+Use Sequential Thinking MCP for complex problem-solving, debugging, refactoring, or any task that requires breaking down into logical steps. Invoke it when reasoning through architecture decisions, troubleshooting bugs, or planning multi-step implementations.
+
+---
+
+## Code Quality Standards
+
+- **Defensive coding:** Always validate inputs, handle null/undefined gracefully, use type guards, and never trust external data. Prefer early returns and fail-fast patterns over deep nesting.
+- **Clean Code:** Write self-documenting code — meaningful names, small focused functions/methods, single responsibility, no magic numbers/strings, avoid duplication (DRY), and keep side-effects explicit.
+- **Error handling:** Use Result patterns (FluentResults in C#, custom union types in TS) instead of throwing exceptions for expected business failures. Log unexpected exceptions with structured context.
+- **No comments in generated code** unless the logic is unavoidably complex — prefer expressive code over explanatory comments.
+

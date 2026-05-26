@@ -1,16 +1,17 @@
-﻿using SocialMedia.Core.QueryFilters;
-using SocialMedia.Infrastructure.Interfaces;
+﻿using SocialMedia.Infrastructure.Interfaces;
 using System;
 
 namespace SocialMedia.Infrastructure.Services
 {
     public class UriService(string baseUrl) : IUriService
     {
-
-        public Uri GetPostPaginationUri(PostQueryFilter filter, string actionUrl)
+        public Uri GetPageUri(int pageNumber, int pageSize, string? filter, string actionUrl)
         {
             var fullUrl = $"{baseUrl}{actionUrl}";
-            return new Uri(fullUrl);
+            var query = $"PageNumber={pageNumber}&PageSize={pageSize}";
+            if (!string.IsNullOrWhiteSpace(filter))
+                query += $"&Filter={Uri.EscapeDataString(filter)}";
+            return new Uri($"{fullUrl}?{query}");
         }
     }
 }

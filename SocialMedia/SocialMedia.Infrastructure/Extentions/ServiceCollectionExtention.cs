@@ -100,6 +100,7 @@ namespace SocialMedia.Infrastructure.Extentions
             services.AddTransient<IPostService, PostService>();
             services.AddTransient<ISecurityService, SecurityService>();
             services.AddTransient<IModuleService, ModuleService>();
+            services.AddTransient<ICervezasService, CervezasService>();
             services.AddSingleton<IPasswordService, PasswordService>();
             services.AddSingleton<IUriService>(provider =>
             {
@@ -116,12 +117,23 @@ namespace SocialMedia.Infrastructure.Extentions
         {
             services.AddSwaggerGen(doc =>
             {
-                doc.SwaggerDoc("v1", new OpenApiInfo { Title = "Social Media API", Version = "v1" });
+                doc.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Title = "Social Media API",
+                    Version = "v1",
+                    Description = "RESTful API for Social Media platform. Version 1."
+                });
+
+                doc.SwaggerDoc("v2", new OpenApiInfo
+                {
+                    Title = "Social Media API",
+                    Version = "v2",
+                    Description = "RESTful API for Social Media platform. Version 2 (future)."
+                });
 
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFileName);
                 doc.IncludeXmlComments(xmlPath);
 
-                // Agregar la descripción del esquema de seguridad JWT
                 doc.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
                     Description = "Bearer Token",
@@ -131,7 +143,6 @@ namespace SocialMedia.Infrastructure.Extentions
                     Scheme = "bearer"
                 });
 
-                // Agregar el esquema de seguridad a los documentos Swagger
                 doc.AddSecurityRequirement(new OpenApiSecurityRequirement
                 {
                     {
