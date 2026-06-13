@@ -15,7 +15,7 @@
       "url": "https://mcp.context7.com/mcp",
       "enabled": true,
       "headers": {
-        "CONTEXT7_API_KEY": "{file:.opencode/secrets/context7-key}"
+        "CONTEXT7_API_KEY": "{file:secrets/context7-key}"
       }
     }
   }
