@@ -348,6 +348,39 @@ El directorio `.opencode/` contiene la configuración del asistente de desarroll
 | `rules/AGENTS.md` | Metadata del proyecto, convenciones, DI wiring, testing |
 | `rules/AI_PROJECT_RULES.md` | Metodología de gestión de proyecto con trazabilidad completa |
 
+### Subagente Analista
+
+El proyecto incluye un **subagente analista** que transforma actas de entrevista en requerimientos estructurados con trazabilidad completa.
+
+**¿Cómo usarlo?**
+
+1. Coloca el acta de entrevista en `knowledge-base/01-discovery/entrevistas/` (formato Markdown).
+2. En la conversación con OpenCode, escribe:
+
+   ```
+   @analista Procesa el acta de entrevista en knowledge-base/01-discovery/entrevistas/[archivo].md y genera todos los artefactos de requerimientos siguiendo AI_PROJECT_RULES.md
+   ```
+3. El agente leerá el acta, extraerá hallazgos (`H-XXX`) y generará automáticamente:
+   - `02-domain/actores.md` — Actores del sistema (`ACT-XXX`)
+   - `02-domain/entidades.md` — Entidades del dominio (`ENT-XXX`)
+   - `02-domain/reglas-negocio.md` — Reglas de negocio (`RN-XXX`)
+   - `02-domain/estados.md` — Máquina de estados por entidad
+   - `02-domain/eventos-negocio.md` — Eventos de negocio (`EVN-XXX`)
+   - `03-requirements/casos-uso/` — Casos de uso (`CU-XXX.md`)
+   - `03-requirements/historias/` — Historias de usuario (`HU-XXX.md`) en formato Gherkin
+   - `03-requirements/criterios/` — Criterios de aceptación (`CA-XXX.md`)
+   - `04-backlog/epicas.md` — Épicas (`EP-XXX`)
+   - `04-backlog/features.md` — Features (`FEAT-XXX`)
+
+**Reglas del agente:**
+
+- Solo trabaja sobre `knowledge-base/` — no puede leer ni modificar código fuente.
+- Usa **Sequential Thinking** para descomponer cada entrevista en pasos lógicos.
+- Exige trazabilidad completa: ningún artefacto se crea sin poder rastrearse hasta un hallazgo validado.
+- Cada artefacto sigue la cadena: `Hallazgo → Regla de Negocio → Entidad → Épica → Feature → Historia de Usuario → Criterio de Aceptación`.
+- Identificadores correlativos globales por tipo (`H-001`, `RN-001`, `ACT-001`, etc.).
+- Los criterios de aceptación siempre en **formato Gherkin** (`Dado/Cuando/Entonces`).
+
 ## Middleware Pipeline
 
 Orden de ejecución en el pipeline de ASP.NET Core:
