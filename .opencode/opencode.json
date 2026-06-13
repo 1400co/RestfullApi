@@ -1,13 +1,24 @@
-{
+﻿{
   "$schema": "https://opencode.ai/config.json",
+  "permission": {
+    "read": {
+      "secrets/**": "deny"
+    },
+    "edit": {
+      "secrets/**": "deny"
+    },
+    "bash": "ask",
+    "webfetch": "allow"
+  },
   "mcp": {
     "microsoft_learn": {
       "type": "remote",
-      "url": "https://learn.microsoft.com/api/mcp"
+      "url": "https://learn.microsoft.com/api/mcp",
+      "enabled": true
     },
-     "sequential-thinking": {
+    "sequential-thinking": {
       "type": "local",
-      "command": ["cmd", "/c", "npx", "-y", "@modelcontextprotocol/server-sequential-thinking"],
+      "command": ["npx", "-y", "@modelcontextprotocol/server-sequential-thinking"],
       "enabled": true
     },
     "context7": {
@@ -17,6 +28,27 @@
       "headers": {
         "CONTEXT7_API_KEY": "{file:secrets/context7-key}"
       }
+    },
+    "angular-cli": {
+      "type": "local",
+      "command": ["npx", "@angular/cli"],
+      "enabled": true
+    }
+  },
+  "command": {
+    "build": {
+      "description": "Compila la soluciÃ³n completa",
+      "template": "Ejecuta dotnet build en Template/Template.sln y muÃ©strame el resultado. Si hay errores, sugiero fixes."
+    },
+    "test": {
+      "description": "Ejecuta todos los tests",
+      "template": "Ejecuta dotnet test en Template/Template.sln y muÃ©strame el resultado. EnfÃ³cate en los tests fallidos y sugiere correcciones."
+    },
+    "analista": {
+      "description": "Procesa actas de entrevista con el agente analista",
+      "template": "Ejecuta el subagente analista para procesar el acta en $ARGUMENTS y genera todos los artefactos de requerimientos siguiendo AI_PROJECT_RULES.md",
+      "agent": "analista",
+      "subtask": true
     }
   }
 }

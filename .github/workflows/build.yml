@@ -1,4 +1,4 @@
-name: Build
+﻿name: Build
 
 on:
   push:
@@ -17,7 +17,7 @@ jobs:
           dotnet-version: "10.0.x"
 
       - name: Restore dependencies
-        run: dotnet restore ./SocialMedia/SocialMedia.sln
+        run: dotnet restore ./src/Template.sln
 
       - name: Build
-        run: dotnet build ./SocialMedia/SocialMedia.sln --no-restore
+        run: dotnet build ./src/Template.sln --no-restore
