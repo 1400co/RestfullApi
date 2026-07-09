@@ -37,12 +37,12 @@
   },
   "command": {
     "build": {
-      "description": "Compila la soluciÃ³n completa",
-      "template": "Ejecuta dotnet build en Template/Template.sln y muÃ©strame el resultado. Si hay errores, sugiero fixes."
+      "description": "Compila la solucion completa",
+      "template": "Ejecuta dotnet build en Template/Template.sln y muestrame el resultado. Si hay errores, sugiero fixes."
     },
     "test": {
       "description": "Ejecuta todos los tests",
-      "template": "Ejecuta dotnet test en Template/Template.sln y muÃ©strame el resultado. EnfÃ³cate en los tests fallidos y sugiere correcciones."
+      "template": "Ejecuta dotnet test en Template/Template.sln y muestrame el resultado. Enfocate en los tests fallidos y sugiere correcciones."
     },
     "analista": {
       "description": "Procesa actas de entrevista con el agente analista",
