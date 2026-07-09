@@ -426,12 +426,20 @@ Justificación: Por qué.
 ├── prompt-pm.md
 ├── prompt-analista.md
 ├── prompt-dev.md
-└── uso-subagente-analista.md   # Guía del subagente Cursor /analista
+├── uso-subagente-analista.md
+└── uso-subagentes.md          # Guía: arquitecto, desarrollador, verificador
 ```
 
 Consultar estos archivos según el rol de la tarea (análisis, desarrollo, gestión).
 
-**Subagente Cursor:** `.cursor/agents/analista.md` — ver `knowledge-base/07-ai-context/uso-subagente-analista.md`
+**Subagentes Cursor:** `.cursor/agents/` — ver guías en `07-ai-context/`
+
+| Subagente | Invocación | Rol |
+|-----------|------------|-----|
+| analista | `/analista` | Requerimientos → `knowledge-base/` |
+| arquitecto | `/arquitecto` | Consultoría técnica + ADRs |
+| desarrollador | `/desarrollador` | HU/CA → `src/` |
+| verificador | `/verificador` | Validación (readonly) |
 
 ---
 
@@ -511,6 +519,10 @@ Para cualquier **nueva funcionalidad** o **cambio de comportamiento**, la trazab
 | Reglas técnicas C# / API | `.cursor/rules/cSharp-rules.md` |
 | Documentación técnica | `README.md` |
 | Subagente analista (Cursor) | `.cursor/agents/analista.md` |
-| Guía de uso del analista | `knowledge-base/07-ai-context/uso-subagente-analista.md` |
+| Subagente arquitecto (Cursor) | `.cursor/agents/arquitecto.md` |
+| Subagente desarrollador (Cursor) | `.cursor/agents/desarrollador.md` |
+| Subagente verificador (Cursor) | `.cursor/agents/verificador.md` |
+| Guía subagentes (analista) | `knowledge-base/07-ai-context/uso-subagente-analista.md` |
+| Guía subagentes (dev/arq/verif) | `knowledge-base/07-ai-context/uso-subagentes.md` |
 | Convenciones de agente | `.opencode/rules/AGENTS.md` |
 | Base de conocimiento | `knowledge-base/` |

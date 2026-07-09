@@ -18,7 +18,7 @@ API RESTful construida con **ASP.NET Core 10** y **EF Core**, siguiendo **Clean 
 - **Dynamic Queries**: System.Linq.Dynamic.Core
 - **Contenedor**: Docker
 - **CI/CD**: GitHub Actions â†’ Build automÃ¡tico en push a `main`
-- **IA / Asistencia**: OpenCode con agentes y MCPs configurados (`.opencode/`)
+- **IA / Asistencia**: Cursor (4 subagentes: analista, arquitecto, desarrollador, verificador en `.cursor/`) y OpenCode (`.opencode/`)
 
 ## Arquitectura
 
@@ -55,6 +55,9 @@ Template.sln (raíz del repo)
 │   ├── Dockerfile
 │   └── Template.sln
 │
+├── .cursor/                      # Reglas y subagentes para Cursor IDE
+│   ├── rules/                    #   cSharp-rules.md, AI_PROJECT_RULES.md
+│   └── agents/                   #   analista, arquitecto, desarrollador, verificador
 ├── .opencode/                    # Configuración de IA (OpenCode)
 ├── knowledge-base/               # Base de conocimiento del proyecto
 └── README.md
@@ -330,62 +333,190 @@ El sistema registra automÃ¡ticamente todos los cambios (Insert, Update, Delete
 
 ## Knowledge Base
 
-El proyecto incluye una base de conocimiento estructurada y versionable en `knowledge-base/` que sigue una metodologÃ­a de trazabilidad completa:
+El proyecto incluye una base de conocimiento estructurada y versionable en `knowledge-base/` que sigue una metodología de trazabilidad completa definida en `.cursor/rules/AI_PROJECT_RULES.md`:
 
 ```
 knowledge-base/
-â”œâ”€â”€ 01-discovery/        # Documentos, entrevistas, procesos, preguntas abiertas
-â”œâ”€â”€ 02-domain/           # Actores, entidades, estados, eventos, glosario, reglas de negocio
-â”œâ”€â”€ 03-requirements/     # Casos de uso, criterios de aceptaciÃ³n, historias de usuario
-â”œâ”€â”€ 04-backlog/          # Ã‰picas, features, roadmap
-â”œâ”€â”€ 05-architecture/     # ADR, arquitectura, integraciones, modelo de dominio
-â”œâ”€â”€ 06-decisions/        # Decisiones arquitectÃ³nicas y tÃ©cnicas
-â””â”€â”€ 07-ai-context/       # Contexto de producto, prompts para asistentes IA
+├── 01-discovery/        # Entrevistas, documentos, procesos, preguntas abiertas y sugeridas
+│   ├── entrevistas/
+│   ├── preguntas-abiertas.md          # Dudas pendientes de validación (PA-XXX)
+│   └── preguntas-proxima-reunion.md   # Sugerencias para la próxima reunión (PS-XXX)
+├── 02-domain/           # Actores, entidades, estados, eventos, glosario, reglas de negocio
+├── 03-requirements/     # Casos de uso, criterios de aceptación, historias de usuario
+├── 04-backlog/          # Épicas, features, roadmap
+├── 05-architecture/     # ADR, arquitectura, integraciones, modelo de dominio
+│   └── adr/             #   Architecture Decision Records (ADR-XXX)
+├── 06-decisions/        # Decisiones arquitectónicas y técnicas
+└── 07-ai-context/       # Prompts y guías: uso-subagente-analista.md, uso-subagentes.md
 ```
 
-## ConfiguraciÃ³n de IA (OpenCode)
+### Regla fundamental
 
-El directorio `.opencode/` contiene la configuraciÃ³n del asistente de desarrollo:
+Ninguna historia de usuario, caso de uso, API o línea de código debe existir si no puede rastrearse hasta una regla de negocio validada:
 
-| Archivo | DescripciÃ³n |
+```
+Hallazgo (H-XXX) → Regla (RN-XXX) → Entidad (ENT-XXX) → Épica (EP-XXX) → Feature (FEAT-XXX) → Historia (HU-XXX) → Criterio (CA-XXX) → Código
+```
+
+## Configuración de IA
+
+### Cursor IDE (`.cursor/`)
+
+Reglas persistentes y subagentes especializados para el agente de Cursor:
+
+| Archivo | Descripción |
 |---------|-------------|
-| `opencode.json` | Configura MCPs: `microsoft_learn` (docs Microsoft), `sequential-thinking`, `context7` (docs de librerÃ­as) |
-| `agents/analista.md` | Agente especializado en anÃ¡lisis de requerimientos |
+| `rules/cSharp-rules.md` | Arquitectura, convenciones API, patrones C#, EF Core, DI, checklist CRUD |
+| `rules/AI_PROJECT_RULES.md` | Metodología de conocimiento, trazabilidad, formatos de artefactos |
+| `agents/analista.md` | Subagente: entrevistas → requerimientos en `knowledge-base/` |
+| `agents/arquitecto.md` | Subagente: consultoría técnica (pros/contras) y ADRs |
+| `agents/desarrollador.md` | Subagente: HU/CA → implementación en `src/` |
+| `agents/verificador.md` | Subagente: validación de implementación (solo lectura) |
+| `agents/README.md` | Índice de subagentes y cadena de trabajo |
+
+Las reglas se cargan automáticamente en cada conversación (`alwaysApply: true`).
+
+### Cadena de subagentes
+
+```
+analista → arquitecto (opcional) → desarrollador → verificador
+```
+
+| Subagente | Comando | Ámbito |
+|-----------|---------|--------|
+| Analista | `/analista` | `knowledge-base/` — requerimientos |
+| Arquitecto | `/arquitecto` | Consultoría + ADRs en `05-architecture/adr/` |
+| Desarrollador | `/desarrollador` | `src/` — código |
+| Verificador | `/verificador` | Solo lectura — validación |
+
+**Guías:** `knowledge-base/07-ai-context/uso-subagente-analista.md` · `uso-subagentes.md`
+
+### Separación de responsabilidades
+
+| Subagente | Escribe en | No toca |
+|-----------|------------|---------|
+| `analista` | `knowledge-base/` (01–04, 07) | `src/` |
+| `arquitecto` | `knowledge-base/05-architecture/adr/` | `src/` |
+| `desarrollador` | `src/` | `knowledge-base/` |
+| `verificador` | nada (`readonly`) | — |
+
+### Flujo de ejemplo completo
+
+```
+1. /analista   → Procesa entrevista-001.md → genera HU-002, CA-002, RN-XXX
+2. /arquitecto → ¿SignalR o polling para notificaciones? Pros y contras.
+                 Usuario decide → documenta ADR-001
+3. /desarrollador → Implementa HU-002 y CA-002 según cSharp-rules.md y ADR-001
+4. /verificador   → Valida implementación vs criterios Gherkin y convenciones REST
+```
+
+### OpenCode (`.opencode/`)
+
+| Archivo | Descripción |
+|---------|-------------|
+| `opencode.json` | MCPs: `microsoft_learn`, `sequential-thinking`, `context7` |
+| `agents/analista.md` | Agente de análisis de requerimientos (formato OpenCode) |
 | `rules/AGENTS.md` | Metadata del proyecto, convenciones, DI wiring, testing |
-| `rules/AI_PROJECT_RULES.md` | MetodologÃ­a de gestiÃ³n de proyecto con trazabilidad completa |
+| `rules/AI_PROJECT_RULES.md` | Copia de referencia de la metodología de proyecto |
 
-### Subagente Analista
+### Subagentes en detalle
 
-El proyecto incluye un **subagente analista** que transforma actas de entrevista en requerimientos estructurados con trazabilidad completa.
+#### Analista (`/analista`)
 
-**Â¿CÃ³mo usarlo?**
+Transforma actas de entrevista en requerimientos estructurados con trazabilidad completa. **No genera código** — solo artefactos en `knowledge-base/`.
 
-1. Coloca el acta de entrevista en `knowledge-base/01-discovery/entrevistas/` (formato Markdown).
-2. En la conversaciÃ³n con OpenCode, escribe:
+**Uso en Cursor:**
+
+1. Coloca el acta en `knowledge-base/01-discovery/entrevistas/` (formato Markdown).
+2. Invoca:
 
    ```
-   @analista Procesa el acta de entrevista en knowledge-base/01-discovery/entrevistas/[archivo].md y genera todos los artefactos de requerimientos siguiendo AI_PROJECT_RULES.md
+   /analista Procesa el acta en knowledge-base/01-discovery/entrevistas/[archivo].md y genera todos los artefactos siguiendo AI_PROJECT_RULES.md
    ```
-3. El agente leerÃ¡ el acta, extraerÃ¡ hallazgos (`H-XXX`) y generarÃ¡ automÃ¡ticamente:
-   - `02-domain/actores.md` â€” Actores del sistema (`ACT-XXX`)
-   - `02-domain/entidades.md` â€” Entidades del dominio (`ENT-XXX`)
-   - `02-domain/reglas-negocio.md` â€” Reglas de negocio (`RN-XXX`)
-   - `02-domain/estados.md` â€” MÃ¡quina de estados por entidad
-   - `02-domain/eventos-negocio.md` â€” Eventos de negocio (`EVN-XXX`)
-   - `03-requirements/casos-uso/` â€” Casos de uso (`CU-XXX.md`)
-   - `03-requirements/historias/` â€” Historias de usuario (`HU-XXX.md`) en formato Gherkin
-   - `03-requirements/criterios/` â€” Criterios de aceptaciÃ³n (`CA-XXX.md`)
-   - `04-backlog/epicas.md` â€” Ã‰picas (`EP-XXX`)
-   - `04-backlog/features.md` â€” Features (`FEAT-XXX`)
 
-**Reglas del agente:**
+3. Artefactos generados:
 
-- Solo trabaja sobre `knowledge-base/` â€” no puede leer ni modificar cÃ³digo fuente.
-- Usa **Sequential Thinking** para descomponer cada entrevista en pasos lÃ³gicos.
-- Exige trazabilidad completa: ningÃºn artefacto se crea sin poder rastrearse hasta un hallazgo validado.
-- Cada artefacto sigue la cadena: `Hallazgo â†’ Regla de Negocio â†’ Entidad â†’ Ã‰pica â†’ Feature â†’ Historia de Usuario â†’ Criterio de AceptaciÃ³n`.
-- Identificadores correlativos globales por tipo (`H-001`, `RN-001`, `ACT-001`, etc.).
-- Los criterios de aceptaciÃ³n siempre en **formato Gherkin** (`Dado/Cuando/Entonces`).
+   | Artefacto | Ubicación | IDs |
+   |-----------|-----------|-----|
+   | Hallazgos | Acta en `entrevistas/` | `H-XXX` |
+   | Preguntas abiertas | `01-discovery/preguntas-abiertas.md` | `PA-XXX` |
+   | Preguntas para próxima reunión | `01-discovery/preguntas-proxima-reunion.md` | `PS-XXX` |
+   | Actores, entidades, reglas | `02-domain/` | `ACT-`, `ENT-`, `RN-`, `EVN-` |
+   | Épicas y features | `04-backlog/` | `EP-`, `FEAT-` |
+   | Casos de uso, historias, criterios | `03-requirements/` | `CU-`, `HU-`, `CA-` |
+
+4. Usa `preguntas-proxima-reunion.md` como guía para la siguiente reunión con el cliente.
+
+**Uso en OpenCode:** `@analista Procesa el acta en knowledge-base/01-discovery/entrevistas/[archivo].md ...`
+
+**Guía:** `knowledge-base/07-ai-context/uso-subagente-analista.md`
+
+---
+
+#### Arquitecto (`/arquitecto`)
+
+Asesor técnico para decisiones de **tecnología, patrones de diseño y arquitectura**. Opera en dos modos:
+
+| Modo | Cuándo | Qué hace |
+|------|--------|----------|
+| **Consultoría** | El usuario pregunta qué usar | Presenta 2–4 alternativas con **pros, contras, esfuerzo y alineación** con el stack. Sugiere opción **no vinculante** — **el usuario decide** |
+| **Documentación** | El usuario confirma una decisión | Crea `ADR-XXX` en `knowledge-base/05-architecture/adr/` |
+
+**Ejemplos:**
+
+```
+/arquitecto ¿CQRS o servicios tradicionales para posts? Presenta pros y contras.
+
+/arquitecto ¿Redis o in-memory cache? No implementes, solo asesora.
+
+/arquitecto El usuario eligió SignalR. Documenta la decisión como ADR-001.
+```
+
+- No implementa código (`/desarrollador`) ni genera requerimientos (`/analista`)
+- Usa MCP `microsoft_learn` y `context7` para documentación actualizada
+
+---
+
+#### Desarrollador (`/desarrollador`)
+
+Implementa historias (`HU-XXX`) y criterios Gherkin (`CA-XXX`) en `src/` siguiendo `cSharp-rules.md`.
+
+**Prerrequisitos:**
+- Historia y criterios documentados por `/analista`
+- ADR aceptado por `/arquitecto` (si hay decisión técnica nueva)
+
+**Genera (checklist CRUD):** Entidad, DTO, Service, Controller, QueryFilter, Validador, AutoMapper, DI, migración EF.
+
+**Ejemplo:**
+
+```
+/desarrollador Implementa HU-001 y CA-001 según cSharp-rules.md
+```
+
+Si faltan requerimientos documentados, **se detiene** y recomienda usar `/analista` primero.
+
+**Guía:** `knowledge-base/07-ai-context/uso-subagentes.md`
+
+---
+
+#### Verificador (`/verificador`)
+
+Valida en **solo lectura** (`readonly: true`) que la implementación cumple:
+
+- Criterios Gherkin (`CA-XXX`) de la historia
+- Checklist CRUD y convenciones REST de `cSharp-rules.md`
+- Trazabilidad HU → código
+- Build y tests (si puede ejecutarlos)
+
+**Ejemplo:**
+
+```
+/verificador Confirma que HU-001 y CA-001 están correctamente implementados
+```
+
+**Reporte:** veredicto `APROBADO` | `APROBADO CON OBSERVACIONES` | `RECHAZADO` con hallazgos por severidad (Crítico, Alto, Medio, Bajo).
+
+**Guía:** `knowledge-base/07-ai-context/uso-subagentes.md`
 
 ## Middleware Pipeline
 
